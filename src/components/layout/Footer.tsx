@@ -127,7 +127,7 @@ export function Footer() {
               />
               <div>
                 <p className="text-white text-[13px] font-medium">Need Help? Call Us</p>
-                <p className="text-[#6ebe26] text-xl font-semibold mt-0.5 tracking-wide">+91 98765 43210</p>
+                <p className="text-[#6ebe26] text-xl font-semibold mt-0.5 tracking-wide">+91 74288 08884</p>
                 <p className="text-white/60 text-[11px] mt-1">Mon - Sun: 8:00 AM - 8:00 PM</p>
               </div>
             </motion.div>
@@ -215,7 +215,7 @@ export function Footer() {
             <motion.ul variants={container} className="space-y-5 text-[14px]">
               <motion.li variants={staggerItem} className="flex gap-3 items-start">
                 <Phone size={18} className="text-[#6ebe26] shrink-0 mt-0.5" />
-                <span className="text-white/90">+91 98765 43210</span>
+                <span className="text-white/90">+91 74288 08884</span>
               </motion.li>
               <motion.li variants={staggerItem} className="flex gap-3 items-start">
                 <Mail size={18} className="text-[#6ebe26] shrink-0 mt-0.5" />

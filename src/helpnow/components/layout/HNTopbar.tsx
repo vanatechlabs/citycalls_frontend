@@ -121,9 +121,9 @@ export function HNTopbar() {
 
       <div className="hn-topbar-inner">
         <div className="hn-top-left">
-          <a href="tel:+919876543210" className="hn-top-link">
+          <a href="tel:+917428808884" className="hn-top-link">
             <Phone size={12} />
-            <span>+91 98765 43210</span>
+            <span>+91 74288 08884</span>
           </a>
           <a href="mailto:hello@helpnow.in" className="hn-top-link" style={{ display: "flex" }}>
             <Mail size={12} />

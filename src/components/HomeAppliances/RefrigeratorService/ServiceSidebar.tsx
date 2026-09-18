@@ -79,10 +79,10 @@ export function ServiceSidebar({ currentStep = 1 }: { currentStep?: number }) {
         <div className="flex justify-between items-center gap-4">
           <ul className="space-y-3">
             <li className="flex items-center gap-2.5 text-[12px] font-bold text-ink">
-              <Phone className="w-4 h-4 text-[#3e8914]" strokeWidth={2.5} /> +91 98765 43210
+              <Phone className="w-4 h-4 text-[#3e8914]" strokeWidth={2.5} /> +91 74288 08884
             </li>
             <li className="flex items-center gap-2.5 text-[12px] font-bold text-ink">
-              <MessageCircle className="w-4 h-4 text-[#3e8914] fill-[#3e8914]" strokeWidth={2.5} /> +91 98765 43210
+              <MessageCircle className="w-4 h-4 text-[#3e8914] fill-[#3e8914]" strokeWidth={2.5} /> +91 74288 08884
             </li>
             <li className="flex items-center gap-2.5 text-[12px] font-bold text-ink">
               <Mail className="w-4 h-4 text-[#3e8914]" strokeWidth={2.5} /> <span className="text-blue-600">hello@citycalls.in</span>

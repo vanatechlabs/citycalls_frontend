@@ -28,9 +28,9 @@ export function Topbar() {
           
           {/* Left Section - Contact Info */}
           <div className="flex items-center justify-center md:justify-start gap-4 md:gap-5 w-full md:w-auto overflow-hidden flex-shrink-0">
-            <a href="tel:+919876543210" className="flex items-center gap-1.5 text-slate-800 dark:text-slate-100 hover:text-primary transition-colors font-bold whitespace-nowrap">
+            <a href="tel:+917428808884" className="flex items-center gap-1.5 text-slate-800 dark:text-slate-100 hover:text-primary transition-colors font-bold whitespace-nowrap">
               <Phone size={13} className="text-primary" />
-              <span>+91 98765 43210</span>
+              <span>+91 74288 08884</span>
             </a>
             <a href="mailto:hello@citycalls.in" className="hidden sm:flex items-center gap-1.5 text-slate-800 dark:text-slate-100 hover:text-primary transition-colors font-bold whitespace-nowrap">
               <Mail size={13} className="text-primary" />

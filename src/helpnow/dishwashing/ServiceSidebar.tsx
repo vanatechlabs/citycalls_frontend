@@ -48,10 +48,10 @@ export function ServiceSidebar({ currentStep = 1 }: { currentStep?: number }) {
         <div className="flex justify-between items-center gap-4">
           <ul className="space-y-3">
             <li className="flex items-center gap-2.5 text-[12px] font-bold text-ink">
-              <Phone className="w-4 h-4 text-[#3e8914]" strokeWidth={2.5} /> +91 98765 43210
+              <Phone className="w-4 h-4 text-[#3e8914]" strokeWidth={2.5} /> +91 74288 08884
             </li>
             <li className="flex items-center gap-2.5 text-[12px] font-bold text-ink">
-              <MessageCircle className="w-4 h-4 text-[#3e8914] fill-[#3e8914]" strokeWidth={2.5} /> +91 98765 43210
+              <MessageCircle className="w-4 h-4 text-[#3e8914] fill-[#3e8914]" strokeWidth={2.5} /> +91 74288 08884
             </li>
             <li className="flex items-center gap-2.5 text-[12px] font-bold text-ink">
               <Mail className="w-4 h-4 text-[#3e8914]" strokeWidth={2.5} /> <span className="text-blue-600">hello@citycalls.in</span>
@@ -157,7 +157,7 @@ function NeedHelpBooking() {
           <p className="text-[11px] font-medium text-ink/70 leading-relaxed mb-4">
             Our support team is happy to assist you at every step.
           </p>
-          <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 bg-[#3e8914] text-white px-4 py-2 rounded-md font-bold text-[12px] shadow-sm hover:bg-[#347311] transition-colors">
+          <a href="https://wa.me/917428808884" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 bg-[#3e8914] text-white px-4 py-2 rounded-md font-bold text-[12px] shadow-sm hover:bg-[#347311] transition-colors">
             <MessageCircle className="w-4 h-4 fill-white" />
             Chat on WhatsApp
           </a>

@@ -52,7 +52,7 @@ export function Step4({ onBack, onEditStep, onSubmit }: Step4Props) {
               </div>
               <div className="grid grid-cols-[100px_1fr] items-baseline">
                 <span className="text-slate-500 text-[11px] font-medium">WhatsApp No.</span>
-                <span className="font-bold text-slate-900">+91 98765 43210</span>
+                <span className="font-bold text-slate-900">+91 74288 08884</span>
               </div>
               <div className="grid grid-cols-[100px_1fr] items-baseline">
                 <span className="text-slate-500 text-[11px] font-medium">Email Address</span>

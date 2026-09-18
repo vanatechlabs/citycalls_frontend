@@ -46,7 +46,7 @@ export function Step4({ onBack, onEditStep, onSubmit }: Step4Props) {
                 {/* Left Column */}
                 <div className="flex flex-col gap-3">
                   <div className="flex items-start"><span className="text-[10px] text-ink/60 font-bold w-24 md:w-28 shrink-0 mt-0.5">Full Name</span><span className="text-[11px] font-medium text-[#4B1426] break-words">Rahul Sharma</span></div>
-                  <div className="flex items-start"><span className="text-[10px] text-ink/60 font-bold w-24 md:w-28 shrink-0 mt-0.5">WhatsApp No.</span><span className="text-[11px] font-medium text-ink break-words">+91 98765 43210</span></div>
+                  <div className="flex items-start"><span className="text-[10px] text-ink/60 font-bold w-24 md:w-28 shrink-0 mt-0.5">WhatsApp No.</span><span className="text-[11px] font-medium text-ink break-words">+91 74288 08884</span></div>
                   <div className="flex items-start"><span className="text-[10px] text-ink/60 font-bold w-24 md:w-28 shrink-0 mt-0.5">Email Address</span><span className="text-[11px] font-medium text-blue-600 break-words flex-1">rahul.sharma@email.com</span></div>
                   <div className="flex items-start"><span className="text-[10px] text-ink/60 font-bold w-24 md:w-28 shrink-0 mt-0.5">Address</span><span className="text-[11px] font-medium text-ink leading-relaxed break-words flex-1">123, Green Park, Near Metro Station</span></div>
                 </div>

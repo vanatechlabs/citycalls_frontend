@@ -160,10 +160,10 @@ export function HNFooter() {
               <div>
                 <p className="text-white text-[12.5px] font-semibold">Need Help? Call Us</p>
                 <a
-                  href="tel:+919876543210"
+                  href="tel:+917428808884"
                   className="text-[#f5a623] text-lg font-bold mt-0.5 tracking-wide block hover:underline"
                 >
-                  +91 98765 43210
+                  +91 74288 08884
                 </a>
                 <p className="text-white/60 text-[11px] mt-0.5 font-medium">Mon - Sun: 8:00 AM - 8:00 PM</p>
               </div>
@@ -271,8 +271,8 @@ export function HNFooter() {
             <motion.ul variants={container} className="space-y-4 text-[13.5px]">
               <motion.li variants={staggerItem} className="flex gap-2.5 items-start">
                 <Phone size={17} className="text-[#f5a623] shrink-0 mt-0.5" />
-                <a href="tel:+919876543210" className="text-white/90 hover:text-[#f5a623] transition-colors">
-                  +91 98765 43210
+                <a href="tel:+917428808884" className="text-white/90 hover:text-[#f5a623] transition-colors">
+                  +91 74288 08884
                 </a>
               </motion.li>
               <motion.li variants={staggerItem} className="flex gap-2.5 items-start">

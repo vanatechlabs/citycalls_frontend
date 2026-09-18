@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Phone } from "lucide-react";
 
 const CallFloat = () => {
-  const [phoneNumber] = useState("919876543210");
+  const [phoneNumber] = useState("917428808884");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const CallFloat = () => {
 };
 
 const WhatsAppFloat = () => {
-  const [phoneNumber] = useState("919876543210");
+  const [phoneNumber] = useState("917428808884");
   const [mounted, setMounted] = useState(false);
   const [message] = useState("Hello! I would like to book a home service.");
 

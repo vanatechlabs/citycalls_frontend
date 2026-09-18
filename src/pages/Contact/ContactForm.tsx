@@ -35,7 +35,7 @@ export default function ContactForm() {
              <Phone className="w-4 h-4 mt-1 opacity-70"/>
              <div>
                <div className="font-bold text-xs tracking-widest uppercase mb-1.5 opacity-80">WhatsApp</div>
-               <a href="tel:+919876543210" className="hover:underline font-medium">+91 98765 43210</a>
+               <a href="tel:+917428808884" className="hover:underline font-medium">+91 74288 08884</a>
              </div>
            </div>
            <div className="flex items-start gap-4 mt-8">

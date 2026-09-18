@@ -111,10 +111,10 @@ export function Step5({ onClose }: Step5Props) {
               </div>
               <div className="flex-1 flex flex-col gap-1.5">
                 <span className="text-[11px] font-medium text-ink flex items-center gap-1.5 break-words">
-                  <Phone className="w-3 h-3 text-[#3e8914]" /> +91 98765 43210
+                  <Phone className="w-3 h-3 text-[#3e8914]" /> +91 74288 08884
                 </span>
                 <span className="text-[11px] font-medium text-ink flex items-center gap-1.5 break-words">
-                  <MessageSquare className="w-3 h-3 text-green-500" /> +91 98765 43210
+                  <MessageSquare className="w-3 h-3 text-green-500" /> +91 74288 08884
                 </span>
                 <span className="text-[11px] font-medium text-blue-600 break-words">
                   rahul.sharma@email.com
