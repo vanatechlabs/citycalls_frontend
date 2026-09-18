@@ -96,7 +96,7 @@ export function Navbar() {
               <div className="relative origin-top group animate-swing">
                 <span className="absolute left-1/2 -top-[18px] -translate-x-1/2 w-[2px] h-[18px] bg-gradient-to-b from-primary to-primary-dark" />
                 <a
-                  href="https://vanatechsaloon.netlify.app/"
+                  href="https://ccsaloon.citycalls.in/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="Btn"
@@ -215,7 +215,7 @@ export function Navbar() {
             <div className="p-4 border-t border-white/10 flex flex-col gap-3">
               <div className="flex justify-center w-full">
                 <a
-                  href="https://vanatechsaloon.netlify.app/"
+                  href="https://ccsaloon.citycalls.in/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="Btn"
