@@ -37,7 +37,7 @@ const spotlightItems: SpotlightItem[] = [
     image: h2,
     serviceName: "HelpNow",
     category: "Service Under 60 Mins",
-    link: "/help-now",
+    link: "https://helpnow.citycalls.in/",
     isExternal: false,
     theme: {
       accent: "#f5a623", // mustard

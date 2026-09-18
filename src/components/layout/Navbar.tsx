@@ -105,7 +105,7 @@ export function Navbar() {
             </div>
 
             {/* Help Now — New UI Button */}
-            <a href="/help-now" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-b from-[#FFCF24] to-[#FDBA00] hover:from-[#FFE066] hover:to-[#F5B50A] transition-all duration-300 rounded-full pl-2.5 pr-1 py-0.5 shadow-[0_4px_14px_rgba(253,186,0,0.4)] border border-[#E5A800]">
+            <a href="https://helpnow.citycalls.in/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-b from-[#FFCF24] to-[#FDBA00] hover:from-[#FFE066] hover:to-[#F5B50A] transition-all duration-300 rounded-full pl-2.5 pr-1 py-0.5 shadow-[0_4px_14px_rgba(253,186,0,0.4)] border border-[#E5A800]">
               {/* Left Icon (House + Sparkles) */}
               <div className="flex items-center gap-1.5">
                 <div className="relative flex items-center pr-1.5">
@@ -223,7 +223,7 @@ export function Navbar() {
                 ></a>
               </div>
               <a
-                href="/help-now"
+                href="https://helpnow.citycalls.in/" target="_blank" rel="noopener noreferrer"
                 className="help-now-btn-mobile"
                 onClick={() => setMobileOpen(false)}
               >

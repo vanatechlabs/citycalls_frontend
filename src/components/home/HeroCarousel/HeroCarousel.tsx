@@ -288,7 +288,7 @@ export function HeroCarousel() {
                     {slide.id === 1 ? (
                       <>
                         <a
-                          href="/help-now#services"
+                          target="_blank" rel="noopener noreferrer" href="https://helpnow.citycalls.in#services"
                           style={{
                             fontFamily: "'Plus Jakarta Sans', sans-serif",
                             padding: "12px 28px",
@@ -313,7 +313,7 @@ export function HeroCarousel() {
                           <ChevronRight size={15} />
                         </a>
                         <a
-                          href="/help-now#how-it-works"
+                          target="_blank" rel="noopener noreferrer" href="https://helpnow.citycalls.in#how-it-works"
                           style={{
                             fontFamily: "'Plus Jakarta Sans', sans-serif",
                             padding: "12px 28px",
