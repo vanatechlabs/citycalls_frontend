@@ -50,7 +50,7 @@ const spotlightItems: SpotlightItem[] = [
     image: cara5,
     serviceName: "Beauty & Salon",
     category: "Luxury Salon at Home",
-    link: "https://ccsaloon.citycalls.in/",
+    link: "https://salon.citycalls.in/",
     isExternal: true,
     theme: {
       accent: "#d4af37", // gold
