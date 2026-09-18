@@ -1,60 +1,63 @@
-import { Gift, ArrowRight, Copy } from "lucide-react";
+import { Gift, Sparkles, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
 
 export function OfferStrip() {
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText("CITY15");
-    toast.success("Coupon code CITY15 copied to clipboard!");
-  };
-
   return (
-    <div 
-      className="w-full py-2.5 shadow-sm bg-gradient-to-r from-slate-900 via-[#1a1a1a] to-slate-900 border-b border-primary/20 relative z-30" 
-    >
-      <div className="container-x mx-auto">
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-          {/* Icon */}
-          <div className="flex items-center gap-1.5 hidden sm:flex">
-            <div className="bg-primary/20 backdrop-blur-sm p-1.5 rounded-full border border-primary/30 flex items-center justify-center">
-              <Gift className="w-4 h-4 text-primary" />
+    <div className="w-full py-2.5 shadow-md bg-gradient-to-r from-slate-950 via-[#0d131f] to-slate-950 border-y border-primary/20 relative z-30 overflow-hidden group">
+      <div className="flex items-center">
+        <div className="marquee-track group-hover:[animation-play-state:paused] flex items-center gap-6 whitespace-nowrap">
+          {[...Array(4)].map((_, index) => (
+            <div key={index} className="flex items-center gap-6">
+              {/* Text 1: Special Home Services Discount */}
+              <div className="flex items-center gap-2.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 px-4 py-1.5 rounded-full transition-colors">
+                <Gift className="w-4 h-4 text-primary animate-pulse" />
+                <span className="text-xs sm:text-sm font-semibold text-white/90">
+                  Special Home Services Discount
+                </span>
+                <span className="px-2.5 py-0.5 rounded font-black text-xs bg-primary text-slate-950 uppercase tracking-wider shadow-sm">
+                  FLAT 15% OFF
+                </span>
+                <span className="text-xs font-medium text-amber-300 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/30">
+                  Use Code: <strong className="font-bold text-amber-200">CITY15</strong>
+                </span>
+                <Link
+                  to="/services"
+                  className="text-xs font-bold text-white hover:text-primary transition-colors flex items-center gap-1 ml-1"
+                >
+                  Claim Offer
+                  <ArrowRight className="w-3 h-3 text-primary" />
+                </Link>
+              </div>
+
+              <span className="text-primary/60 font-bold text-xs select-none">✦</span>
+
+              {/* Text 2: First Service Discount */}
+              <div className="flex items-center gap-2.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 px-4 py-1.5 rounded-full transition-colors">
+                <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+                <span className="text-xs sm:text-sm font-semibold text-white/90">
+                  First Deep Cleaning & Doorstep Repair
+                </span>
+                <span className="px-2.5 py-0.5 rounded font-black text-xs bg-amber-400 text-slate-950 uppercase tracking-wider shadow-sm">
+                  GET 20% OFF
+                </span>
+                <span className="text-xs font-medium text-primary bg-primary/10 px-2.5 py-0.5 rounded-full border border-primary/30">
+                  Use Code: <strong className="font-bold text-emerald-300">CLEAN20</strong>
+                </span>
+                <Link
+                  to="/contact"
+                  className="text-xs font-bold text-white hover:text-amber-400 transition-colors flex items-center gap-1 ml-1"
+                >
+                  Book Under 60 Mins
+                  <ArrowRight className="w-3 h-3 text-amber-400" />
+                </Link>
+              </div>
+
+              <span className="text-amber-400/60 font-bold text-xs select-none">✦</span>
             </div>
-          </div>
-
-          {/* OFFER TEXT */}
-          <div className="flex flex-wrap items-center justify-center gap-2 text-white text-center">
-            <span className="text-[12px] sm:text-[13px] font-medium text-white/90">
-              Special Home Services Discount
-            </span>
-
-            <span className="px-2 py-0.5 rounded font-bold text-[13px] shadow-sm bg-primary text-primary-foreground">
-              FLAT 15% OFF
-            </span>
-
-            <span className="text-[12px] sm:text-[13px] font-medium text-white/90 ml-1">
-              Use Code:
-            </span>
-
-            <button 
-              onClick={handleCopyCode}
-              className="group relative px-2.5 py-0.5 rounded font-bold border border-primary/50 text-[12px] sm:text-[13px] bg-black/40 text-primary hover:bg-primary/20 transition-colors flex items-center gap-1.5"
-              title="Click to copy"
-            >
-              CITY15
-              <Copy size={12} className="opacity-60 group-hover:opacity-100 transition-opacity" />
-            </button>
-          </div>
-
-          {/* BUTTON */}
-          <Link
-            to="/services"
-            className="bg-white text-ink hover:bg-primary hover:text-white px-3 sm:px-4 py-1.5 rounded font-bold text-[11px] sm:text-[12px] transition-all duration-300 flex items-center gap-1.5 group shadow-sm ml-0 sm:ml-2 uppercase tracking-wider whitespace-nowrap"
-          >
-            Claim Offer
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-          </Link>
+          ))}
         </div>
       </div>
     </div>
   );
 }
+

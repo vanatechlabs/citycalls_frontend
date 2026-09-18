@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
-import { ChevronDown, Menu, Phone, X, Sun, Moon } from "lucide-react";
+import { ChevronDown, Menu, Phone, X, Sun, Moon, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { serviceCategories } from "@/data/services";
 import { useBooking } from "@/context/BookingContext";
 import { Logo } from "@/components/layout/Logo";
 import { MegaMenu } from "./MegaMenu";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 export function Navbar() {
   const { openDrawer } = useBooking();
@@ -12,22 +13,6 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileCat, setMobileCat] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
-
-  const [isDark, setIsDark] = useState(() => {
-    return localStorage.getItem("theme") === "dark";
-  });
-
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [isDark]);
-
-  const toggleDarkMode = () => setIsDark((prev) => !prev);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -41,21 +26,27 @@ export function Navbar() {
   }, [mobileOpen]);
 
   return (
-    <header className={`sticky top-0 z-40 text-white border-b border-white/5 transition-colors duration-300 ${scrolled ? 'bg-ink/95 backdrop-blur shadow-soft' : 'bg-ink'}`}>
+    <header className={`sticky top-0 z-[100] text-white border-b border-white/5 transition-colors duration-300 ${scrolled ? 'bg-ink/95 backdrop-blur shadow-soft' : 'bg-ink'}`}>
       <div className="w-full px-4 lg:px-6 xl:px-8 flex items-center justify-between h-16 md:h-[72px] max-w-[1600px] mx-auto">
-        <div className="-ml-2">
+        <div className="ml-8">
           <Logo />
         </div>
 
         <nav className="hidden lg:flex items-center gap-0.5">
-          {serviceCategories.map((cat) => (
+          {serviceCategories
+            .filter(cat => ["home-appliance", "home-cleaning", "sofa-cleaning", "pest-control"].includes(cat.id))
+            .sort((a, b) => {
+              const order = ["home-appliance", "home-cleaning", "sofa-cleaning", "pest-control"];
+              return order.indexOf(a.id) - order.indexOf(b.id);
+            })
+            .map((cat) => (
             <div
               key={cat.id}
               className="relative"
               onMouseEnter={() => setOpenCat(cat.id)}
               onMouseLeave={() => setOpenCat(null)}
             >
-              <button className="group relative flex items-center gap-1 px-1.5 xl:px-2.5 py-2 text-[13px] font-medium text-white/90 hover:text-white transition-colors duration-200 rounded-md whitespace-nowrap">
+              <button className="group relative flex items-center gap-1 px-1.5 xl:px-2.5 py-2 text-[12px] font-sans font-semibold uppercase tracking-wider text-white/90 hover:text-white transition-colors duration-200 rounded-md whitespace-nowrap">
                 {cat.label}
                 <ChevronDown
                   size={14}
@@ -72,48 +63,13 @@ export function Navbar() {
           ))}
           <Link
             to="/contact"
-            className="group relative flex items-center px-1.5 xl:px-2.5 py-2 text-[13px] font-medium text-white/90 hover:text-white transition-colors duration-200 rounded-md whitespace-nowrap"
+            className="group relative flex items-center px-1.5 xl:px-2.5 py-2 text-[12px] font-sans font-semibold uppercase tracking-wider text-white/90 hover:text-white transition-colors duration-200 rounded-md whitespace-nowrap"
           >
             Contact
             <span className="absolute left-1.5 right-1.5 xl:left-2.5 xl:right-2.5 -bottom-[1px] h-[2px] bg-primary origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
           </Link>
 
-          {/* Day/Night Sky Theme Switch */}
-          <div className="flex items-center ml-2 xl:ml-3 gap-2">
-            <label className="theme-switch" title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}>
-              <input
-                type="checkbox"
-                className="theme-switch__checkbox"
-                checked={isDark}
-                onChange={toggleDarkMode}
-              />
-              <div className="theme-switch__container">
-                <div className="theme-switch__clouds"></div>
-                <div className="theme-switch__stars-container">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 55" fill="none">
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M135.831 3.00688C135.055 3.85027 134.111 4.29946 133 4.35447C134.111 4.40947 135.055 4.85867 135.831 5.71123C136.607 6.55462 136.996 7.56303 136.996 8.72727C136.996 7.95722 137.172 7.25134 137.525 6.59129C137.886 5.93124 138.372 5.39954 138.98 5.00535C139.598 4.60199 140.268 4.39114 141 4.35447C139.88 4.2903 138.936 3.85027 138.16 3.00688C137.384 2.16348 136.996 1.16425 136.996 0C136.996 1.16425 136.607 2.16348 135.831 3.00688ZM31 23.3545C32.1114 23.2995 33.0551 22.8503 33.8313 22.0069C34.6075 21.1635 34.9956 20.1642 34.9956 19C34.9956 20.1642 35.3837 21.1635 36.1599 22.0069C36.9361 22.8503 37.8798 23.2903 39 23.3545C38.2679 23.3911 37.5976 23.602 36.9802 24.0053C36.3716 24.3995 35.8864 24.9312 35.5248 25.5913C35.172 26.2513 34.9956 26.9572 34.9956 27.7273C34.9956 26.563 34.6075 25.5546 33.8313 24.7112C33.0551 23.8587 32.1114 23.4095 31 23.3545ZM0 36.3545C1.11136 36.2995 2.05513 35.8503 2.83131 35.0069C3.6075 34.1635 3.99559 33.1642 3.99559 32C3.99559 33.1642 4.38368 34.1635 5.15987 35.0069C5.93605 35.8503 6.87982 36.2903 8 36.3545C7.26792 36.3911 6.59757 36.602 5.98015 37.0053C5.37155 37.3995 4.88644 37.9312 4.52481 38.5913C4.172 39.2513 3.99559 39.9572 3.99559 40.7273C3.99559 39.563 3.6075 38.5546 2.83131 37.7112C2.05513 36.8587 1.11136 36.4095 0 36.3545ZM56.8313 24.0069C56.0551 24.8503 55.1114 25.2995 54 25.3545C55.1114 25.4095 56.0551 25.8587 56.8313 26.7112C57.6075 27.5546 57.9956 28.563 57.9956 29.7273C57.9956 28.9572 58.172 28.2513 58.5248 27.5913C58.8864 26.9312 59.3716 26.3995 59.9802 26.0053C60.5976 25.602 61.2679 25.3911 62 25.3545C60.8798 25.2903 59.9361 24.8503 59.1599 24.0069C58.3837 23.1635 57.9956 22.1642 57.9956 21C57.9956 22.1642 57.6075 23.1635 56.8313 24.0069ZM81 25.3545C82.1114 25.2995 83.0551 24.8503 83.8313 24.0069C84.6075 23.1635 84.9956 22.1642 84.9956 21C84.9956 22.1642 85.3837 23.1635 86.1599 24.0069C86.9361 24.8503 87.8798 25.2903 89 25.3545C88.2679 25.3911 87.5976 25.602 86.9802 26.0053C86.3716 26.3995 85.8864 26.9312 85.5248 27.5913C85.172 28.2513 84.9956 28.9572 84.9956 29.7273C84.9956 28.563 84.6075 27.5546 83.8313 26.7112C83.0551 25.8587 82.1114 25.4095 81 25.3545ZM136 36.3545C137.111 36.2995 138.055 35.8503 138.831 35.0069C139.607 34.1635 139.996 33.1642 139.996 32C139.996 33.1642 140.384 34.1635 141.16 35.0069C141.936 35.8503 142.88 36.2903 144 36.3545C143.268 36.3911 142.598 36.602 141.98 37.0053C141.372 37.3995 140.886 37.9312 140.525 38.5913C140.172 39.2513 139.996 39.9572 139.996 40.7273C139.996 39.563 139.607 38.5546 138.831 37.7112C138.055 36.8587 137.111 36.4095 136 36.3545ZM101.831 49.0069C101.055 49.8503 100.111 50.2995 99 50.3545C100.111 50.4095 101.055 50.8587 101.831 51.7112C102.607 52.5546 102.996 53.563 102.996 54.7273C102.996 53.9572 103.172 53.2513 103.525 52.5913C103.886 51.9312 104.372 51.3995 104.98 51.0053C105.598 50.602 106.268 50.3911 107 50.3545C105.88 50.2903 104.936 49.8503 104.16 49.0069C103.384 48.1635 102.996 47.1642 102.996 46C102.996 47.1642 102.607 48.1635 101.831 49.0069Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                </div>
-                <div className="theme-switch__circle-container">
-                  <div className="theme-switch__sun-moon-container">
-                    <div className="theme-switch__moon">
-                      <div className="theme-switch__spot"></div>
-                      <div className="theme-switch__spot"></div>
-                      <div className="theme-switch__spot"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </label>
-            <span className="text-[12px] font-semibold text-white/90 whitespace-nowrap select-none">
-              {isDark ? "Dark Mode" : "Light Mode"}
-            </span>
-          </div>
+
         </nav>
 
         <div className="flex items-center gap-2">
@@ -134,19 +90,63 @@ export function Navbar() {
               animation: dropIn 0.5s ease-out 0.2s both;
             }
           `}</style>
-          <div className="hidden md:flex relative justify-center mr-2 animate-drop-in">
-            <div className="relative origin-top group animate-swing">
-              <span className="absolute left-1/2 -top-[18px] -translate-x-1/2 w-[2px] h-[18px] bg-gradient-to-b from-primary to-primary-dark" />
-              <button
-                onClick={() => openDrawer()}
-                className={`relative px-4 py-2 text-[12px] font-bold border-2 border-primary shadow-sm flex items-center gap-2 overflow-hidden transition-all duration-500 rounded-md ${scrolled ? 'bg-primary text-primary-foreground' : 'bg-ink text-white'}`}
-              >
-                <span className="absolute inset-0 bg-gradient-to-r from-primary to-primary-dark translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500" />
-                <span className="relative z-10 flex items-center gap-2 transition-colors duration-300 uppercase tracking-wider">
-                  Book Now
-                </span>
-              </button>
+          <div className="hidden md:flex items-center gap-3 mr-14 animate-drop-in">
+            {/* Beauty Saloon pendant — RIGHT */}
+            <div className="relative justify-center flex mr-5">
+              <div className="relative origin-top group animate-swing">
+                <span className="absolute left-1/2 -top-[18px] -translate-x-1/2 w-[2px] h-[18px] bg-gradient-to-b from-primary to-primary-dark" />
+                <a
+                  href="https://vanatechsaloon.netlify.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="Btn"
+                ></a>
+              </div>
             </div>
+
+            {/* Help Now — New UI Button */}
+            <a href="/help-now" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-b from-[#FFCF24] to-[#FDBA00] hover:from-[#FFE066] hover:to-[#F5B50A] transition-all duration-300 rounded-full pl-2.5 pr-1 py-0.5 shadow-[0_4px_14px_rgba(253,186,0,0.4)] border border-[#E5A800]">
+              {/* Left Icon (House + Sparkles) */}
+              <div className="flex items-center gap-1.5">
+                <div className="relative flex items-center pr-1.5">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 10l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <rect x="9" y="12" width="2.5" height="2.5" fill="black"></rect>
+                    <rect x="12.5" y="12" width="2.5" height="2.5" fill="black"></rect>
+                    <rect x="9" y="15.5" width="2.5" height="2.5" fill="black"></rect>
+                    <rect x="12.5" y="15.5" width="2.5" height="2.5" fill="black"></rect>
+                  </svg>
+                  <div className="absolute -top-0.5 right-0">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="black">
+                      <path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2z"/>
+                    </svg>
+                  </div>
+                  <div className="absolute top-3 -right-1.5">
+                    <svg width="6" height="6" viewBox="0 0 24 24" fill="black">
+                      <path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2z"/>
+                    </svg>
+                  </div>
+                </div>
+                {/* Divider */}
+                <div className="w-[1.5px] h-6 bg-black/80 rounded-full" />
+              </div>
+
+              {/* Middle Text */}
+              <div className="flex flex-col items-start leading-none">
+                <div className="text-black text-[15px] tracking-tight flex items-baseline">
+                  <span className="font-extrabold font-sans">Help</span>
+                  <span className="font-serif italic font-bold ml-[1px]">Now</span>
+                </div>
+                <span className="text-black font-bold text-[8px] uppercase tracking-wider mt-0.5">
+                  House Help Services
+                </span>
+              </div>
+
+              {/* Right Arrow */}
+              <div className="w-7 h-7 bg-white/95 rounded-full flex items-center justify-center ml-1 shadow-sm">
+                <ArrowRight size={15} className="text-black" strokeWidth={2.5} />
+              </div>
+            </a>
           </div>
           <button
             onClick={() => setMobileOpen(true)}
@@ -157,6 +157,7 @@ export function Navbar() {
           </button>
         </div>
       </div>
+
 
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
@@ -169,11 +170,17 @@ export function Navbar() {
               </button>
             </div>
             <div className="flex-1 overflow-y-auto py-2">
-              {serviceCategories.map((cat) => (
+              {serviceCategories
+                .filter(cat => ["home-appliance", "home-cleaning", "sofa-cleaning", "pest-control"].includes(cat.id))
+                .sort((a, b) => {
+                  const order = ["home-appliance", "home-cleaning", "sofa-cleaning", "pest-control"];
+                  return order.indexOf(a.id) - order.indexOf(b.id);
+                })
+                .map((cat) => (
                 <div key={cat.id} className="border-b border-white/5">
                   <button
                     onClick={() => setMobileCat(mobileCat === cat.id ? null : cat.id)}
-                    className="w-full flex items-center justify-between px-5 py-3.5 text-sm font-semibold"
+                    className="w-full flex items-center justify-between px-5 py-3.5 text-[13px] font-sans font-semibold uppercase tracking-wider"
                   >
                     {cat.label}
                     <ChevronDown size={16} className={`transition-transform ${mobileCat === cat.id ? "rotate-180" : ""}`} />
@@ -194,59 +201,38 @@ export function Navbar() {
                   )}
                 </div>
               ))}
-              <Link to="/about" onClick={() => setMobileOpen(false)} className="block px-5 py-3.5 text-sm font-semibold border-b border-white/5">
+              <Link to="/about" onClick={() => setMobileOpen(false)} className="block px-5 py-3.5 text-[13px] font-sans font-semibold uppercase tracking-wider border-b border-white/5">
                 About
               </Link>
-              <Link to="/blogs" onClick={() => setMobileOpen(false)} className="block px-5 py-3.5 text-sm font-semibold border-b border-white/5">
+              <Link to="/blogs" onClick={() => setMobileOpen(false)} className="block px-5 py-3.5 text-[13px] font-sans font-semibold uppercase tracking-wider border-b border-white/5">
                 Blogs
               </Link>
-              <Link to="/contact" onClick={() => setMobileOpen(false)} className="block px-5 py-3.5 text-sm font-semibold border-b border-white/5">
+              <Link to="/contact" onClick={() => setMobileOpen(false)} className="block px-5 py-3.5 text-[13px] font-sans font-semibold uppercase tracking-wider border-b border-white/5">
                 Contact
               </Link>
-              <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/5">
-                <span className="text-sm font-semibold">{isDark ? "Dark Mode" : "Light Mode"}</span>
-                <label className="theme-switch" title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}>
-                  <input
-                    type="checkbox"
-                    className="theme-switch__checkbox"
-                    checked={isDark}
-                    onChange={toggleDarkMode}
-                  />
-                  <div className="theme-switch__container">
-                    <div className="theme-switch__clouds"></div>
-                    <div className="theme-switch__stars-container">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 55" fill="none">
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M135.831 3.00688C135.055 3.85027 134.111 4.29946 133 4.35447C134.111 4.40947 135.055 4.85867 135.831 5.71123C136.607 6.55462 136.996 7.56303 136.996 8.72727C136.996 7.95722 137.172 7.25134 137.525 6.59129C137.886 5.93124 138.372 5.39954 138.98 5.00535C139.598 4.60199 140.268 4.39114 141 4.35447C139.88 4.2903 138.936 3.85027 138.16 3.00688C137.384 2.16348 136.996 1.16425 136.996 0C136.996 1.16425 136.607 2.16348 135.831 3.00688ZM31 23.3545C32.1114 23.2995 33.0551 22.8503 33.8313 22.0069C34.6075 21.1635 34.9956 20.1642 34.9956 19C34.9956 20.1642 35.3837 21.1635 36.1599 22.0069C36.9361 22.8503 37.8798 23.2903 39 23.3545C38.2679 23.3911 37.5976 23.602 36.9802 24.0053C36.3716 24.3995 35.8864 24.9312 35.5248 25.5913C35.172 26.2513 34.9956 26.9572 34.9956 27.7273C34.9956 26.563 34.6075 25.5546 33.8313 24.7112C33.0551 23.8587 32.1114 23.4095 31 23.3545ZM0 36.3545C1.11136 36.2995 2.05513 35.8503 2.83131 35.0069C3.6075 34.1635 3.99559 33.1642 3.99559 32C3.99559 33.1642 4.38368 34.1635 5.15987 35.0069C5.93605 35.8503 6.87982 36.2903 8 36.3545C7.26792 36.3911 6.59757 36.602 5.98015 37.0053C5.37155 37.3995 4.88644 37.9312 4.52481 38.5913C4.172 39.2513 3.99559 39.9572 3.99559 40.7273C3.99559 39.563 3.6075 38.5546 2.83131 37.7112C2.05513 36.8587 1.11136 36.4095 0 36.3545ZM56.8313 24.0069C56.0551 24.8503 55.1114 25.2995 54 25.3545C55.1114 25.4095 56.0551 25.8587 56.8313 26.7112C57.6075 27.5546 57.9956 28.563 57.9956 29.7273C57.9956 28.9572 58.172 28.2513 58.5248 27.5913C58.8864 26.9312 59.3716 26.3995 59.9802 26.0053C60.5976 25.602 61.2679 25.3911 62 25.3545C60.8798 25.2903 59.9361 24.8503 59.1599 24.0069C58.3837 23.1635 57.9956 22.1642 57.9956 21C57.9956 22.1642 57.6075 23.1635 56.8313 24.0069ZM81 25.3545C82.1114 25.2995 83.0551 24.8503 83.8313 24.0069C84.6075 23.1635 84.9956 22.1642 84.9956 21C84.9956 22.1642 85.3837 23.1635 86.1599 24.0069C86.9361 24.8503 87.8798 25.2903 89 25.3545C88.2679 25.3911 87.5976 25.602 86.9802 26.0053C86.3716 26.3995 85.8864 26.9312 85.5248 27.5913C85.172 28.2513 84.9956 28.9572 84.9956 29.7273C84.9956 28.563 84.6075 27.5546 83.8313 26.7112C83.0551 25.8587 82.1114 25.4095 81 25.3545ZM136 36.3545C137.111 36.2995 138.055 35.8503 138.831 35.0069C139.607 34.1635 139.996 33.1642 139.996 32C139.996 33.1642 140.384 34.1635 141.16 35.0069C141.936 35.8503 142.88 36.2903 144 36.3545C143.268 36.3911 142.598 36.602 141.98 37.0053C141.372 37.3995 140.886 37.9312 140.525 38.5913C140.172 39.2513 139.996 39.9572 139.996 40.7273C139.996 39.563 139.607 38.5546 138.831 37.7112C138.055 36.8587 137.111 36.4095 136 36.3545ZM101.831 49.0069C101.055 49.8503 100.111 50.2995 99 50.3545C100.111 50.4095 101.055 50.8587 101.831 51.7112C102.607 52.5546 102.996 53.563 102.996 54.7273C102.996 53.9572 103.172 53.2513 103.525 52.5913C103.886 51.9312 104.372 51.3995 104.98 51.0053C105.598 50.602 106.268 50.3911 107 50.3545C105.88 50.2903 104.936 49.8503 104.16 49.0069C103.384 48.1635 102.996 47.1642 102.996 46C102.996 47.1642 102.607 48.1635 101.831 49.0069Z"
-                          fill="currentColor"
-                        />
-                      </svg>
-                    </div>
-                    <div className="theme-switch__circle-container">
-                      <div className="theme-switch__sun-moon-container">
-                        <div className="theme-switch__moon">
-                          <div className="theme-switch__spot"></div>
-                          <div className="theme-switch__spot"></div>
-                          <div className="theme-switch__spot"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </label>
-              </div>
+
             </div>
-            <div className="p-4 border-t border-white/10">
-              <button
-                onClick={() => {
-                  setMobileOpen(false);
-                  openDrawer();
-                }}
-                className="w-full rounded-full bg-primary text-primary-foreground py-3 text-sm font-semibold"
+            <div className="p-4 border-t border-white/10 flex flex-col gap-3">
+              <div className="flex justify-center w-full">
+                <a
+                  href="https://vanatechsaloon.netlify.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="Btn"
+                  onClick={() => setMobileOpen(false)}
+                ></a>
+              </div>
+              <a
+                href="/help-now"
+                className="help-now-btn-mobile"
+                onClick={() => setMobileOpen(false)}
               >
-                Book Now
-              </button>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M14.2199 21.63C13.0399 21.63 11.3699 20.8 10.0499 16.83L9.32988 14.67L7.16988 13.95C3.20988 12.63 2.37988 10.96 2.37988 9.78001C2.37988 8.61001 3.20988 6.93001 7.16988 5.60001L15.6599 2.77001C17.7799 2.06001 19.5499 2.27001 20.6399 3.35001C21.7299 4.43001 21.9399 6.21001 21.2299 8.33001L18.3999 16.82C17.0699 20.8 15.3999 21.63 14.2199 21.63ZM7.63988 7.03001C4.85988 7.96001 3.86988 9.06001 3.86988 9.78001C3.86988 10.5 4.85988 11.6 7.63988 12.52L10.1599 13.36C10.3799 13.43 10.5599 13.61 10.6299 13.83L11.4699 16.35C12.3899 19.13 13.4999 20.12 14.2199 20.12C14.9399 20.12 16.0399 19.13 16.9699 16.35L19.7999 7.86001C20.3099 6.32001 20.2199 5.06001 19.5699 4.41001C18.9199 3.76001 17.6599 3.68001 16.1299 4.19001L7.63988 7.03001Z" fill="currentColor"></path>
+                  <path d="M10.11 14.4C9.92005 14.4 9.73005 14.33 9.58005 14.18C9.29005 13.89 9.29005 13.41 9.58005 13.12L13.16 9.53C13.45 9.24 13.93 9.24 14.22 9.53C14.51 9.82 14.51 10.3 14.22 10.59L10.64 14.18C10.5 14.33 10.3 14.4 10.11 14.4Z" fill="currentColor"></path>
+                </svg>
+                Help Now
+              </a>
             </div>
           </div>
         </div>

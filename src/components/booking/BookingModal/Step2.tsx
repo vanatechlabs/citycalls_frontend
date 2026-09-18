@@ -13,13 +13,23 @@ export function Step2({ onBack, onNext }: Step2Props) {
     model: "",
     fridgeType: "Double Door",
     capacity: "",
-    issueType: "Not Cooling",
     description: "",
     frequency: "Always",
     safetyConcern: ""
   });
+  const [selectedIssues, setSelectedIssues] = useState<string[]>(["Not Cooling"]);
+  const [issueError, setIssueError] = useState(false);
 
   const upd = (k: string, v: string) => setForm((p) => ({ ...p, [k]: v }));
+
+  const toggleIssue = (issueId: string) => {
+    setSelectedIssues((prev) => {
+      const exists = prev.includes(issueId);
+      const next = exists ? prev.filter((id) => id !== issueId) : [...prev, issueId];
+      if (next.length > 0) setIssueError(false);
+      return next;
+    });
+  };
 
   const [files, setFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -39,6 +49,10 @@ export function Step2({ onBack, onNext }: Step2Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (selectedIssues.length === 0) {
+      setIssueError(true);
+      return;
+    }
     onNext();
   };
 
@@ -84,7 +98,7 @@ export function Step2({ onBack, onNext }: Step2Props) {
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-bold text-ink mb-1.5">Model Number (if known)</label>
+              <label className="block text-[11px] font-bold text-ink mb-1.5">Model Number (Optional)</label>
               <input type="text" placeholder="Enter model number" className="w-full border border-black/20 rounded px-3 py-2 text-[12px] outline-none focus:border-primary-dark transition-colors font-medium placeholder:font-normal placeholder:text-ink/40" value={form.model} onChange={e => upd("model", e.target.value)} />
             </div>
           </div>
@@ -124,25 +138,36 @@ export function Step2({ onBack, onNext }: Step2Props) {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-ink mb-1.5">What seems to be the issue? <span className="text-red-500">*</span></label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-[11px] font-bold text-ink">
+                What seems to be the issue? <span className="text-red-500">*</span>
+                <span className="text-[10px] font-normal text-ink/50 ml-1.5">(Select all that apply)</span>
+              </label>
+              {issueError && (
+                <span className="text-[10px] font-semibold text-red-500">
+                  Please select at least one issue
+                </span>
+              )}
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {issueTypes.map((issue) => {
                 const Icon = issue.icon;
+                const isSelected = selectedIssues.includes(issue.id);
                 return (
                   <div 
                     key={issue.id}
-                    onClick={() => upd("issueType", issue.id)}
-                    className={`border rounded px-2 py-3 flex items-center justify-center gap-2 cursor-pointer transition-colors relative ${
-                      form.issueType === issue.id ? 'border-[#3e8914] bg-[#3e8914]/5' : 'border-black/20 hover:border-black/30'
+                    onClick={() => toggleIssue(issue.id)}
+                    className={`border rounded px-2 py-3 flex items-center justify-center gap-2 cursor-pointer transition-colors relative select-none ${
+                      isSelected ? 'border-[#3e8914] bg-[#3e8914]/5' : 'border-black/20 hover:border-black/30'
                     }`}
                   >
-                    {form.issueType === issue.id && (
+                    {isSelected && (
                       <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-[#3e8914] rounded-full flex items-center justify-center text-white z-10">
                         <Check className="w-2.5 h-2.5" strokeWidth={3} />
                       </div>
                     )}
-                    <Icon className={`w-3.5 h-3.5 shrink-0 ${form.issueType === issue.id ? 'text-[#3e8914]' : 'text-ink/60'}`} />
-                    <span className="text-[10px] font-bold text-ink">{issue.label}</span>
+                    <Icon className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-[#3e8914]' : 'text-ink/60'}`} />
+                    <span className={`text-[10px] font-bold ${isSelected ? 'text-[#3e8914]' : 'text-ink'}`}>{issue.label}</span>
                   </div>
                 )
               })}

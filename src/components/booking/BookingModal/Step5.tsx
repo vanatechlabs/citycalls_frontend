@@ -66,7 +66,7 @@ export function Step5({ onClose }: Step5Props) {
               <div className="flex items-center gap-1.5 w-24 md:w-28 shrink-0 mt-0.5 text-ink/60">
                 <span className="text-[10px] font-bold ml-[18px]">Model</span>
               </div>
-              <span className="text-[11px] font-medium text-ink/70 break-words flex-1">MC2886BRUM (if known)</span>
+              <span className="text-[11px] font-medium text-ink/70 break-words flex-1">MC2886BRUM (Optional)</span>
             </div>
 
             <div className="flex items-start">

@@ -2,6 +2,9 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Target, Eye } from "lucide-react";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import about1 from "@/assets/Images/about1.png";
+import about2 from "@/assets/Images/about2.png";
+import about3 from "@/assets/Images/about3.png";
 
 const headingWords = ["Home", "Services", "Partner"];
 
@@ -246,7 +249,7 @@ export function AboutSection() {
                   initial={{ scale: 1.15 }}
                   animate={isInView ? { scale: 1 } : {}}
                   transition={{ duration: 0.9, ease: "easeOut" }}
-                  src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=900&q=80"
+                  src={about1}
                   alt="CityCalls Professional Cleaning"
                   className="w-full h-full object-cover"
                 />
@@ -262,8 +265,8 @@ export function AboutSection() {
                   initial={{ scale: 1.15 }}
                   animate={isInView ? { scale: 1 } : {}}
                   transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
-                  src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=800&q=80"
-                  alt="AC Repair Technician"
+                  src={about2}
+                  alt="CityCalls Technician with Happy Family"
                   className="w-full h-full object-cover"
                 />
               </motion.div>
@@ -278,8 +281,8 @@ export function AboutSection() {
                   initial={{ scale: 1.15 }}
                   animate={isInView ? { scale: 1 } : {}}
                   transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-                  src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80"
-                  alt="Electrical Services"
+                  src={about3}
+                  alt="CityCalls Team Collaboration"
                   className="w-full h-full object-cover"
                 />
               </motion.div>

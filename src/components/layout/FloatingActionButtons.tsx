@@ -137,8 +137,28 @@ const WhatsAppFloat = () => {
 };
 
 export const FloatingActionButtons = () => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    const handleToggle = (e: Event) => {
+      const customEvt = e as CustomEvent;
+      if (customEvt.detail && typeof customEvt.detail.collapsed === "boolean") {
+        setIsCollapsed(customEvt.detail.collapsed);
+      }
+    };
+    window.addEventListener("social-sidebar-toggle", handleToggle);
+    return () => window.removeEventListener("social-sidebar-toggle", handleToggle);
+  }, []);
+
   return (
-    <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-center gap-4">
+    <div
+      className="fixed bottom-6 right-6 z-[100] flex flex-col items-center gap-4 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+      style={{
+        transform: isCollapsed ? "translateY(40px) scale(0)" : "translateY(0) scale(1)",
+        opacity: isCollapsed ? 0 : 1,
+        pointerEvents: isCollapsed ? "none" : "auto",
+      }}
+    >
       <CallFloat />
       <WhatsAppFloat />
     </div>

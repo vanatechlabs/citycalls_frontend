@@ -18,10 +18,10 @@ export function ParallaxBanner() {
   return (
     <section 
       ref={ref} 
-      className="relative h-[250px] md:h-[350px] overflow-hidden bg-gray-900 mt-12 mb-12"
+      className="relative h-[250px] md:h-[350px] overflow-hidden bg-gray-900 mt-12 mb-12 z-0"
     >
       {/* Background Gradient Overlay */}
-      <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/40 via-black/50 to-black/40" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/40 via-black/50 to-black/40 pointer-events-none" />
 
       {/* Main Parallax Image Layer with Enhanced Movement */}
       <motion.div 
@@ -31,7 +31,7 @@ export function ParallaxBanner() {
           opacity,
           rotate
         }}
-        className="absolute inset-0 w-full h-[150%] -top-[25%]"
+        className="absolute inset-0 w-full h-[150%] -top-[25%] z-0"
       >
         <motion.img
           src="https://images.unsplash.com/photo-1556911220-bff31c812dba?q=80&w=2000&auto=format&fit=crop"
@@ -46,7 +46,7 @@ export function ParallaxBanner() {
       {/* Secondary Parallax Layer for Depth */}
       <motion.div 
         style={{ y: y2 }}
-        className="absolute inset-0 w-full h-[180%] -top-[40%] z-10 opacity-25"
+        className="absolute inset-0 w-full h-[180%] -top-[40%] z-[5] opacity-25 pointer-events-none"
       >
         <div className="w-full h-full bg-gradient-to-r from-[#3e8914]/30 via-transparent to-[#134698]/30" />
       </motion.div>
@@ -57,26 +57,26 @@ export function ParallaxBanner() {
           y: useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]),
           x: useTransform(scrollYProgress, [0, 1], ["-5%", "5%"])
         }}
-        className="absolute top-1/4 left-10 w-20 h-20 border border-white/10 rounded-full hidden lg:block z-30"
+        className="absolute top-1/4 left-10 w-20 h-20 border border-white/10 rounded-full hidden lg:block z-10 pointer-events-none"
       />
       <motion.div
         style={{ 
           y: useTransform(scrollYProgress, [0, 1], ["-20%", "20%"]),
           x: useTransform(scrollYProgress, [0, 1], ["5%", "-5%"])
         }}
-        className="absolute bottom-1/4 right-12 w-16 h-16 border border-[#3e8914]/20 rounded-full hidden lg:block z-30"
+        className="absolute bottom-1/4 right-12 w-16 h-16 border border-[#3e8914]/20 rounded-full hidden lg:block z-10 pointer-events-none"
       />
       <motion.div
         style={{ 
           y: useTransform(scrollYProgress, [0, 1], ["-18%", "18%"]),
           rotate: useTransform(scrollYProgress, [0, 1], [0, 360])
         }}
-        className="absolute top-1/3 right-1/4 w-12 h-12 border border-white/5 rounded-full hidden lg:block z-30"
+        className="absolute top-1/3 right-1/4 w-12 h-12 border border-white/5 rounded-full hidden lg:block z-10 pointer-events-none"
       />
       
-      {/* Parallax Content (Original Text) */}
-      <div className="absolute inset-0 z-40 flex items-center justify-center">
-        <div className="text-center px-4 max-w-[1000px] mx-auto">
+      {/* Parallax Content */}
+      <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+        <div className="text-center px-4 max-w-[1000px] mx-auto pointer-events-auto">
           <h2 className="text-2xl md:text-4xl font-sans font-black text-white uppercase tracking-tight leading-tight mb-3 drop-shadow-md md:whitespace-nowrap">
             Expert Repair at <span className="text-[#3e8914]">Your Doorstep</span>
           </h2>

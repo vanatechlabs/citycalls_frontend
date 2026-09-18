@@ -186,13 +186,15 @@ export const PopularPackages = () => {
 export function PackageCard({ d, idx }: { d: (typeof servicePackages)[number]; idx: number }) {
   const { data, addToCart, openDrawer } = useBooking();
   const cart = data.cart || [];
-  const isInCart = cart.some(item => item.id === d.id);
+  const itemId = String(d.id);
+  const isInCart = cart.some(item => item.id === itemId);
 
   const handleBook = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     if (!isInCart) {
       addToCart({
-        id: d.id,
+        id: itemId,
         name: d.name,
         duration: d.duration,
         price: d.price,

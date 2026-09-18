@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 export function Topbar() {
   const marqueeText = "Get 20% off on your first deep cleaning service! Use code: CLEAN20 • Verified technicians available across Ghaziabad • Book now and get service in under 60 minutes!";
 
+
   return (
     <>
       <style>{`
@@ -65,6 +66,8 @@ export function Topbar() {
               <Clock size={13} className="text-primary" /> 
               <span>Mon-Sat: 9:00 AM - 8:00 PM</span>
             </div>
+
+
             <div className="flex items-center gap-1.5">
               <Link 
                 to="/customer-login"
@@ -72,12 +75,7 @@ export function Topbar() {
               >
                 Customer Login
               </Link>
-              <Link 
-                to="/vendor-login"
-                className="px-2.5 py-1.5 rounded-md bg-primary hover:bg-[#7cb342] text-white transition-all duration-300 font-bold border border-transparent text-[9px] uppercase tracking-wider whitespace-nowrap shadow-md hover:scale-105 inline-block"
-              >
-                Vendor Login
-              </Link>
+
             </div>
           </div>
 

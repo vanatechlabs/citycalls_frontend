@@ -1,6 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { Wrench, Zap, Sparkles, ShieldCheck, ArrowUpRight } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const processes = [
   {
@@ -72,8 +72,29 @@ const iconVariants = {
 
 export function PremiumServices() {
   const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const isInView = useInView(sectionRef, { once: true, amount: 0.25 });
   const [hovered, setHovered] = useState(false);
+  const [autoRevealed, setAutoRevealed] = useState(false);
+
+  // Auto reveal on scroll when entering section, then auto hide after ~3 seconds
+  useEffect(() => {
+    if (isInView) {
+      const showTimer = setTimeout(() => {
+        setAutoRevealed(true);
+      }, 700);
+
+      const hideTimer = setTimeout(() => {
+        setAutoRevealed(false);
+      }, 3700);
+
+      return () => {
+        clearTimeout(showTimer);
+        clearTimeout(hideTimer);
+      };
+    }
+  }, [isInView]);
+
+  const isImageVisible = hovered || autoRevealed;
 
   return (
     <section ref={sectionRef} className="pt-10 pb-10 bg-[#FAF9F6] overflow-hidden">
@@ -116,7 +137,7 @@ export function PremiumServices() {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.35 }}
               className="text-gray-500 text-[13px] md:text-sm leading-relaxed relative z-10 transition-colors duration-300"
-              style={{ color: hovered ? "#334155" : undefined }}
+              style={{ color: isImageVisible ? "#334155" : undefined }}
             >
               CityCalls is dedicated to providing accessible, high-quality home repairs. From
               emergency plumbing to deep cleaning, our verified experts ensure every service is
@@ -130,13 +151,13 @@ export function PremiumServices() {
               transition={{ duration: 0.5, delay: 0.5, ease: "backOut" }}
               className="relative z-10 flex-shrink-0 w-11 h-11 rounded-full border border-gray-300 flex items-center justify-center text-gray-400 transition-all duration-300"
               style={
-                hovered
+                isImageVisible
                   ? { color: "var(--color-primary, #94d052)", borderColor: "var(--color-primary, #94d052)", background: "rgba(148,208,82,0.05)" }
                   : undefined
               }
             >
               <motion.span
-                animate={hovered ? { scale: 1.15, rotate: 45 } : { scale: 1, rotate: 0 }}
+                animate={isImageVisible ? { scale: 1.15, rotate: 45 } : { scale: 1, rotate: 0 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 className="flex"
               >
@@ -144,11 +165,11 @@ export function PremiumServices() {
               </motion.span>
             </motion.button>
 
-            {/* Hover image popup — spring pop with clip-reveal */}
+            {/* Popup image — auto-reveals on scroll and on hover */}
             <motion.div
               initial={false}
               animate={
-                hovered
+                isImageVisible
                   ? { opacity: 1, scale: 1, y: 8, rotate: 2, clipPath: "inset(0% 0% 0% 0%)" }
                   : { opacity: 0, scale: 0.85, y: 0, rotate: -6, clipPath: "inset(0% 0% 100% 0%)" }
               }
@@ -158,14 +179,14 @@ export function PremiumServices() {
               <motion.img
                 src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&q=80"
                 alt="CityCalls Premium Service"
-                animate={hovered ? { scale: 1 } : { scale: 1.25 }}
+                animate={isImageVisible ? { scale: 1 } : { scale: 1.25 }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <motion.div
                 initial={{ opacity: 0, x: -8 }}
-                animate={hovered ? { opacity: 1, x: 0 } : { opacity: 0, x: -8 }}
+                animate={isImageVisible ? { opacity: 1, x: 0 } : { opacity: 0, x: -8 }}
                 transition={{ duration: 0.3, delay: 0.15 }}
                 className="absolute bottom-3 left-4 flex items-center gap-1.5"
               >

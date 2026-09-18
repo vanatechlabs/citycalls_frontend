@@ -130,11 +130,11 @@ export function Step3({ onBack, onSubmit }: Step3Props) {
             </div>
           </div>
 
-          <div className="bg-red-50 border border-red-200 rounded p-4 flex items-start gap-3">
-            <Info className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+          <div className="bg-emerald-50/80 border border-emerald-200 rounded-lg p-3.5 flex items-start gap-3">
+            <Info className="w-4 h-4 text-[#3e8914] shrink-0 mt-0.5" />
             <div>
-              <h4 className="text-[11px] font-bold text-red-700 mb-0.5">Important Notes</h4>
-              <p className="text-[10px] text-red-600/80 font-medium leading-relaxed">
+              <h4 className="text-[11px] font-bold text-emerald-900 mb-0.5">Important Notes</h4>
+              <p className="text-[10px] text-emerald-800/90 font-medium leading-relaxed">
                 Our expert will arrive within the selected time slot. You will receive a call or WhatsApp message from our team before the visit.
               </p>
             </div>

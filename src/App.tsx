@@ -21,6 +21,8 @@ import BlogDetail from "@/pages/BlogDetail";
 import ServiceDetail from "@/pages/ServiceDetail";
 import RefrigeratorService from "@/pages/HomeAppliances/RefrigeratorService";
 import NotFound from "@/pages/NotFound";
+import HelpNowPage from "@/helpnow/pages/HelpNowPage";
+import DishWashingPage from "@/helpnow/dishwashing";
 import { ReactLenis } from 'lenis/react';
 
 const queryClient = new QueryClient();
@@ -35,23 +37,33 @@ const App = () => {
         <BrowserRouter>
           <ScrollToTop />
           
-          <div className="flex min-h-screen flex-col">
-            <Topbar />
-            <Navbar />
-            <main className="flex-1">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/blogs" element={<Blogs />} />
-                <Route path="/blogs/:slug" element={<BlogDetail />} />
-                <Route path="/services/refrigerator-service" element={<RefrigeratorService />} />
-                <Route path="/services/:slug" element={<ServiceDetail />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
+          <Routes>
+            {/* Help Now — standalone page with its own layout */}
+            <Route path="/help-now" element={<HelpNowPage />} />
+            <Route path="/help-now/dish-washing" element={<DishWashingPage />} />
+            <Route path="/help-now/services/dish-washing" element={<DishWashingPage />} />
+
+            {/* Main CityCalls layout */}
+            <Route path="/*" element={
+              <div className="flex min-h-screen flex-col">
+                {/* <Topbar /> */}
+                <Navbar />
+                <main className="flex-1">
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/blogs" element={<Blogs />} />
+                    <Route path="/blogs/:slug" element={<BlogDetail />} />
+                    <Route path="/services/refrigerator-service" element={<RefrigeratorService />} />
+                    <Route path="/services/:slug" element={<ServiceDetail />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </main>
+                <Footer />
+              </div>
+            } />
+          </Routes>
           
           <SocialSidebar />
           <FloatingActionButtons />

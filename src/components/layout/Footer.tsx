@@ -1,5 +1,6 @@
+import { useRef } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import {
   Facebook,
   Instagram,
@@ -47,8 +48,21 @@ const iconPop = {
 };
 
 export function Footer() {
+  const footerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: footerRef,
+    offset: ["start end", "end end"],
+  });
+
+  // Scroll-driven horizontal parallax (Left to Right movement on mouse scroll)
+  const x = useTransform(scrollYProgress, [0, 1], ["-25%", "25%"]);
+  const smoothX = useSpring(x, { stiffness: 90, damping: 25, mass: 0.5 });
+
   return (
-    <footer className="bg-[#030a0c] text-white/80 relative font-sans overflow-hidden">
+    <footer
+      ref={footerRef}
+      className="bg-[#030a0c] text-white/80 relative font-sans overflow-hidden"
+    >
       {/* Top accent line */}
       <motion.div
         className="h-1 w-full bg-[#6ebe26] origin-left"
@@ -259,13 +273,42 @@ export function Footer() {
           </motion.div>
         </div>
 
+        {/* ── GIANT SIGNATURE SCROLL-DRIVEN "citycalls" WORDMARK (Left to Right Parallax) ── */}
+        <div className="w-full overflow-hidden flex justify-center select-none pointer-events-none mt-10 -mb-4 sm:-mb-6 md:-mb-8 leading-[0.75] relative">
+          <motion.div
+            style={{ x: smoothX }}
+            className="flex items-center gap-10 whitespace-nowrap will-change-transform"
+          >
+            <span
+              className="font-black text-center whitespace-nowrap lowercase tracking-tighter select-none"
+              style={{
+                fontSize: "clamp(90px, 20vw, 300px)",
+                color: "rgba(255, 255, 255, 0.055)",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+              }}
+            >
+              citycalls
+            </span>
+            <span
+              className="font-black text-center whitespace-nowrap lowercase tracking-tighter select-none hidden md:inline-block"
+              style={{
+                fontSize: "clamp(90px, 20vw, 300px)",
+                color: "rgba(255, 255, 255, 0.035)",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+              }}
+            >
+              citycalls
+            </span>
+          </motion.div>
+        </div>
+
         {/* Bottom bar */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: false }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="mt-10 border-t border-white/[0.06]"
+          className="mt-3 border-t border-white/[0.06]"
         >
           <div className="pt-5 pb-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[13.5px] text-white">
             <p>© {new Date().getFullYear()} CityCalls. All rights reserved.</p>

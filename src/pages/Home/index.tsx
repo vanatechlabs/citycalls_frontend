@@ -22,7 +22,7 @@ const HomePage = () => {
       <OfferStrip />
       <SpotlightCarousel />
       <PremiumServices />
-      <MarqueeText />
+      {/* <MarqueeText /> */}
       <AboutSection />
       <PopularPackages />
           <ServicesGrid />

@@ -79,7 +79,7 @@ export function Step4({ onBack, onEditStep, onSubmit }: Step4Props) {
                   <div className="flex items-start"><span className="text-[10px] text-ink/60 font-bold w-24 shrink-0 mt-0.5">Category</span><span className="text-[11px] font-medium text-[#4B1426] break-words">Home Appliance</span></div>
                   <div className="flex items-start"><span className="text-[10px] text-ink/60 font-bold w-24 shrink-0 mt-0.5">Sub Category</span><span className="text-[11px] font-medium text-ink break-words">Microwave & Oven</span></div>
                   <div className="flex items-start"><span className="text-[10px] text-ink/60 font-bold w-24 shrink-0 mt-0.5">Brand</span><span className="text-[11px] font-medium text-ink break-words">LG</span></div>
-                  <div className="flex items-start"><span className="text-[10px] text-ink/60 font-bold w-24 shrink-0 mt-0.5">Model</span><span className="text-[11px] font-medium text-ink break-words">MC2886BRUM (if known)</span></div>
+                  <div className="flex items-start"><span className="text-[10px] text-ink/60 font-bold w-24 shrink-0 mt-0.5">Model</span><span className="text-[11px] font-medium text-ink break-words">MC2886BRUM (Optional)</span></div>
                 </div>
                 <div className="flex flex-col gap-3">
                   <div>
@@ -124,11 +124,11 @@ export function Step4({ onBack, onEditStep, onSubmit }: Step4Props) {
             </div>
 
             {/* Important Note */}
-            <div className="bg-red-50 border border-red-200 rounded p-4 flex items-start gap-3">
-              <Info className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+            <div className="bg-emerald-50/80 border border-emerald-200 rounded-lg p-3.5 flex items-start gap-3">
+              <Info className="w-4 h-4 text-[#3e8914] shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-[12px] font-bold text-red-600 mb-0.5">Important Note</h4>
-                <p className="text-[11px] text-red-900/80 font-medium leading-relaxed">
+                <h4 className="text-[12px] font-bold text-emerald-900 mb-0.5">Important Notes</h4>
+                <p className="text-[11px] text-emerald-800/90 font-medium leading-relaxed">
                   Our expert will arrive within the selected time slot. You will receive a call or WhatsApp message from our team before the visit.
                 </p>
               </div>
