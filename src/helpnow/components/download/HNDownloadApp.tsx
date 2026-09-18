@@ -379,22 +379,6 @@ function PhoneMockup({ screens, tabs, isInView, intervalMs = 3400, startDelay = 
 
         {/* Screen */}
         <div className="relative w-full h-full rounded-[1.75rem] bg-white overflow-hidden [isolation:isolate] [transform:translateZ(0)]">
-          {/* Coming Soon Watermark — Red Stamp Style */}
-          <div className="absolute inset-0 z-50 pointer-events-none flex items-center justify-center">
-            <div
-              className="select-none flex flex-col items-center gap-0.5"
-              style={{
-                transform: "rotate(-25deg)",
-                border: "3px solid rgba(220,38,38,0.85)",
-                padding: "6px 12px",
-                boxShadow: "0 0 0 2px rgba(220,38,38,0.2), inset 0 0 0 1px rgba(220,38,38,0.15)",
-              }}
-            >
-              <span style={{ fontFamily: "'Arial Black', sans-serif", fontSize: "7px", letterSpacing: "0.4em", color: "rgba(220,38,38,0.85)", fontWeight: 900, textTransform: "uppercase" }}>App</span>
-              <span style={{ fontFamily: "'Arial Black', sans-serif", fontSize: "20px", letterSpacing: "0.08em", color: "rgba(220,38,38,0.85)", fontWeight: 900, textTransform: "uppercase", lineHeight: 1 }}>COMING</span>
-              <span style={{ fontFamily: "'Arial Black', sans-serif", fontSize: "20px", letterSpacing: "0.08em", color: "rgba(220,38,38,0.85)", fontWeight: 900, textTransform: "uppercase", lineHeight: 1 }}>SOON</span>
-            </div>
-          </div>
           {/* Dynamic island */}
           <div className="absolute top-2 left-1/2 -translate-x-1/2 w-14 h-4 bg-black rounded-full z-40" />
           <StatusBar />
@@ -472,49 +456,30 @@ export function HNDownloadApp() {
               app-only offers.
             </p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-4">
-              <div className="flex flex-wrap gap-3">
-                <a
-                  href="#"
-                  className="group inline-flex items-center gap-3 rounded-xl border border-white/15 bg-white/[0.06] px-4 py-2.5 hover:bg-white/[0.12] hover:border-[#f5a623]/50 transition-colors duration-200"
-                >
-                  <Apple size={20} className="text-white/80 group-hover:text-[#f5a623] transition-colors" />
-                  <div className="text-left">
-                    <div className="text-[9px] uppercase tracking-wider text-white/50">
-                      Download on
-                    </div>
-                    <div className="text-[13px] font-semibold text-white">App Store</div>
-                  </div>
-                </a>
-                <a
-                  href="#"
-                  className="group inline-flex items-center gap-3 rounded-xl border border-white/15 bg-white/[0.06] px-4 py-2.5 hover:bg-white/[0.12] hover:border-[#f5a623]/50 transition-colors duration-200"
-                >
-                  <Play size={18} className="text-white/80 group-hover:text-[#f5a623] transition-colors" />
-                  <div className="text-left">
-                    <div className="text-[9px] uppercase tracking-wider text-white/50">Get it on</div>
-                    <div className="text-[13px] font-semibold text-white">Google Play</div>
-                  </div>
-                </a>
+            <div className="mt-6 p-5 rounded-2xl bg-white/[0.06] border border-[#f5a623]/30 backdrop-blur-md max-w-lg shadow-xl">
+              <div className="flex items-center gap-2.5 mb-2.5">
+                <span className="flex h-2.5 w-2.5 rounded-full bg-[#f5a623] animate-pulse" />
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#f5a623]">
+                  Launching Soon
+                </span>
+                <span className="text-[10px] font-medium text-white/60 bg-white/10 px-2 py-0.5 rounded-full ml-auto">
+                  Coming Very Soon
+                </span>
               </div>
-
-              {/* Big QR Code Container */}
-              <div className="flex items-center gap-4 bg-white/10 border border-white/20 rounded-2xl p-3.5 pr-6 shadow-xl backdrop-blur-md">
-                <div className="w-24 h-24 bg-white rounded-xl p-2 flex items-center justify-center shrink-0 shadow-md">
-                  <img
-                    src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://citycalls.in/app"
-                    alt="Scan to Download App"
-                    className="w-full h-full object-contain"
-                  />
+              <h3 className="text-[17px] font-bold text-white mb-1.5 leading-snug">
+                CityCalls Mobile App is Launching Soon!
+              </h3>
+              <p className="text-[13px] text-slate-300 leading-relaxed">
+                We are putting the final touches on our high-speed mobile app. Very soon, you will be able to download CityCalls on iOS &amp; Android for instant 1-tap bookings, live technician tracking, and exclusive discounts.
+              </p>
+              <div className="mt-4 flex flex-wrap items-center gap-2.5 pt-3.5 border-t border-white/10 text-[12px] text-white/80">
+                <div className="flex items-center gap-2 bg-white/[0.08] hover:bg-white/[0.12] px-3.5 py-1.5 rounded-xl border border-white/10 transition-colors">
+                  <Apple size={16} className="text-white/90" />
+                  <span className="font-medium text-[12.5px]">Apple App Store</span>
                 </div>
-                <div className="text-left">
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-[#b5730f] bg-[#fff6e8] border border-[#f5a623]/30 px-2 py-0.5 rounded-full inline-block mb-1.5">
-                    Quick Scan
-                  </span>
-                  <div className="text-[14px] font-bold text-white leading-tight">Scan QR Code</div>
-                  <div className="text-[11px] text-white/70 mt-1 max-w-[140px] leading-snug">
-                    Point your camera to download app directly
-                  </div>
+                <div className="flex items-center gap-2 bg-white/[0.08] hover:bg-white/[0.12] px-3.5 py-1.5 rounded-xl border border-white/10 transition-colors">
+                  <Play size={15} className="text-white/90" />
+                  <span className="font-medium text-[12.5px]">Google Play Store</span>
                 </div>
               </div>
             </div>
@@ -532,7 +497,7 @@ export function HNDownloadApp() {
               isInView={isInView}
               intervalMs={3400}
               startDelay={500}
-              tag="Coming Soon"
+              
             />
           </motion.div>
         </div>
