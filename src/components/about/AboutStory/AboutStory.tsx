@@ -1,9 +1,9 @@
 import { Target, Users } from "lucide-react";
 import { motion } from "framer-motion";
-import s1 from "@/assets/services/s1.png";
-import s2 from "@/assets/services/s2.png";
-import s3 from "@/assets/services/s3.png";
-import s4 from "@/assets/services/s4.png";
+import s1 from "@/assets/Services/s1.png";
+import s2 from "@/assets/Services/s2.png";
+import s3 from "@/assets/Services/s3.png";
+import s4 from "@/assets/Services/s4.png";
 
 const wordVariants = {
   hidden: { y: "100%", opacity: 0 },

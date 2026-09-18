@@ -19,12 +19,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import { useBooking } from "@/context/BookingContext";
 
-import cara1 from "@/assets/banner/cara4.png";
-import cara2 from "@/assets/banner/cara5.png";
-import cara3 from "@/assets/banner/cara6.png";
-import cara4 from "@/assets/banner/cara7.png";
-import cara5 from "@/assets/banner/cara8.png";
-import h11 from "@/assets/banner/h11.png";
+import cara1 from "@/assets/Banner/cara4.png";
+import cara2 from "@/assets/Banner/cara5.png";
+import cara3 from "@/assets/Banner/cara6.png";
+import cara4 from "@/assets/Banner/cara7.png";
+import cara5 from "@/assets/Banner/cara8.png";
+import h11 from "@/assets/Banner/h11.png";
 
 import { LaunchSpotlight } from "./LaunchSpotlight";
 

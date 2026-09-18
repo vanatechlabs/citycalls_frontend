@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { findService } from "@/data/services";
 import { BookingForm } from "@/components/booking/BookingForm/BookingForm";
-import refBg from "@/assets/banner/refbg.png";
+import refBg from "@/assets/Banner/refbg.png";
 
 function ServicePage() {
   const { slug } = useParams<{ slug: string }>();

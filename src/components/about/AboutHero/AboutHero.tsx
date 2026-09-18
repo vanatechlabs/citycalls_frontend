@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Clock, IndianRupee, HeadphonesIcon, ShieldCheck, Users, ClipboardList, Star, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
-import aboutImg from "@/assets/banner/about.png";
+import aboutImg from "@/assets/Banner/about.png";
 
 const TypewriterText = ({ text, className = "" }: { text: string; className?: string }) => (
   <span className={className}>

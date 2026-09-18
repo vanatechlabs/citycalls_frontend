@@ -3,8 +3,8 @@ import gsap from "gsap";
 import { Sparkles, X, ChevronUp, ChevronDown } from "lucide-react";
 import { useBooking } from "@/context/BookingContext";
 
-import cara5 from "@/assets/banner/cara8.png";
-import h2 from "@/assets/banner/h2.png";
+import cara5 from "@/assets/Banner/cara8.png";
+import h2 from "@/assets/Banner/h2.png";
 
 /* ============================================================================
    LAUNCH SPOTLIGHT — Fixed Bottom-Left Floating Overlay Card

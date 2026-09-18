@@ -1,7 +1,7 @@
 import { ShieldCheck, Clock, IndianRupee } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import refBg from "@/assets/banner/refbg.png";
+import refBg from "@/assets/Banner/refbg.png";
 
 interface HeroProps {
   service: any; // We'll type this properly later if needed

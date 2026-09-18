@@ -1,7 +1,7 @@
 import { ShieldCheck, Clock, IndianRupee } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import dishBg from "@/assets/banner/dish.png";
+import dishBg from "@/assets/Banner/dish.png";
 
 export function HeroSection() {
   const containerRef = useRef<HTMLElement>(null);

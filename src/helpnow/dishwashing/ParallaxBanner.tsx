@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import dishBg from "@/assets/banner/dish.png";
+import dishBg from "@/assets/Banner/dish.png";
 
 export function ParallaxBanner() {
   const ref = useRef(null);
