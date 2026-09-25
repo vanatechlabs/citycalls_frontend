@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { ArrowLeft, Check, Lock, User, PenTool, Calendar, Info, Edit2, Image as ImageIcon, X } from "lucide-react";
 
@@ -167,8 +169,8 @@ export function Step4({ onBack, onEditStep, onSubmit }: Step4Props) {
             <div className="p-4 overflow-y-auto flex-1 bg-black/5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <img src="https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?auto=format&fit=crop&w=800&q=80" alt="Upload 1" className="w-full h-auto rounded-lg shadow-sm border border-black/10" />
-                <img src="https://images.unsplash.com/photo-1585659722983-36cb2b4690d5?auto=format&fit=crop&w=800&q=80" alt="Upload 2" className="w-full h-auto rounded-lg shadow-sm border border-black/10" />
-                <img src="https://images.unsplash.com/photo-1558565251-115fdf89b9ce?auto=format&fit=crop&w=800&q=80" alt="Upload 3" className="w-full h-auto rounded-lg shadow-sm border border-black/10 sm:col-span-2" />
+                <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80" alt="Upload 2" className="w-full h-auto rounded-lg shadow-sm border border-black/10" />
+                <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?auto=format&fit=crop&w=800&q=80" alt="Upload 3" className="w-full h-auto rounded-lg shadow-sm border border-black/10 sm:col-span-2" />
               </div>
             </div>
           </div>

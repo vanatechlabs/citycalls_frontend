@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import cara2 from '@/assets/Banner/cara2.png';
+const cara2 = "/assets/Banner/cara2.png";
 
 export function AboutParallax() {
   const ref = useRef(null);

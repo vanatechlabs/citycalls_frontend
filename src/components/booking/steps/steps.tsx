@@ -1,3 +1,5 @@
+"use client";
+
 import { Check, Plus, Minus, CreditCard, ShieldCheck } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { BookingData } from "@/types";

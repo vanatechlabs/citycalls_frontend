@@ -1,7 +1,9 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
 import { ArrowRight, CheckCircle2, Clock, IndianRupee, HeadphonesIcon, ShieldCheck, Users, ClipboardList, Star, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
-import aboutImg from "@/assets/Banner/about.png";
+const aboutImg = "/assets/Banner/about.png";
 
 const TypewriterText = ({ text, className = "" }: { text: string; className?: string }) => (
   <span className={className}>
@@ -50,7 +52,7 @@ export function AboutHero() {
             </motion.h1>
 
             <motion.div 
-              initial={{ opacity: 0, w: 0 }} animate={{ opacity: 1, w: 64 }} transition={{ duration: 0.5, delay: 0.2 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.2 }}
               className="w-16 h-1 bg-[#3e8914] rounded-full mb-6"
             />
 
@@ -87,13 +89,13 @@ export function AboutHero() {
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.5 }}
               className="flex flex-wrap items-center gap-4"
             >
-              <Link to="/" className="inline-flex items-center gap-2 bg-[#3e8914] hover:bg-[#327310] text-white px-7 py-3.5 rounded-full text-sm font-bold transition-all shadow-[0_4px_20px_rgba(62,137,20,0.3)]">
+              <Link href="/" className="inline-flex items-center gap-2 bg-[#3e8914] hover:bg-[#327310] text-white px-7 py-3.5 rounded-full text-sm font-bold transition-all shadow-[0_4px_20px_rgba(62,137,20,0.3)]">
                 Explore Services
                 <div className="bg-white rounded-full p-1">
                   <ArrowRight className="w-3.5 h-3.5 text-[#3e8914]" strokeWidth={3} />
                 </div>
               </Link>
-              <Link to="/contact" className="inline-flex items-center justify-center bg-white hover:bg-gray-50 text-ink border border-gray-200 px-7 py-3.5 rounded-full text-sm font-bold transition-all shadow-sm">
+              <Link href="/contact" className="inline-flex items-center justify-center bg-white hover:bg-gray-50 text-ink border border-gray-200 px-7 py-3.5 rounded-full text-sm font-bold transition-all shadow-sm">
                 Contact Us
               </Link>
             </motion.div>

@@ -1,3 +1,5 @@
+"use client";
+
 import { Check, Clock, ChevronRight } from "lucide-react";
 
 interface Props {

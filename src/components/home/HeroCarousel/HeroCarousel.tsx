@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
 import {
   Search,
   MapPin,
@@ -20,12 +22,12 @@ import gsap from "gsap";
 import { useBooking } from "@/context/BookingContext";
 import { fetchCityCallsHeroSlides, resolveWebsiteImageUrl } from "@/lib/api/cityCallsHome";
 
-import cara1 from "@/assets/Banner/cara4.png";
-import cara2 from "@/assets/Banner/cara5.png";
-import cara3 from "@/assets/Banner/cara6.png";
-import cara4 from "@/assets/Banner/cara7.png";
-import cara5 from "@/assets/Banner/cara8.png";
-import h11 from "@/assets/Banner/h11.png";
+const cara1 = "/assets/Banner/cara4.png";
+const cara2 = "/assets/Banner/cara5.png";
+const cara3 = "/assets/Banner/cara6.png";
+const cara4 = "/assets/Banner/cara7.png";
+const cara5 = "/assets/Banner/cara8.png";
+const h11 = "/assets/Banner/h11.png";
 
 import { LaunchSpotlight } from "./LaunchSpotlight";
 
@@ -116,6 +118,7 @@ function formatDate(d: Date) {
 
 const SLIDE_INTERVAL = 5000;
 const BAR_COUNT = 6;
+const HERO_TEXT_SHADOW = "1px 1px 2px rgba(0,0,0,0.4)";
 
 const lineVariants = {
   hidden: {},
@@ -173,7 +176,7 @@ export function HeroCarousel() {
   const slide = slides[current];
 
   return (
-    <section className="relative bg-ink text-white overflow-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <section className="relative bg-ink text-white overflow-hidden" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
       {/* Background image — instant swap, continuous ken-burns zoom */}
       <div className="absolute inset-0">
         <motion.div
@@ -267,7 +270,10 @@ export function HeroCarousel() {
                         style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                       >
                         <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                        <span className="text-[12px] font-bold text-white uppercase tracking-[0.2em]">
+                        <span
+                          className="text-[12px] font-bold text-white uppercase tracking-[0.2em]"
+                          style={{ textShadow: HERO_TEXT_SHADOW }}
+                        >
                           {slide.subtitle}
                         </span>
                       </div>
@@ -281,7 +287,11 @@ export function HeroCarousel() {
                   style={
                     slide.id === 1
                       ? { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "clamp(36px, 5vw, 56px)", fontWeight: 800, lineHeight: 1.12, letterSpacing: "-0.02em" }
-                      : { fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: "-0.01em" }
+                      : {
+                          fontFamily: "'Plus Jakarta Sans', sans-serif",
+                          letterSpacing: "-0.01em",
+                          textShadow: HERO_TEXT_SHADOW,
+                        }
                   }
                 >
                   {slide.titleParts.map((line, li) => (
@@ -300,8 +310,8 @@ export function HeroCarousel() {
                             slide.id === 1
                               ? li === 0 ? "text-[#0f172a]" : "text-[#d97706]"
                               : li === 1
-                                ? "text-[#7BB50B] drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)]"
-                                : "text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)]"
+                                ? "text-[#7BB50B]"
+                                : "text-white"
                           }`}
                         >
                           {word}
@@ -319,7 +329,7 @@ export function HeroCarousel() {
                     style={
                       slide.id === 1
                         ? { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "clamp(15px, 1.6vw, 17px)", color: "#334155", lineHeight: 1.65, fontWeight: 600 }
-                        : { fontFamily: "'Plus Jakarta Sans', sans-serif", textShadow: "0 2px 10px rgba(0,0,0,0.4)" }
+                        : { fontFamily: "'Plus Jakarta Sans', sans-serif", textShadow: HERO_TEXT_SHADOW }
                     }
                     className={`mb-8 max-w-xl leading-relaxed ${slide.id === 1 ? "" : "text-[15px] md:text-base lg:text-[17px] font-medium text-white/90 tracking-wide"}`}
                   >

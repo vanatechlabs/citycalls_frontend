@@ -1,13 +1,15 @@
+"use client";
+
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { Flag, Users, Building2, Trophy, Rocket, Star, TrainFront, Sparkles } from "lucide-react";
 import { useRef } from "react";
 
-import s1 from "@/assets/Services/s1.png";
-import s2 from "@/assets/Services/s2.png";
-import s3 from "@/assets/Services/s3.png";
-import s4 from "@/assets/Services/s4.png";
-import s5 from "@/assets/Services/s5.png";
-import s6 from "@/assets/Services/s6.png";
+const s1 = "/assets/Services/s1.png";
+const s2 = "/assets/Services/s2.png";
+const s3 = "/assets/Services/s3.png";
+const s4 = "/assets/Services/s4.png";
+const s5 = "/assets/Services/s5.png";
+const s6 = "/assets/Services/s6.png";
 
 const milestones = [
   {

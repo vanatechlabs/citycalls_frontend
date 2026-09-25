@@ -1,6 +1,8 @@
+"use client";
+
 export function MarqueeText() {
   const content = (
-    <span className="inline-block pr-16 md:pr-24 text-[36px] md:text-[46px] font-extrabold leading-none uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <span className="inline-block pr-16 md:pr-24 text-[36px] md:text-[46px] font-extrabold leading-none uppercase" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
       <span className="text-primary">DOORSTEP SERVICE </span>
       <span style={{ color: "transparent", WebkitTextStroke: "1.5px #000000" }}>
         • VERIFIED TECHNICIANS • TRANSPARENT PRICING •{" "}

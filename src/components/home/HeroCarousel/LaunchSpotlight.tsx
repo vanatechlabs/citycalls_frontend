@@ -1,10 +1,12 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { Sparkles, X, ChevronUp, ChevronDown } from "lucide-react";
 import { useBooking } from "@/context/BookingContext";
 
-import cara5 from "@/assets/Banner/cara8.png";
-import h2 from "@/assets/Banner/h2.png";
+const cara5 = "/assets/Banner/cara8.png";
+const h2 = "/assets/Banner/h2.png";
 
 /* ============================================================================
    LAUNCH SPOTLIGHT — Fixed Bottom-Left Floating Overlay Card

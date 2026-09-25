@@ -1,15 +1,15 @@
 import type { ServiceCategory, SubService } from "@/types";
-import s1 from "@/assets/Services/s1.png";
-import s2 from "@/assets/Services/s2.png";
-import s3 from "@/assets/Services/s3.png";
-import s4 from "@/assets/Services/s4.png";
-import s5 from "@/assets/Services/s5.png";
-import s6 from "@/assets/Services/s6.png";
-import s7 from "@/assets/Services/s7.png";
-import s8 from "@/assets/Services/s8.png";
-import s10 from "@/assets/Services/s10.png";
-import s11 from "@/assets/Services/s11.png";
-import s12 from "@/assets/Services/s12.png";
+const s1 = "/assets/Services/s1.png";
+const s2 = "/assets/Services/s2.png";
+const s3 = "/assets/Services/s3.png";
+const s4 = "/assets/Services/s4.png";
+const s5 = "/assets/Services/s5.png";
+const s6 = "/assets/Services/s6.png";
+const s7 = "/assets/Services/s7.png";
+const s8 = "/assets/Services/s8.png";
+const s10 = "/assets/Services/s10.png";
+const s11 = "/assets/Services/s11.png";
+const s12 = "/assets/Services/s12.png";
 
 const img = (id: string) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1200&q=70`;
@@ -191,7 +191,7 @@ export const serviceCategories: ServiceCategory[] = [
         short: "Indoor & outdoor mosquito & larvae control.",
         description:
           "Fogging plus larvicidal treatment for balconies, terraces and stagnant water zones — safe for kids and pets.",
-        image: img("photo-1587653263995-422546a7a559"),
+        image: img("photo-1595853035070-59a39fe84de3"),
         price: "₹299 visit charge",
         duration: "45–75 min",
         issues: ["Adult mosquitoes indoors", "Balcony / terrace larvae", "Society common areas", "Water body treatment", "Recurring problem", "Others"],
@@ -204,7 +204,7 @@ export const serviceCategories: ServiceCategory[] = [
         short: "Complete bed-bug elimination — mattresses, sofas, crevices.",
         description:
           "A two-round treatment guaranteed to eliminate bed bugs from mattresses, headboards, sofas and floor gaps.",
-        image: img("photo-1611095564985-e3fa2e7f6d1a"),
+        image: img("photo-1618477388954-7852f32655ec"),
         price: "₹299 visit charge",
         duration: "90–120 min",
         issues: ["Mattress infestation", "Sofa infestation", "Full apartment treatment", "Post-travel / hotel exposure", "Recurring problem", "Others"],

@@ -1,9 +1,11 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import { animate, useInView } from "framer-motion";
-import s1 from "@/assets/Services/s1.png";
-import s2 from "@/assets/Services/s2.png";
-import s3 from "@/assets/Services/s3.png";
-import s4 from "@/assets/Services/s4.png";
+const s1 = "/assets/Services/s1.png";
+const s2 = "/assets/Services/s2.png";
+const s3 = "/assets/Services/s3.png";
+const s4 = "/assets/Services/s4.png";
 
 const countersData = [
   { value: 10000, suffix: "+", label: "Happy Customers", image: s1 },

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useRef } from "react";
 import { ArrowRight, ArrowLeft, UploadCloud, TriangleAlert, X, Check, Snowflake, Droplets, Volume2, DoorOpen, Flame, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";

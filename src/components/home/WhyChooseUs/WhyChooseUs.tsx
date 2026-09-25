@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "framer-motion";
 import { BadgeCheck, HandCoins, HomeIcon, ShieldCheck, Timer, Wrench } from "lucide-react";
 

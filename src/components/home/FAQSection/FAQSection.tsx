@@ -1,14 +1,16 @@
+"use client";
+
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus, HelpCircle } from "lucide-react";
 
-import s1 from "@/assets/Services/s1.png";
-import s2 from "@/assets/Services/s2.png";
-import s3 from "@/assets/Services/s3.png";
-import s4 from "@/assets/Services/s4.png";
-import banner from "@/assets/Banner/cara1.png";
-import banner2 from "@/assets/Banner/cara2.png";
+const s1 = "/assets/Services/s1.png";
+const s2 = "/assets/Services/s2.png";
+const s3 = "/assets/Services/s3.png";
+const s4 = "/assets/Services/s4.png";
+const banner = "/assets/Banner/cara1.png";
+const banner2 = "/assets/Banner/cara2.png";
 
 const faqs = [
   { 
@@ -176,7 +178,7 @@ export function FAQSection() {
                 "Still have questions about our services?"
               </p>
               <Link
-                to="/contact"
+                href="/contact"
                 className="inline-block bg-primary text-primary-foreground px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-primary-dark transition-all shadow-md rounded-lg relative z-10"
               >
                 Contact Support

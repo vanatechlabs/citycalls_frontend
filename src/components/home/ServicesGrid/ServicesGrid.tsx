@@ -1,5 +1,7 @@
+"use client";
+
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { ArrowRight, PhoneCall, ChevronDown } from "lucide-react";
 import { allServices } from "@/data/services";
 import { useRef, useState } from "react";
@@ -254,7 +256,7 @@ export function ServicesGrid() {
                     className="pointer-events-none absolute inset-0 z-30 w-1/2 skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/50 to-transparent"
                   />
 
-                  <Link to={`/services/${service.slug}`} className="block relative h-40 overflow-hidden">
+                  <Link href={`/services/${service.slug}`} className="block relative h-40 overflow-hidden">
                     <img
                       src={service.image}
                       alt={service.name}
@@ -282,7 +284,7 @@ export function ServicesGrid() {
                       {(idx + 1).toString().padStart(2, "0")}
                     </div>
 
-                    <Link to={`/services/${service.slug}`} className="block">
+                    <Link href={`/services/${service.slug}`} className="block">
                       <h3 className="text-[15px] font-bold text-ink group-hover:text-primary mb-1.5 uppercase tracking-wider transition-colors duration-300">
                         {service.name}
                       </h3>
@@ -325,7 +327,7 @@ export function ServicesGrid() {
           className="mt-6 text-center"
         >
           <Link
-            to="/services"
+            href="/services"
             className="inline-flex items-center justify-center gap-2.5 bg-primary-dark hover:bg-primary text-primary-foreground px-8 py-3 font-bold uppercase tracking-widest text-[11px] shadow-lg transition-all duration-300 group rounded-md"
           >
             Explore All Services

@@ -1,18 +1,20 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { ArrowRight, Clock, Star, ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useBooking } from "@/context/BookingContext";
 
 // Import images
-import a1 from "../../../assets/Images/a1.webp";
-import a2 from "../../../assets/Images/a2.webp";
-import a3 from "../../../assets/Images/a3.webp";
-import a4 from "../../../assets/Images/a4.webp";
-import a5 from "../../../assets/Images/a5.webp";
-import a6 from "../../../assets/Images/a6.webp";
-import ac1 from "../../../assets/Images/ac1.png";
-import ac2 from "../../../assets/Images/ac2.png";
+const a1 = "/assets/Images/a1.webp";
+const a2 = "/assets/Images/a2.webp";
+const a3 = "/assets/Images/a3.webp";
+const a4 = "/assets/Images/a4.webp";
+const a5 = "/assets/Images/a5.webp";
+const a6 = "/assets/Images/a6.webp";
+const ac1 = "/assets/Images/ac1.png";
+const ac2 = "/assets/Images/ac2.png";
 
 const ITEMS_PER_VIEW = 4;
 const AUTO_SLIDE_DELAY = 4500;
@@ -134,7 +136,7 @@ export const PopularPackages = () => {
           </div>
           
           <Link
-            to="/services"
+            href="/services"
             className="group flex items-center gap-1.5 px-5 py-2.5 border-2 border-primary rounded-full text-primary text-[12px] font-bold uppercase tracking-wide hover:bg-primary hover:text-white transition-all w-fit shrink-0 shadow-sm"
           >
             Explore All Services

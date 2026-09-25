@@ -1,5 +1,7 @@
+"use client";
+
 import { motion, useInView } from "framer-motion";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Calendar, ArrowRight } from "lucide-react";
 import { blogs } from "@/data/blogs";
 import { useRef } from "react";
@@ -111,7 +113,7 @@ export function BlogsPreview() {
               transition={{ delay: idx * 0.1 }}
               className="group relative bg-card border-2 border-border overflow-hidden hover:shadow-2xl hover:border-primary-dark transition-all duration-300 rounded-md flex flex-col h-full"
             >
-              <Link to={`/blogs/${blog.slug}`} className="flex flex-col h-full relative z-10">
+              <Link href={`/blogs/${blog.slug}`} className="flex flex-col h-full relative z-10">
                 
                 {/* Image Container */}
                 <div className="relative overflow-hidden aspect-[16/10]">
@@ -171,7 +173,7 @@ export function BlogsPreview() {
           className="mt-10 text-center"
         >
           <Link 
-            to="/blogs" 
+            href="/blogs" 
             className="inline-flex items-center justify-center gap-2.5 bg-primary-dark hover:bg-primary text-primary-foreground px-8 py-3 font-bold uppercase tracking-widest text-[11px] shadow-lg transition-all duration-300 group rounded-md"
           >
             View All Posts

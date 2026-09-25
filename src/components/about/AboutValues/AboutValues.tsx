@@ -1,3 +1,5 @@
+"use client";
+
 import { Award, Heart, ShieldCheck, Users } from "lucide-react";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";

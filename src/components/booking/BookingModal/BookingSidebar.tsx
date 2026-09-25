@@ -1,3 +1,5 @@
+"use client";
+
 import { ShieldCheck, Clock, Headphones, Wrench, BadgeCheck, Calendar, Phone } from "lucide-react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 

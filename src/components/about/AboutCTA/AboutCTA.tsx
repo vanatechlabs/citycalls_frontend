@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 export function AboutCTA() {
@@ -10,7 +12,7 @@ export function AboutCTA() {
           Book any service and feel it for yourself. Zero commitment.
         </p>
         <Link 
-          to="/" 
+          href="/" 
           className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground hover:bg-primary-dark px-8 py-4 text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20"
         >
           Explore services

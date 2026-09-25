@@ -1,3 +1,5 @@
+"use client";
+
 import { CheckCircle2, Copy, CalendarDays, Send, Settings, Calendar, MapPin, Phone, ShieldCheck, HeadphonesIcon, Shield, ThumbsUp, MessageSquare, ArrowRight, X } from "lucide-react";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 

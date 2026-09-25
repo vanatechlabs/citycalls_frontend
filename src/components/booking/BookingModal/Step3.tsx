@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { ArrowLeft, Check, CalendarDays, Clock, Info, Pencil } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";

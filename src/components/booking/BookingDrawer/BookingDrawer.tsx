@@ -1,3 +1,5 @@
+"use client";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, X, CalendarDays } from "lucide-react";
 import { useEffect, useState } from "react";

@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
 import { ArrowRight, Target, Eye } from "lucide-react";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import about1 from "@/assets/Images/about1.png";
-import about2 from "@/assets/Images/about2.png";
-import about3 from "@/assets/Images/about3.png";
+const about1 = "/assets/Images/about1.png";
+const about2 = "/assets/Images/about2.png";
+const about3 = "/assets/Images/about3.png";
 
 const headingWords = ["Home", "Services", "Partner"];
 
@@ -224,7 +226,7 @@ export function AboutSection() {
               className="flex justify-start mt-4"
             >
               <Link
-                to="/about"
+                href="/about"
                 className="group inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-[13px] font-bold text-primary border-2 border-primary bg-transparent hover:bg-primary hover:text-white transition-all shadow-sm w-fit"
               >
                 Discover More

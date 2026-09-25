@@ -1,3 +1,5 @@
+"use client";
+
 const avatars = Array.from({ length: 14 }, (_, i) =>
   `https://i.pravatar.cc/120?img=${(i % 70) + 1}`,
 );

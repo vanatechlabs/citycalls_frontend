@@ -1,3 +1,5 @@
+"use client";
+
 export function AboutStats() {
   const stats = [
     { number: "10,000+", label: "Jobs completed" },

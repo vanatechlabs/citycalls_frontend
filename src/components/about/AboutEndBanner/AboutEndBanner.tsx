@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+"use client";
+
+import Link from "next/link";
 import { ArrowRight, Phone } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -21,7 +23,7 @@ export function AboutEndBanner() {
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link 
-              to="/"
+              href="/"
               className="inline-flex items-center gap-2 bg-[#3e8914] hover:bg-[#327310] text-white px-8 py-4 rounded-full text-[15px] font-bold transition-all shadow-[0_4px_20px_rgba(62,137,20,0.2)] hover:shadow-[0_8px_25px_rgba(62,137,20,0.3)] hover:-translate-y-0.5 w-full sm:w-auto justify-center"
             >
               Book a Service
@@ -31,7 +33,7 @@ export function AboutEndBanner() {
             </Link>
             
             <Link 
-              to="/contact"
+              href="/contact"
               className="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-ink border-2 border-gray-200 hover:border-gray-300 px-8 py-4 rounded-full text-[15px] font-bold transition-all w-full sm:w-auto justify-center"
             >
               <Phone className="w-4 h-4 text-[#3e8914]" strokeWidth={2.5} />

@@ -1,1 +1,1 @@
-export { HowItWorks } from "@/components/HomeAppliances/RefrigeratorService/HowItWorks";
+export { HowItWorks } from "@/components/shared/HowItWorks/HowItWorks";
