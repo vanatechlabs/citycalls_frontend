@@ -2,7 +2,11 @@
 FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+# Retry flaky registry downloads, then fail fast if the Linux (musl) native
+# bindings Tailwind/lightningcss need were skipped - npm treats them as optional
+# and would otherwise leave a broken, cached node_modules layer behind.
+RUN npm ci --no-audit --no-fund --fetch-retries=5 --fetch-retry-mintimeout=20000 --fetch-retry-maxtimeout=120000 \
+ && node -e "require('lightningcss'); require('@tailwindcss/oxide')"
 
 # ---- builder: build the Next.js standalone bundle ----
 FROM node:22-alpine AS builder
