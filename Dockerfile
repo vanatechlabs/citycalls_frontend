@@ -1,13 +1,25 @@
+# syntax=docker/dockerfile:1
 # ---- deps: install exact dependencies from the lockfile ----
 FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
+
+# The build server's network drops npm registry connections now and then:
+# - prefer IPv4 (flaky IPv6 routes cause ECONNRESET / timeouts),
+# - keep downloaded packages in a BuildKit cache so retries/re-deploys reuse them,
+# - retry the whole install up to 3 times.
 # --include=dev: build tooling (Tailwind, TypeScript) lives in devDependencies,
 # and Coolify may pass NODE_ENV=production at build time, which would skip them.
-# Retry flaky registry downloads, then fail fast if the Linux (musl) native
-# bindings Tailwind/lightningcss need were skipped - npm treats them as optional
-# and would otherwise leave a broken, cached node_modules layer behind.
-RUN npm ci --include=dev --no-audit --no-fund --fetch-retries=5 --fetch-retry-mintimeout=20000 --fetch-retry-maxtimeout=120000 \
+# The final check fails fast if the Linux (musl) native bindings Tailwind /
+# lightningcss need were skipped (npm treats them as optional).
+ENV NODE_OPTIONS=--dns-result-order=ipv4first
+RUN --mount=type=cache,target=/root/.npm \
+    for attempt in 1 2 3; do \
+      npm ci --include=dev --prefer-offline --no-audit --no-fund \
+        --fetch-retries=5 --fetch-retry-mintimeout=20000 --fetch-retry-maxtimeout=120000 && break; \
+      if [ "$attempt" = 3 ]; then exit 1; fi; \
+      echo "npm ci failed (attempt $attempt/3), retrying in 15s..."; sleep 15; \
+    done \
  && node -e "require('lightningcss'); require('@tailwindcss/oxide')"
 
 # ---- builder: build the Next.js standalone bundle ----
