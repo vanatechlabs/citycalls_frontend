@@ -1,0 +1,46 @@
+import type { PublicServicePage } from "@/lib/api/servicePages";
+
+// Microwave & oven page copy — hero, walkthrough, stats, banner and areas.
+export const microwavePageContent: PublicServicePage = {
+  id: "local-microwave-oven-services",
+  slug: "microwave-oven-services",
+  serviceName: "Microwave & Oven Repair",
+  serviceImage: "/assets/Services/s5.png",
+  heroImage: "/assets/Services/s5.png",
+  heroEyebrow: "Professional Kitchen Appliance Care",
+  heroTitle: "Microwave & Oven Repair in\nGhaziabad",
+  heroHighlight: "Ghaziabad",
+  heroDescription: "Not heating, sparking, turntable not rotating, panel errors and door issues — repaired safely at your doorstep.",
+  heroFeatures: [
+    { title: "Certified", subtitle: "Technicians" },
+    { title: "Same Day", subtitle: "Service" },
+    { title: "Genuine", subtitle: "Magnetron & Parts" },
+    { title: "30-Day", subtitle: "Warranty" },
+  ],
+  walkthroughEyebrow: "Simple Kitchen Fix",
+  walkthroughTitle: "How Microwave Repair Works",
+  walkthroughHighlight: "Works",
+  walkthroughDescription: "From booking to a final heating test, every microwave and oven repair is safe, transparent and professionally handled.",
+  steps: [
+    { badge: "Step 01", title: "Book Your Repair", description: "Tell us your microwave type, capacity and the problem, then choose a convenient slot." },
+    { badge: "Step 02", title: "Technician Assigned", description: "A trained, background-verified appliance technician is assigned to your booking." },
+    { badge: "Step 03", title: "Safe Diagnosis & Repair", description: "The technician discharges the capacitor and checks the magnetron, fuse, diode, panel and door switches." },
+    { badge: "Step 04", title: "Heating Test", description: "Your microwave is tested for heating, turntable rotation and door safety before the job is closed." },
+  ],
+  statsTitle: "TRUSTED FOR KITCHEN CARE",
+  statsHighlight: "KITCHEN CARE",
+  stats: [
+    { value: "4K+", label: "Microwaves Repaired" },
+    { value: "35+", label: "Expert Technicians" },
+    { value: "96%", label: "First-Visit Resolution" },
+    { value: "4.8", label: "Average Rating" },
+  ],
+  bannerEyebrow: "Microwave & Oven Repair",
+  bannerTitle: "Hot Meals, Back in Minutes",
+  bannerHighlight: "Back in Minutes",
+  bannerDescription: "Solo, grill, convection and built-in ovens repaired with genuine parts and a complete safety and heating check.",
+  areasTitle: "Microwave Repair Areas in Ghaziabad",
+  areasHighlight: "Ghaziabad",
+  areasDescription: "Fast doorstep microwave and oven repair across major Ghaziabad neighbourhoods for every brand.",
+  areas: ["Indirapuram", "Vaishali", "Kaushambi", "Raj Nagar", "Crossing Republik", "Sahibabad", "Nehru Nagar", "Rajnagar Extension"],
+};

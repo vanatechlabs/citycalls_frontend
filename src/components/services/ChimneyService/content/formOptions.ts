@@ -1,0 +1,41 @@
+import type { ApplianceFormConfig } from "@/components/services/ApplianceService/types";
+
+// Step 2 "Service Details" fields of the kitchen chimney booking form.
+export const chimneyFormOptions: ApplianceFormConfig = {
+  formId: "chimney-step2-form",
+  stepTitle: "Step 2: Chimney Service Details",
+  stepSubtitle: "Tell us about your kitchen chimney and the repair or cleaning you need",
+  brandLabel: "Chimney Brand",
+  brands: ["Elica", "Faber", "Hindware", "Glen", "Kaff", "Sunflame", "Bosch", "Prestige", "Pigeon", "Inalsa", "Other"],
+  modelPlaceholder: "Enter chimney model number",
+  typeLabel: "Chimney Type",
+  types: ["Wall Mounted", "Island", "Built-in", "Corner"],
+  capacityLabel: "Chimney Size",
+  capacityPlaceholder: "Select size",
+  capacities: ["60 cm", "75 cm", "90 cm", "Not Sure"],
+  ageLabel: "Approx. Chimney Age",
+  issueLabel: "What problem are you facing?",
+  issues: [
+    { id: "low-suction", label: "Low Suction", icon: "wind" },
+    { id: "loud-noise", label: "Loud Motor Noise", icon: "volume" },
+    { id: "oil-dripping", label: "Oil Dripping", icon: "droplets" },
+    { id: "deep-cleaning", label: "Deep Cleaning", icon: "sparkles" },
+    { id: "light-not-working", label: "Light Not Working", icon: "lightbulb" },
+    { id: "auto-clean", label: "Auto-clean / Panel", icon: "settings" },
+    { id: "installation", label: "Install / Uninstall", icon: "wrench" },
+    { id: "other", label: "Other Issue", icon: "help" },
+  ],
+  defaultIssueId: "low-suction",
+  descriptionLabel: "Describe the chimney issue",
+  descriptionPlaceholder: "E.g. 90 cm wall-mounted chimney has very weak suction and the motor makes a loud humming sound...",
+  photoLabel: "Upload Chimney Photos (Optional)",
+  photoHint: "Upload chimney, filters or control panel photos",
+  extraQuestion: { label: "Filter type", options: ["Baffle", "Mesh", "Filterless", "Not Sure"] },
+  safetyOptions: [
+    { value: "burning-smell", label: "Burning smell from motor" },
+    { value: "sparking", label: "Sparking / electrical smell" },
+    { value: "loose-hood", label: "Hood loose or tilting" },
+    { value: "oil-near-flame", label: "Oil dripping onto the stove" },
+    { value: "none", label: "No immediate safety concern" },
+  ],
+};

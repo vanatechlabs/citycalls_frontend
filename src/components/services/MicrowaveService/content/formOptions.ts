@@ -1,0 +1,41 @@
+import type { ApplianceFormConfig } from "@/components/services/ApplianceService/types";
+
+// Step 2 "Service Details" fields of the microwave & oven booking form.
+export const microwaveFormOptions: ApplianceFormConfig = {
+  formId: "microwave-step2-form",
+  stepTitle: "Step 2: Microwave & Oven Details",
+  stepSubtitle: "Tell us about your microwave or oven and the repair you need",
+  brandLabel: "Microwave Brand",
+  brands: ["LG", "Samsung", "IFB", "Panasonic", "Whirlpool", "Bajaj", "Morphy Richards", "Godrej", "Haier", "Bosch", "Other"],
+  modelPlaceholder: "Enter microwave model number",
+  typeLabel: "Microwave Type",
+  types: ["Solo", "Grill", "Convection", "OTG / Built-in"],
+  capacityLabel: "Capacity",
+  capacityPlaceholder: "Select capacity",
+  capacities: ["Below 20 L", "20 – 25 L", "25 – 30 L", "Above 30 L", "Not Sure"],
+  ageLabel: "Approx. Microwave Age",
+  issueLabel: "What problem are you facing?",
+  issues: [
+    { id: "not-heating", label: "Not Heating", icon: "thermometer" },
+    { id: "sparking", label: "Sparking Inside", icon: "zap" },
+    { id: "turntable", label: "Turntable Not Rotating", icon: "rotate" },
+    { id: "panel-error", label: "Panel / Display Error", icon: "settings" },
+    { id: "not-turning-on", label: "Not Turning On", icon: "power" },
+    { id: "door-issue", label: "Door Not Closing", icon: "circle-off" },
+    { id: "noise", label: "Fan / Buzzing Noise", icon: "volume" },
+    { id: "other", label: "Other Issue", icon: "help" },
+  ],
+  defaultIssueId: "not-heating",
+  descriptionLabel: "Describe the microwave issue",
+  descriptionPlaceholder: "E.g. Convection microwave turns on and the plate rotates, but food does not heat at all...",
+  photoLabel: "Upload Microwave Photos (Optional)",
+  photoHint: "Upload inside cavity, panel or model sticker photos",
+  extraQuestion: { label: "How is it installed?", options: ["Countertop", "Built-in / Wall mounted", "Not Sure"] },
+  safetyOptions: [
+    { value: "sparking", label: "Sparking or arcing inside" },
+    { value: "burning-smell", label: "Burning smell or smoke" },
+    { value: "door-not-sealing", label: "Door not sealing properly" },
+    { value: "electrical", label: "Electric shock from body" },
+    { value: "none", label: "No immediate safety concern" },
+  ],
+};

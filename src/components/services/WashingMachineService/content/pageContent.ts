@@ -1,0 +1,46 @@
+import type { PublicServicePage } from "@/lib/api/servicePages";
+
+// Washing machine page copy — hero, walkthrough, stats, banner and areas.
+export const washingMachinePageContent: PublicServicePage = {
+  id: "local-washing-machine-services",
+  slug: "washing-machine-services",
+  serviceName: "Washing Machine Repair",
+  serviceImage: "/assets/Services/s3.png",
+  heroImage: "/assets/Services/s3.png",
+  heroEyebrow: "Professional Laundry Care",
+  heroTitle: "Washing Machine Repair in\nGhaziabad",
+  heroHighlight: "Ghaziabad",
+  heroDescription: "Not spinning, not draining, drum noise, water leakage, error codes and installation — fixed at your doorstep.",
+  heroFeatures: [
+    { title: "Certified", subtitle: "Technicians" },
+    { title: "Same Day", subtitle: "Service" },
+    { title: "Genuine", subtitle: "Spare Parts" },
+    { title: "30-Day", subtitle: "Warranty" },
+  ],
+  walkthroughEyebrow: "Simple Laundry Fix",
+  walkthroughTitle: "How Washing Machine Repair Works",
+  walkthroughHighlight: "Works",
+  walkthroughDescription: "From booking to a final test wash, every washing machine repair is quick, transparent and professionally handled.",
+  steps: [
+    { badge: "Step 01", title: "Book Your Repair", description: "Tell us your machine type, brand and the problem, then choose a convenient slot." },
+    { badge: "Step 02", title: "Technician Assigned", description: "A trained, background-verified washing machine technician is assigned to your booking." },
+    { badge: "Step 03", title: "Diagnosis & Repair", description: "The expert checks the drum, motor, belt, drain pump, inlet valve and PCB before repairing." },
+    { badge: "Step 04", title: "Test Wash", description: "Your machine is run through a test cycle for spin, drain and leakage before the job is closed." },
+  ],
+  statsTitle: "TRUSTED FOR LAUNDRY CARE",
+  statsHighlight: "LAUNDRY CARE",
+  stats: [
+    { value: "6K+", label: "Machines Repaired" },
+    { value: "60+", label: "Expert Technicians" },
+    { value: "97%", label: "First-Visit Resolution" },
+    { value: "4.8", label: "Average Rating" },
+  ],
+  bannerEyebrow: "Washing Machine Repair",
+  bannerTitle: "Fresh Laundry, Zero Hassle",
+  bannerHighlight: "Zero Hassle",
+  bannerDescription: "Front load, top load and semi-automatic machines repaired with genuine parts and a complete test wash.",
+  areasTitle: "Washing Machine Repair Areas in Ghaziabad",
+  areasHighlight: "Ghaziabad",
+  areasDescription: "Fast doorstep washing machine repair across major Ghaziabad neighbourhoods for every brand and model.",
+  areas: ["Indirapuram", "Vaishali", "Kaushambi", "Raj Nagar", "Crossing Republik", "Sahibabad", "Nehru Nagar", "Rajnagar Extension"],
+};

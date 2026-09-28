@@ -1,0 +1,57 @@
+import type { PublicServicePage } from "@/lib/api/servicePages";
+
+// Edit this file when AC page marketing copy, stats, walkthrough, banner, or
+// service areas need to change. The UI components intentionally stay generic.
+export const acServicePageContent: PublicServicePage = {
+  id: "local-ac-service",
+  slug: "ac-service",
+  serviceName: "AC Service & Repair",
+  serviceImage: "/assets/Services/s2.png",
+  heroImage: "/assets/Services/s2.png",
+  heroEyebrow: "Professional AC Care",
+  heroTitle: "AC Service & Repair in\nGhaziabad",
+  heroHighlight: "Ghaziabad",
+  heroDescription: "Low cooling, gas refill, water leakage, deep cleaning, installation and repair — handled at your doorstep.",
+  heroFeatures: [
+    { title: "Certified", subtitle: "AC Experts" },
+    { title: "Same Day", subtitle: "Service" },
+    { title: "Upfront", subtitle: "Pricing" },
+    { title: "30-Day", subtitle: "Warranty" },
+  ],
+  walkthroughEyebrow: "Simple AC Care",
+  walkthroughTitle: "How AC Service Works",
+  walkthroughHighlight: "Works",
+  walkthroughDescription: "From booking to final cooling check, every AC service is simple, transparent and professionally handled.",
+  steps: [
+    { badge: "Step 01", title: "Choose AC Service", description: "Select repair, deep cleaning, gas refill or installation and choose a convenient slot." },
+    { badge: "Step 02", title: "AC Expert Assigned", description: "A trained and background-verified AC technician is assigned to your booking." },
+    { badge: "Step 03", title: "Diagnosis & Service", description: "The expert inspects pressure, filters, coils, drainage and electrical components before service." },
+    { badge: "Step 04", title: "Cooling Check", description: "Your AC is tested for cooling, airflow and leakage before the job is closed." },
+  ],
+  statsTitle: "TRUSTED FOR AC CARE",
+  statsHighlight: "AC CARE",
+  stats: [
+    { value: "8K+", label: "AC Services" },
+    { value: "75+", label: "AC Technicians" },
+    { value: "98%", label: "First-Visit Resolution" },
+    { value: "4.9", label: "Average Rating" },
+  ],
+  bannerEyebrow: "AC Service & Repair",
+  bannerTitle: "Cool Comfort at Your Doorstep",
+  bannerHighlight: "Your Doorstep",
+  bannerDescription: "Professional AC cleaning, repair and gas charging with genuine parts, safe methods and a complete performance check.",
+  bannerImage: "/assets/Images/ac1.png",
+  areasTitle: "AC Service Areas in Ghaziabad",
+  areasHighlight: "Ghaziabad",
+  areasDescription: "Fast doorstep AC service across major Ghaziabad neighbourhoods for split, window and inverter systems.",
+  areas: [
+    "Indirapuram",
+    "Vaishali",
+    "Kaushambi",
+    "Raj Nagar",
+    "Crossing Republik",
+    "Sahibabad",
+    "Nehru Nagar",
+    "Rajnagar Extension",
+  ],
+};

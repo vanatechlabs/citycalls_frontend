@@ -1,0 +1,46 @@
+import type { PublicServicePage } from "@/lib/api/servicePages";
+
+// Television page copy — hero, walkthrough, stats, banner and areas.
+export const televisionPageContent: PublicServicePage = {
+  id: "local-television-repair-services",
+  slug: "television-repair-services",
+  serviceName: "TV Repair & Service",
+  serviceImage: "/assets/Services/s4.png",
+  heroImage: "/assets/Services/s4.png",
+  heroEyebrow: "Professional TV Care",
+  heroTitle: "TV Repair & Service in\nGhaziabad",
+  heroHighlight: "Ghaziabad",
+  heroDescription: "No display, no sound, lines on screen, smart TV and Wi-Fi issues, wall mounting — handled at your doorstep.",
+  heroFeatures: [
+    { title: "Certified", subtitle: "TV Engineers" },
+    { title: "Same Day", subtitle: "Service" },
+    { title: "Original", subtitle: "Spare Parts" },
+    { title: "30-Day", subtitle: "Warranty" },
+  ],
+  walkthroughEyebrow: "Simple TV Care",
+  walkthroughTitle: "How TV Repair Works",
+  walkthroughHighlight: "Works",
+  walkthroughDescription: "From booking to a final picture and sound check, every TV repair is transparent and professionally handled.",
+  steps: [
+    { badge: "Step 01", title: "Book Your Repair", description: "Tell us your TV type, screen size and the problem, then choose a convenient slot." },
+    { badge: "Step 02", title: "TV Engineer Assigned", description: "A trained, background-verified TV engineer is assigned to your booking." },
+    { badge: "Step 03", title: "Diagnosis & Repair", description: "The engineer checks the panel, backlight, power board, main board, speakers and ports." },
+    { badge: "Step 04", title: "Picture & Sound Check", description: "Your TV is tested for display, sound, inputs and smart features before the job is closed." },
+  ],
+  statsTitle: "TRUSTED FOR TV CARE",
+  statsHighlight: "TV CARE",
+  stats: [
+    { value: "5K+", label: "TVs Repaired" },
+    { value: "40+", label: "TV Engineers" },
+    { value: "95%", label: "First-Visit Resolution" },
+    { value: "4.8", label: "Average Rating" },
+  ],
+  bannerEyebrow: "TV Repair & Service",
+  bannerTitle: "Crystal-Clear Picture, Every Time",
+  bannerHighlight: "Every Time",
+  bannerDescription: "LED, LCD, Smart and OLED TVs repaired with original parts, careful handling and a complete picture and sound check.",
+  areasTitle: "TV Repair Areas in Ghaziabad",
+  areasHighlight: "Ghaziabad",
+  areasDescription: "Fast doorstep TV repair across major Ghaziabad neighbourhoods for every brand and screen size.",
+  areas: ["Indirapuram", "Vaishali", "Kaushambi", "Raj Nagar", "Crossing Republik", "Sahibabad", "Nehru Nagar", "Rajnagar Extension"],
+};

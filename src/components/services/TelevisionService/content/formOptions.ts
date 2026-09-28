@@ -1,0 +1,41 @@
+import type { ApplianceFormConfig } from "@/components/services/ApplianceService/types";
+
+// Step 2 "Service Details" fields of the TV booking form.
+export const televisionFormOptions: ApplianceFormConfig = {
+  formId: "television-step2-form",
+  stepTitle: "Step 2: TV Service Details",
+  stepSubtitle: "Tell us about your TV and the repair or service you need",
+  brandLabel: "TV Brand",
+  brands: ["Samsung", "LG", "Sony", "Mi / Xiaomi", "OnePlus", "TCL", "Panasonic", "Vu", "Philips", "Haier", "Other"],
+  modelPlaceholder: "Enter TV model number",
+  typeLabel: "TV Type",
+  types: ["LED / LCD", "Smart TV", "OLED / QLED", "Plasma / CRT"],
+  capacityLabel: "Screen Size",
+  capacityPlaceholder: "Select size",
+  capacities: ['Up to 32"', '40" – 43"', '50" – 55"', 'Above 55"', "Not Sure"],
+  ageLabel: "Approx. TV Age",
+  issueLabel: "What problem are you facing?",
+  issues: [
+    { id: "no-display", label: "No Display", icon: "monitor-off" },
+    { id: "no-sound", label: "No Sound", icon: "volume-off" },
+    { id: "lines-on-screen", label: "Lines on Screen", icon: "tv" },
+    { id: "not-turning-on", label: "Not Turning On", icon: "power" },
+    { id: "smart-wifi", label: "Smart / Wi-Fi Issue", icon: "wifi" },
+    { id: "ports-remote", label: "Ports / Remote", icon: "cable" },
+    { id: "wall-mount", label: "Wall Mount / Install", icon: "wrench" },
+    { id: "other", label: "Other Issue", icon: "help" },
+  ],
+  defaultIssueId: "no-display",
+  descriptionLabel: "Describe the TV issue",
+  descriptionPlaceholder: "E.g. 43\" smart TV has sound but the screen stays black, started after a power cut...",
+  photoLabel: "Upload TV Photos (Optional)",
+  photoHint: "Upload screen, back panel or model sticker photos",
+  extraQuestion: { label: "Is the TV wall mounted?", options: ["No, on a stand", "Yes, wall mounted", "Not Sure"] },
+  safetyOptions: [
+    { value: "electrical", label: "Sparking / electrical smell" },
+    { value: "burning-smell", label: "Burning smell or smoke" },
+    { value: "cracked-screen", label: "Cracked or broken screen" },
+    { value: "loose-mount", label: "Loose or unsafe wall mount" },
+    { value: "none", label: "No immediate safety concern" },
+  ],
+};

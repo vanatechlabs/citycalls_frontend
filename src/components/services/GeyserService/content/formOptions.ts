@@ -1,0 +1,41 @@
+import type { ApplianceFormConfig } from "@/components/services/ApplianceService/types";
+
+// Step 2 "Service Details" fields of the geyser booking form.
+export const geyserFormOptions: ApplianceFormConfig = {
+  formId: "geyser-step2-form",
+  stepTitle: "Step 2: Geyser Service Details",
+  stepSubtitle: "Tell us about your geyser and the repair or service you need",
+  brandLabel: "Geyser Brand",
+  brands: ["Racold", "AO Smith", "Bajaj", "Havells", "V-Guard", "Crompton", "Haier", "Venus", "Usha", "Jaquar", "Other"],
+  modelPlaceholder: "Enter geyser model number",
+  typeLabel: "Geyser Type",
+  types: ["Storage Geyser", "Instant Geyser", "Gas Geyser", "Solar Water Heater"],
+  capacityLabel: "Capacity",
+  capacityPlaceholder: "Select capacity",
+  capacities: ["Up to 10 L", "15 L", "25 L", "Above 25 L", "Not Sure"],
+  ageLabel: "Approx. Geyser Age",
+  issueLabel: "What problem are you facing?",
+  issues: [
+    { id: "no-hot-water", label: "No Hot Water", icon: "thermometer" },
+    { id: "water-leakage", label: "Water Leakage", icon: "droplets" },
+    { id: "mcb-tripping", label: "MCB Tripping", icon: "zap" },
+    { id: "thermostat", label: "Thermostat / Overheating", icon: "flame" },
+    { id: "not-turning-on", label: "Not Turning On", icon: "power" },
+    { id: "descaling", label: "Descaling / Service", icon: "sparkles" },
+    { id: "installation", label: "Install / Uninstall", icon: "wrench" },
+    { id: "other", label: "Other Issue", icon: "help" },
+  ],
+  defaultIssueId: "no-hot-water",
+  descriptionLabel: "Describe the geyser issue",
+  descriptionPlaceholder: "E.g. 25 L storage geyser trips the MCB as soon as it's switched on, water is also dripping from the bottom...",
+  photoLabel: "Upload Geyser Photos (Optional)",
+  photoHint: "Upload geyser, fittings or model sticker photos",
+  extraQuestion: { label: "Where is the geyser installed?", options: ["Bathroom", "Kitchen", "Other"] },
+  safetyOptions: [
+    { value: "electric-shock", label: "Electric shock from water / tap" },
+    { value: "burning-smell", label: "Burning smell or smoke" },
+    { value: "overheating", label: "Water or tank overheating" },
+    { value: "gas-smell", label: "Gas smell (gas geyser)" },
+    { value: "none", label: "No immediate safety concern" },
+  ],
+};

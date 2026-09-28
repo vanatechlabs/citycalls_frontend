@@ -1,0 +1,46 @@
+import type { PublicServicePage } from "@/lib/api/servicePages";
+
+// Kitchen chimney page copy — hero, walkthrough, stats, banner and areas.
+export const chimneyPageContent: PublicServicePage = {
+  id: "local-chimney-repair-services",
+  slug: "chimney-repair-services",
+  serviceName: "Chimney Repair & Cleaning",
+  serviceImage: "/assets/Services/s7.png",
+  heroImage: "/assets/Services/s7.png",
+  heroEyebrow: "Professional Kitchen Chimney Care",
+  heroTitle: "Chimney Repair & Cleaning in\nGhaziabad",
+  heroHighlight: "Ghaziabad",
+  heroDescription: "Low suction, loud motor, oil dripping, filter cleaning, auto-clean faults and installation — sorted at your doorstep.",
+  heroFeatures: [
+    { title: "Certified", subtitle: "Technicians" },
+    { title: "Same Day", subtitle: "Service" },
+    { title: "Deep", subtitle: "Cleaning" },
+    { title: "30-Day", subtitle: "Warranty" },
+  ],
+  walkthroughEyebrow: "Simple Chimney Care",
+  walkthroughTitle: "How Chimney Service Works",
+  walkthroughHighlight: "Works",
+  walkthroughDescription: "From booking to a final suction test, every chimney repair and cleaning is thorough and professionally handled.",
+  steps: [
+    { badge: "Step 01", title: "Book Your Service", description: "Tell us your chimney type, size and the problem, then choose a convenient slot." },
+    { badge: "Step 02", title: "Technician Assigned", description: "A trained, background-verified chimney technician is assigned to your booking." },
+    { badge: "Step 03", title: "Dismantle, Clean & Repair", description: "The technician cleans filters and the hood, then checks the motor, blower, duct, panel and lights." },
+    { badge: "Step 04", title: "Suction Test", description: "Your chimney is tested for suction, noise, lights and auto-clean before the job is closed." },
+  ],
+  statsTitle: "TRUSTED FOR KITCHEN CARE",
+  statsHighlight: "KITCHEN CARE",
+  stats: [
+    { value: "3K+", label: "Chimneys Serviced" },
+    { value: "30+", label: "Expert Technicians" },
+    { value: "96%", label: "First-Visit Resolution" },
+    { value: "4.8", label: "Average Rating" },
+  ],
+  bannerEyebrow: "Chimney Repair & Cleaning",
+  bannerTitle: "Smoke-Free Kitchen, Every Day",
+  bannerHighlight: "Every Day",
+  bannerDescription: "Wall-mounted, island and built-in chimneys deep-cleaned and repaired with genuine parts and a full suction test.",
+  areasTitle: "Chimney Service Areas in Ghaziabad",
+  areasHighlight: "Ghaziabad",
+  areasDescription: "Fast doorstep chimney repair and deep cleaning across major Ghaziabad neighbourhoods for every brand.",
+  areas: ["Indirapuram", "Vaishali", "Kaushambi", "Raj Nagar", "Crossing Republik", "Sahibabad", "Nehru Nagar", "Rajnagar Extension"],
+};

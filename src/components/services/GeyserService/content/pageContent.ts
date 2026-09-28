@@ -1,0 +1,46 @@
+import type { PublicServicePage } from "@/lib/api/servicePages";
+
+// Geyser page copy — hero, walkthrough, stats, banner and areas.
+export const geyserPageContent: PublicServicePage = {
+  id: "local-geyser-repair-services",
+  slug: "geyser-repair-services",
+  serviceName: "Geyser Repair & Service",
+  serviceImage: "/assets/Services/s6.png",
+  heroImage: "/assets/Services/s6.png",
+  heroEyebrow: "Professional Water Heater Care",
+  heroTitle: "Geyser Repair & Service in\nGhaziabad",
+  heroHighlight: "Ghaziabad",
+  heroDescription: "No hot water, leakage, MCB tripping, thermostat faults, descaling and installation — handled safely at your doorstep.",
+  heroFeatures: [
+    { title: "Certified", subtitle: "Technicians" },
+    { title: "Same Day", subtitle: "Service" },
+    { title: "Safety", subtitle: "Tested" },
+    { title: "30-Day", subtitle: "Warranty" },
+  ],
+  walkthroughEyebrow: "Simple Hot Water Fix",
+  walkthroughTitle: "How Geyser Repair Works",
+  walkthroughHighlight: "Works",
+  walkthroughDescription: "From booking to a final safety test, every geyser repair is safe, transparent and professionally handled.",
+  steps: [
+    { badge: "Step 01", title: "Book Your Repair", description: "Tell us your geyser type, capacity and the problem, then choose a convenient slot." },
+    { badge: "Step 02", title: "Technician Assigned", description: "A trained, background-verified geyser technician is assigned to your booking." },
+    { badge: "Step 03", title: "Diagnosis & Repair", description: "The technician checks the heating element, thermostat, safety valve, earthing and tank for scaling or leaks." },
+    { badge: "Step 04", title: "Safety & Heating Test", description: "Your geyser is tested for heating, earthing, leakage and cut-off before the job is closed." },
+  ],
+  statsTitle: "TRUSTED FOR HOT WATER CARE",
+  statsHighlight: "HOT WATER CARE",
+  stats: [
+    { value: "5K+", label: "Geysers Serviced" },
+    { value: "45+", label: "Expert Technicians" },
+    { value: "97%", label: "First-Visit Resolution" },
+    { value: "4.8", label: "Average Rating" },
+  ],
+  bannerEyebrow: "Geyser Repair & Service",
+  bannerTitle: "Warm Water, Safe Home",
+  bannerHighlight: "Safe Home",
+  bannerDescription: "Storage, instant and gas geysers repaired, descaled and installed with genuine parts and a full safety test.",
+  areasTitle: "Geyser Repair Areas in Ghaziabad",
+  areasHighlight: "Ghaziabad",
+  areasDescription: "Fast doorstep geyser repair and installation across major Ghaziabad neighbourhoods for every brand.",
+  areas: ["Indirapuram", "Vaishali", "Kaushambi", "Raj Nagar", "Crossing Republik", "Sahibabad", "Nehru Nagar", "Rajnagar Extension"],
+};

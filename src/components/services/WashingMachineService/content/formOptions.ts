@@ -1,0 +1,41 @@
+import type { ApplianceFormConfig } from "@/components/services/ApplianceService/types";
+
+// Step 2 "Service Details" fields of the washing machine booking form.
+export const washingMachineFormOptions: ApplianceFormConfig = {
+  formId: "washing-machine-step2-form",
+  stepTitle: "Step 2: Washing Machine Service Details",
+  stepSubtitle: "Tell us about your washing machine and the repair you need",
+  brandLabel: "Washing Machine Brand",
+  brands: ["LG", "Samsung", "Whirlpool", "IFB", "Bosch", "Godrej", "Haier", "Panasonic", "Voltas Beko", "Onida", "Other"],
+  modelPlaceholder: "Enter washing machine model number",
+  typeLabel: "Machine Type",
+  types: ["Front Load", "Top Load", "Semi-Automatic", "Washer Dryer"],
+  capacityLabel: "Capacity",
+  capacityPlaceholder: "Select capacity",
+  capacities: ["Up to 6 Kg", "6 – 7 Kg", "7 – 8 Kg", "Above 8 Kg", "Not Sure"],
+  ageLabel: "Approx. Machine Age",
+  issueLabel: "What problem are you facing?",
+  issues: [
+    { id: "not-spinning", label: "Not Spinning", icon: "rotate" },
+    { id: "not-draining", label: "Not Draining", icon: "droplets" },
+    { id: "water-leakage", label: "Water Leakage", icon: "droplets" },
+    { id: "noise-vibration", label: "Noise / Vibration", icon: "volume" },
+    { id: "not-starting", label: "Not Starting", icon: "power" },
+    { id: "error-code", label: "Error Code", icon: "zap" },
+    { id: "door-lock", label: "Door / Lid Lock", icon: "settings" },
+    { id: "other", label: "Other Issue", icon: "help" },
+  ],
+  defaultIssueId: "not-spinning",
+  descriptionLabel: "Describe the washing machine issue",
+  descriptionPlaceholder: "E.g. Front load machine stops mid-cycle, water is not draining and it shows error code OE...",
+  photoLabel: "Upload Machine Photos (Optional)",
+  photoHint: "Upload drum, control panel or error code photos",
+  extraQuestion: { label: "Water inlet & drain nearby?", options: ["Yes", "No", "Not Sure"] },
+  safetyOptions: [
+    { value: "electrical", label: "Electrical shock / sparking" },
+    { value: "burning-smell", label: "Burning smell" },
+    { value: "water-near-socket", label: "Water near power socket" },
+    { value: "door-stuck-with-water", label: "Door stuck with water inside" },
+    { value: "none", label: "No immediate safety concern" },
+  ],
+};
