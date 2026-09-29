@@ -12,15 +12,16 @@ import { ParallaxBanner } from "@/components/services/ACService/ParallaxBanner/P
 import { ServiceAreas } from "@/components/services/ACService/ServiceAreas/ServiceAreas";
 import { ServiceSidebar } from "@/components/services/ACService/ServiceSidebar/ServiceSidebar";
 import { acServicePageContent } from "@/components/services/ACService/content/acServicePageContent";
+import type { PublicPageBackground } from "@/lib/api/pageBackgrounds";
 import type { PublicServicePage } from "@/lib/api/servicePages";
 
-export function ACServiceView({ content }: { content?: PublicServicePage | null }) {
+export function ACServiceView({ content, background }: { content?: PublicServicePage | null; background?: PublicPageBackground | null }) {
   const [currentStep, setCurrentStep] = useState(1);
   const pageContent = content ?? acServicePageContent;
 
   return (
     <div className="min-h-screen bg-white">
-      <HeroSection content={pageContent} />
+      <HeroSection content={pageContent} background={background} />
 
       <section className="container-x py-10">
         <div className="flex flex-col items-start gap-8 lg:flex-row">

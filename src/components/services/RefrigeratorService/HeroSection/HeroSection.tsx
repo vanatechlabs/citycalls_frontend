@@ -3,6 +3,7 @@
 import { ShieldCheck, Clock, IndianRupee } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import type { PublicPageBackground } from "@/lib/api/pageBackgrounds";
 import type { PublicServicePage } from "@/lib/api/servicePages";
 
 const refBg = "/assets/Banner/refbg.png";
@@ -10,6 +11,8 @@ const refBg = "/assets/Banner/refbg.png";
 interface HeroProps {
   service: { slug: string; name: string; image?: string; short?: string };
   content?: PublicServicePage;
+  // Admin → Background Section entry for this page; overrides the fields it sets.
+  background?: PublicPageBackground | null;
 }
 
 function HighlightedTitle({ title, highlight }: { title: string; highlight: string }) {
@@ -18,7 +21,7 @@ function HighlightedTitle({ title, highlight }: { title: string; highlight: stri
   return <>{title.slice(0, index)}<span className="text-[#88be1e]">{highlight}</span>{title.slice(index + highlight.length)}</>;
 }
 
-export function HeroSection({ service, content }: HeroProps) {
+export function HeroSection({ service, content, background }: HeroProps) {
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
@@ -26,7 +29,7 @@ export function HeroSection({ service, content }: HeroProps) {
   const rotateX = useTransform(scrollYProgress, [0, 1], [0, 45]);
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8]);
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const features = content?.heroFeatures ?? [
+  const features = (background?.features.length ? background.features : content?.heroFeatures) ?? [
     { title: "Expert", subtitle: "Technicians" },
     { title: "Same Day", subtitle: "Service" },
     { title: "Transparent", subtitle: "Pricing" },
@@ -41,7 +44,11 @@ export function HeroSection({ service, content }: HeroProps) {
         animate={{ scale: 1, opacity: 0.8 }}
         transition={{ duration: 1, ease: "easeOut" }}
         className="absolute inset-0 h-full w-full bg-cover bg-center"
-        style={{ backgroundImage: `url(${content?.heroImage || (service.slug === "refrigerator-service" ? refBg : service.image)})`, y: bgY }}
+        style={{
+          backgroundImage: `url(${background?.image || content?.heroImage || (service.slug === "refrigerator-service" ? refBg : service.image)})`,
+          y: bgY,
+        }}
+        {...(background?.imageAlt && { role: "img", "aria-label": background.imageAlt })}
       />
       <div className="absolute inset-0 bg-gradient-to-r from-ink/80 via-ink/40 to-transparent" />
 
@@ -53,7 +60,7 @@ export function HeroSection({ service, content }: HeroProps) {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mb-3 text-[10px] font-bold uppercase tracking-widest text-[#88be1e]"
           >
-            {content?.heroEyebrow ?? "Professional & Reliable"}
+            {background?.subheading || content?.heroEyebrow || "Professional & Reliable"}
           </motion.div>
 
           <motion.h1
@@ -62,7 +69,9 @@ export function HeroSection({ service, content }: HeroProps) {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="mb-4 whitespace-pre-line font-sans text-3xl font-bold leading-[1.15] md:text-4xl lg:text-5xl"
           >
-            {content
+            {background
+              ? <HighlightedTitle title={background.heading} highlight={background.highlight ?? ""} />
+              : content
               ? <HighlightedTitle title={content.heroTitle} highlight={content.heroHighlight} />
               : <>{service.name} in <br /><span className="text-[#88be1e]">Ghaziabad</span></>}
           </motion.h1>
@@ -73,7 +82,7 @@ export function HeroSection({ service, content }: HeroProps) {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="mb-6 max-w-xl text-base font-medium text-white/90"
           >
-            {content?.heroDescription || service.short || "Cooling issues, gas refill, ice buildup — sorted at your doorstep."}
+            {background?.description || content?.heroDescription || service.short || "Cooling issues, gas refill, ice buildup — sorted at your doorstep."}
           </motion.p>
 
           <motion.div

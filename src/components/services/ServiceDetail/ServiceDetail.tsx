@@ -6,10 +6,27 @@ import { useState, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { findService } from "@/data/services";
 import { BookingForm } from "@/components/booking/BookingForm/BookingForm";
+import type { PublicPageBackground } from "@/lib/api/pageBackgrounds";
 const refBg = "/assets/Banner/refbg.png";
 
-export function ServiceDetail({ slug }: { slug: string }) {
+const DEFAULT_FEATURES = [
+  { title: "Expert", subtitle: "Technicians" },
+  { title: "Same Day", subtitle: "Service" },
+  { title: "Transparent", subtitle: "Pricing" },
+  { title: "30-Day", subtitle: "Warranty" },
+];
+const FEATURE_ICONS = [ShieldCheck, Clock, IndianRupee, ShieldCheck];
+
+function HighlightedHeading({ heading, highlight }: { heading: string; highlight: string }) {
+  const index = highlight ? heading.indexOf(highlight) : -1;
+  if (index < 0) return <>{heading}</>;
+  return <>{heading.slice(0, index)}<span className="text-[#88be1e]">{highlight}</span>{heading.slice(index + highlight.length)}</>;
+}
+
+// background: Admin → Background Section hero for this page, if any.
+export function ServiceDetail({ slug, background }: { slug: string; background?: PublicPageBackground | null }) {
   const service = findService(slug);
+  const heroFeatures = background?.features.length ? background.features : DEFAULT_FEATURES;
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -35,9 +52,10 @@ export function ServiceDetail({ slug }: { slug: string }) {
           transition={{ duration: 1, ease: "easeOut" }}
           className="absolute inset-0 h-full w-full bg-cover bg-center"
           style={{ 
-            backgroundImage: `url(${service.slug === 'refrigerator-service' ? refBg : service.image})`,
+            backgroundImage: `url(${background?.image || (service.slug === 'refrigerator-service' ? refBg : service.image)})`,
             y: bgY 
           }}
+          {...(background?.imageAlt && { role: "img", "aria-label": background.imageAlt })}
         />
         {/* Dark gradient overlay to ensure text readability */}
         <div className="absolute inset-0 bg-gradient-to-r from-ink/80 via-ink/40 to-transparent" />
@@ -55,7 +73,7 @@ export function ServiceDetail({ slug }: { slug: string }) {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-[10px] font-bold tracking-widest text-[#88be1e] uppercase mb-3"
             >
-              Professional & Reliable
+              {background?.subheading || "Professional & Reliable"}
             </motion.div>
             
             <motion.h1 
@@ -64,8 +82,9 @@ export function ServiceDetail({ slug }: { slug: string }) {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="text-3xl md:text-4xl lg:text-5xl font-bold font-sans leading-[1.15] mb-4"
             >
-              {service.name} in <br/>
-              <span className="text-[#88be1e]">Ghaziabad</span>
+              {background
+                ? <HighlightedHeading heading={background.heading} highlight={background.highlight ?? ""} />
+                : <>{service.name} in <br/><span className="text-[#88be1e]">Ghaziabad</span></>}
             </motion.h1>
             
             <motion.p 
@@ -74,7 +93,7 @@ export function ServiceDetail({ slug }: { slug: string }) {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="text-base text-white/90 max-w-xl font-medium mb-6"
             >
-              {service.short || "Cooling issues, gas refill, ice buildup — sorted at your doorstep."}
+              {background?.description || service.short || "Cooling issues, gas refill, ice buildup — sorted at your doorstep."}
             </motion.p>
             
             <motion.div 
@@ -83,30 +102,17 @@ export function ServiceDetail({ slug }: { slug: string }) {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="flex flex-wrap items-center gap-5 md:gap-8 text-xs font-semibold"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                  <ShieldCheck size={20} className="text-[#88be1e]" />
-                </div>
-                <span>Expert<br/>Technicians</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                  <Clock size={20} className="text-[#88be1e]" />
-                </div>
-                <span>Same Day<br/>Service</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                  <IndianRupee size={20} className="text-[#88be1e]" />
-                </div>
-                <span>Transparent<br/>Pricing</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                  <ShieldCheck size={20} className="text-[#88be1e]" />
-                </div>
-                <span>30-Day<br/>Warranty</span>
-              </div>
+              {heroFeatures.slice(0, 4).map((feature, index) => {
+                const Icon = FEATURE_ICONS[index] ?? ShieldCheck;
+                return (
+                  <div key={`${feature.title}-${index}`} className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                      <Icon size={20} className="text-[#88be1e]" />
+                    </div>
+                    <span>{feature.title}<br/>{feature.subtitle}</span>
+                  </div>
+                );
+              })}
             </motion.div>
           </motion.div>
 
@@ -149,7 +155,7 @@ export function ServiceDetail({ slug }: { slug: string }) {
           
           {/* Left Column: Form */}
           <div className="w-full lg:w-[65%]">
-            <BookingForm serviceSlug={service.slug} />
+            <BookingForm serviceSlug={service.slug} serviceName={service.name} />
 
             {/* FAQs moved below form */}
             <div className="mt-10 bg-white rounded-xl shadow-[0_2px_15px_rgba(0,0,0,0.04)] border border-black/5 p-6 md:p-8">

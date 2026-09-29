@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { ACServiceView } from "@/components/services/ACService/ACServiceView/ACServiceView";
 import { acServicePageContent } from "@/components/services/ACService/content/acServicePageContent";
 import { SeoJsonLd } from "@/components/seo/SeoJsonLd";
+import { fetchPageBackground } from "@/lib/api/pageBackgrounds";
 import { fetchPublicServicePage } from "@/lib/api/servicePages";
 import { buildMetadata } from "@/lib/seo/seoMetadata";
 
@@ -19,11 +20,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ACServicePage() {
-  const content = await fetchPublicServicePage("ac-service");
+  const [content, background] = await Promise.all([fetchPublicServicePage("ac-service"), fetchPageBackground(PATH)]);
   return (
     <>
       <SeoJsonLd path={PATH} />
-      <ACServiceView content={content} />
+      <ACServiceView content={content} background={background} />
     </>
   );
 }

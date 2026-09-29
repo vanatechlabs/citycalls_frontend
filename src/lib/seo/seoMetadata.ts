@@ -7,6 +7,17 @@ const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:
 // without making every request hit the API.
 const SEO_REVALIDATE_SECONDS = 60;
 
+// Site-wide share preview (public/og-image.webp, 1599×835) — used whenever the
+// admin hasn't set an OG image for a page, so WhatsApp/Facebook links always
+// show a picture. Relative URL resolves against metadataBase in the root layout.
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://citycalls.in").replace(/\/$/, "");
+export const DEFAULT_OG_IMAGE = {
+  url: "/og-image.webp",
+  width: 1599,
+  height: 835,
+  alt: "CityCalls — Home Appliance Repair & Home Services in Delhi NCR",
+};
+
 export interface PublicSeoMeta {
   pagePath: string;
   metaTitle?: string;
@@ -74,14 +85,14 @@ export async function buildMetadata(path: string, fallback: Metadata = {}): Prom
       title: tags["og:title"] || title,
       description: tags["og:description"] || description,
       ...((tags["og:url"] || seo.canonicalUrl) && { url: tags["og:url"] || seo.canonicalUrl }),
-      ...(image && { images: [{ url: image }] }),
+      images: [image ? { url: image } : DEFAULT_OG_IMAGE],
     },
     twitter: {
       ...fallback.twitter,
       card: tags["twitter:card"] === "summary" ? "summary" : "summary_large_image",
       title: tags["twitter:title"] || tags["og:title"] || title,
       description: tags["twitter:description"] || tags["og:description"] || description,
-      ...((tags["twitter:image"] || image) && { images: [tags["twitter:image"] || image] }),
+      images: [tags["twitter:image"] || image || DEFAULT_OG_IMAGE.url],
     },
   };
 }

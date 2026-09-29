@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Share2, X } from "lucide-react";
+import type { PublicSocialLinks } from "@/lib/api/socialLinks";
 
 const FacebookIcon = ({ size = 16, color = "#1877F2" }: { size?: number; color?: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -38,7 +39,7 @@ const LinkedinIcon = ({ size = 16, color = "#0A66C2" }: { size?: number; color?:
   </svg>
 );
 
-const SocialSidebar = () => {
+const SocialSidebar = ({ links }: { links: PublicSocialLinks }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -58,46 +59,39 @@ const SocialSidebar = () => {
     });
   };
 
-  const socialLinks = {
-    facebook: "https://www.facebook.com/",
-    instagram: "https://www.instagram.com/",
-    twitter: "https://twitter.com/",
-    youtube: "https://www.youtube.com/",
-    linkedin: "https://www.linkedin.com/",
-  };
-
   const socialData = [
     {
       icon: FacebookIcon,
-      url: socialLinks.facebook,
+      url: links.facebook,
       color: "#1877F2",
       label: "Facebook",
     },
     {
       icon: InstagramIcon,
-      url: socialLinks.instagram,
+      url: links.instagram,
       color: "#E4405F",
       label: "Instagram",
     },
     {
       icon: TwitterIcon,
-      url: socialLinks.twitter,
+      url: links.twitter,
       color: "#000000",
       label: "Twitter",
     },
     {
       icon: YoutubeIcon,
-      url: socialLinks.youtube,
+      url: links.youtube,
       color: "#FF0000",
       label: "YouTube",
     },
     {
       icon: LinkedinIcon,
-      url: socialLinks.linkedin,
+      url: links.linkedin,
       color: "#0A66C2",
       label: "LinkedIn",
     },
-  ];
+    // Links left empty in admin are hidden.
+  ].filter((social) => !!social.url);
 
   return (
     <>

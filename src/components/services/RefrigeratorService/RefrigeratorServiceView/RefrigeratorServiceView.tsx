@@ -12,14 +12,16 @@ import { ParallaxBanner } from "@/components/services/RefrigeratorService/Parall
 import { ServiceAreas } from "@/components/services/RefrigeratorService/ServiceAreas/ServiceAreas";
 import { OtherServices } from "@/components/services/RefrigeratorService/OtherServices/OtherServices";
 import { AppDownloadStatsBanner } from "@/components/shared/AppDownloadStatsBanner";
+import type { PublicPageBackground } from "@/lib/api/pageBackgrounds";
 import type { PublicServicePage } from "@/lib/api/servicePages";
 
 interface RefrigeratorServiceViewProps {
   slug?: string;
   content?: PublicServicePage | null;
+  background?: PublicPageBackground | null;
 }
 
-export function RefrigeratorServiceView({ slug = "refrigerator-service", content }: RefrigeratorServiceViewProps = {}) {
+export function RefrigeratorServiceView({ slug = "refrigerator-service", content, background }: RefrigeratorServiceViewProps = {}) {
   const [currentStep, setCurrentStep] = useState(1);
   const staticService = findService(slug);
   const service = staticService ?? (content ? {
@@ -33,7 +35,7 @@ export function RefrigeratorServiceView({ slug = "refrigerator-service", content
 
   return (
     <div className="bg-white min-h-screen">
-      <HeroSection service={service} content={content ?? undefined} />
+      <HeroSection service={service} content={content ?? undefined} background={background} />
 
       {/* Main Content Area */}
       <section className="container-x py-10">

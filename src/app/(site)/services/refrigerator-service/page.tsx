@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { RefrigeratorServiceView } from "@/components/services/RefrigeratorService/RefrigeratorServiceView/RefrigeratorServiceView";
 import { SeoJsonLd } from "@/components/seo/SeoJsonLd";
+import { fetchPageBackground } from "@/lib/api/pageBackgrounds";
 import { fetchPublicServicePage } from "@/lib/api/servicePages";
 import { buildMetadata } from "@/lib/seo/seoMetadata";
 
@@ -20,11 +21,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RefrigeratorServicePage() {
-  const content = await fetchPublicServicePage("refrigerator-service");
+  const [content, background] = await Promise.all([fetchPublicServicePage("refrigerator-service"), fetchPageBackground(PATH)]);
   return (
     <>
       <SeoJsonLd path={PATH} />
-      <RefrigeratorServiceView content={content} />
+      <RefrigeratorServiceView content={content} background={background} />
     </>
   );
 }

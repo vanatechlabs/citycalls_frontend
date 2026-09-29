@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { allServices, findService } from "@/data/services";
 import { ServiceDetail } from "@/components/services/ServiceDetail/ServiceDetail";
 import { RefrigeratorServiceView } from "@/components/services/RefrigeratorService/RefrigeratorServiceView/RefrigeratorServiceView";
+import { fetchPageBackground } from "@/lib/api/pageBackgrounds";
 import { fetchPublicServicePage } from "@/lib/api/servicePages";
 import { SeoJsonLd } from "@/components/seo/SeoJsonLd";
 import { buildMetadata } from "@/lib/seo/seoMetadata";
@@ -19,6 +20,18 @@ const DEDICATED_SERVICE_ROUTES = [
   "microwave-oven-services",
   "geyser-repair-services",
   "chimney-repair-services",
+  "general-pest-control",
+  "termite-control",
+  "cockroach-control",
+  "mosquito-control",
+  "bed-bug-treatment",
+  "sofa-shampooing",
+  "sofa-dry-cleaning",
+  "carpet-cleaning",
+  "mattress-cleaning",
+  "home-cleaning",
+  "kitchen-cleaning",
+  "bathroom-cleaning",
 ];
 
 export function generateStaticParams() {
@@ -41,12 +54,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ServiceDetailPage({ params }: Props) {
   const { slug } = await params;
-  const managedPage = await fetchPublicServicePage(slug);
+  const [managedPage, background] = await Promise.all([
+    fetchPublicServicePage(slug),
+    fetchPageBackground(`/services/${slug}`),
+  ]);
   if (!managedPage && !findService(slug)) notFound();
   return (
     <>
       <SeoJsonLd path={`/services/${slug}`} />
-      {managedPage ? <RefrigeratorServiceView slug={slug} content={managedPage} /> : <ServiceDetail slug={slug} />}
+      {managedPage
+        ? <RefrigeratorServiceView slug={slug} content={managedPage} background={background} />
+        : <ServiceDetail slug={slug} background={background} />}
     </>
   );
 }

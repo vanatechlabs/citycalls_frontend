@@ -105,8 +105,9 @@ export function Step4({ onBack, onEditStep, onSubmit }: Step4Props) {
                 <div className="flex flex-col gap-3">
                   <Row label="Service" valueClass="text-[#4B1426]">{booking?.serviceName}</Row>
                   <Row label="Type">{service?.applianceType}</Row>
-                  <Row label="Brand">{service?.brand}</Row>
-                  <Row label="Model">{service?.modelNumber}</Row>
+                  {/* Appliances only — pest control / cleaning have no brand or model */}
+                  {service?.brand && <Row label="Brand">{service.brand}</Row>}
+                  {service?.modelNumber && <Row label="Model">{service.modelNumber}</Row>}
                   <Row label="Capacity / Size">{service?.capacity}</Row>
                 </div>
                 <div className="flex flex-col gap-3">

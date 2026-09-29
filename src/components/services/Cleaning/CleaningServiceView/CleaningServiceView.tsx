@@ -12,24 +12,26 @@ import { ServiceAreas } from "@/components/services/RefrigeratorService/ServiceA
 import { ServiceSidebar } from "@/components/services/RefrigeratorService/ServiceSidebar/ServiceSidebar";
 import type { PublicPageBackground } from "@/lib/api/pageBackgrounds";
 import type { PublicServicePage } from "@/lib/api/servicePages";
-import { PestBookingForm } from "../BookingForm/PestBookingForm";
-import { PEST_ICONS } from "../pestIcons";
-import { PEST_CONTROL_SERVICES } from "../pestServicesList";
-import type { PestServiceConfig } from "../types";
+import { CleaningBookingForm } from "../BookingForm/CleaningBookingForm";
+import { CLEANING_ICONS } from "../cleaningIcons";
+import { OTHER_CLEANING_SERVICES } from "../cleaningServicesList";
+import type { CleaningServiceConfig } from "../types";
 
-interface PestControlServiceViewProps {
-  config: PestServiceConfig;
+interface CleaningServiceViewProps {
+  config: CleaningServiceConfig;
   // Admin → Pages content for this slug; replaces config.pageContent when set.
   content?: PublicServicePage | null;
   // Admin → Background Section hero for this page.
   background?: PublicPageBackground | null;
 }
 
-// The full pest control service page — same layout as the appliance pages,
-// with the pest booking step, a "Pests We Treat" grid and other pest services.
-export function PestControlServiceView({ config, content, background }: PestControlServiceViewProps) {
+// The full sofa / home cleaning service page — same layout as the appliance
+// and pest control pages, with the cleaning booking step, a "What We Clean"
+// grid and the other services of the same group.
+export function CleaningServiceView({ config, content, background }: CleaningServiceViewProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const page = content ?? config.pageContent;
+  const other = OTHER_CLEANING_SERVICES[config.group];
 
   return (
     <div className="min-h-screen bg-white">
@@ -42,7 +44,7 @@ export function PestControlServiceView({ config, content, background }: PestCont
       <section className="container-x py-10">
         <div className="flex flex-col items-start gap-8 lg:flex-row">
           <div className="w-full lg:w-[65%]">
-            <PestBookingForm serviceSlug={config.slug} serviceName={config.pageContent.serviceName} form={config.form} onStepChange={setCurrentStep} />
+            <CleaningBookingForm serviceSlug={config.slug} serviceName={config.pageContent.serviceName} form={config.form} onStepChange={setCurrentStep} />
           </div>
           <div className="w-full lg:w-[35%]">
             <ServiceSidebar currentStep={currentStep} content={config.sidebarContent} />
@@ -54,7 +56,7 @@ export function PestControlServiceView({ config, content, background }: PestCont
         title={config.showcaseTitle}
         highlight={config.showcaseHighlight}
         brands={config.showcaseItems}
-        icon={PEST_ICONS[config.showcaseIcon]}
+        icon={CLEANING_ICONS[config.showcaseIcon]}
       />
       <HowItWorks
         eyebrow={page.walkthroughEyebrow}
@@ -74,9 +76,9 @@ export function PestControlServiceView({ config, content, background }: PestCont
       <ServiceAreas title={page.areasTitle} highlight={page.areasHighlight} description={page.areasDescription} areas={page.areas} />
       <OtherServices
         currentSlug={config.slug}
-        services={PEST_CONTROL_SERVICES}
-        highlight="PEST CONTROL SERVICES"
-        description="Safe, certified treatments for every other pest problem at home or office."
+        services={other.services}
+        highlight={other.highlight}
+        description={other.description}
         imageFit="cover"
       />
     </div>

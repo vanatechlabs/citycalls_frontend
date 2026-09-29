@@ -8,6 +8,7 @@ import { HeroSection } from "@/components/services/RefrigeratorService/HeroSecti
 import { ParallaxBanner } from "@/components/services/RefrigeratorService/ParallaxBanner/ParallaxBanner";
 import { ServiceAreas } from "@/components/services/RefrigeratorService/ServiceAreas/ServiceAreas";
 import { ServiceSidebar } from "@/components/services/RefrigeratorService/ServiceSidebar/ServiceSidebar";
+import type { PublicPageBackground } from "@/lib/api/pageBackgrounds";
 import type { PublicServicePage } from "@/lib/api/servicePages";
 import { ApplianceBookingForm } from "../BookingForm/ApplianceBookingForm";
 import { BrandsWeService } from "../BrandsWeService/BrandsWeService";
@@ -19,11 +20,13 @@ interface ApplianceServiceViewProps {
   config: ApplianceServiceConfig;
   // Admin → Pages content for this slug; replaces config.pageContent when set.
   content?: PublicServicePage | null;
+  // Admin → Background Section hero for this page.
+  background?: PublicPageBackground | null;
 }
 
 // The full appliance service page (same layout as the AC page), driven by one
 // service's config from its own folder, e.g. WashingMachineService/.
-export function ApplianceServiceView({ config, content }: ApplianceServiceViewProps) {
+export function ApplianceServiceView({ config, content, background }: ApplianceServiceViewProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const page = content ?? config.pageContent;
 
@@ -32,6 +35,7 @@ export function ApplianceServiceView({ config, content }: ApplianceServiceViewPr
       <HeroSection
         service={{ slug: config.slug, name: page.serviceName, image: page.serviceImage ?? page.heroImage, short: page.heroDescription }}
         content={page}
+        background={background}
       />
 
       <section className="container-x py-10">

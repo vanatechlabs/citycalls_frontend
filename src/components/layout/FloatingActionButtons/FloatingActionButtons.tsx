@@ -2,16 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { Phone } from "lucide-react";
+import type { PublicSocialLinks } from "@/lib/api/socialLinks";
 
-const CallFloat = () => {
-  const [phoneNumber] = useState("917428808884");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
+const CallFloat = ({ phoneNumber }: { phoneNumber: string }) => {
 
   return (
     <>
@@ -99,20 +92,9 @@ const CallFloat = () => {
   );
 };
 
-const WhatsAppFloat = () => {
-  const [phoneNumber] = useState("917428808884");
-  const [mounted, setMounted] = useState(false);
-  const [message] = useState("Hello! I would like to book a home service.");
+const WhatsAppFloat = ({ phoneNumber, message }: { phoneNumber: string; message: string }) => {
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
-    message
-  )}`;
-
-  if (!mounted) return null;
+  const whatsappUrl = `https://wa.me/${phoneNumber}${message ? `?text=${encodeURIComponent(message)}` : ""}`;
 
   return (
     <>
@@ -138,7 +120,7 @@ const WhatsAppFloat = () => {
   );
 };
 
-export const FloatingActionButtons = () => {
+export const FloatingActionButtons = ({ links }: { links: PublicSocialLinks }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
@@ -161,8 +143,9 @@ export const FloatingActionButtons = () => {
         pointerEvents: isCollapsed ? "none" : "auto",
       }}
     >
-      <CallFloat />
-      <WhatsAppFloat />
+      {/* A number left empty in admin hides its button. */}
+      {links.callNumber && <CallFloat phoneNumber={links.callNumber} />}
+      {links.whatsappNumber && <WhatsAppFloat phoneNumber={links.whatsappNumber} message={links.whatsappMessage ?? ""} />}
     </div>
   );
 };

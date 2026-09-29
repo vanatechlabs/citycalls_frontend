@@ -4,14 +4,14 @@ import { SeoJsonLd } from "@/components/seo/SeoJsonLd";
 import { fetchPageBackground } from "@/lib/api/pageBackgrounds";
 import { fetchPublicServicePage } from "@/lib/api/servicePages";
 import { buildMetadata } from "@/lib/seo/seoMetadata";
-import { PestControlServiceView } from "./PestControlServiceView/PestControlServiceView";
-import type { PestServiceConfig } from "./types";
+import { CleaningServiceView } from "./CleaningServiceView/CleaningServiceView";
+import type { CleaningServiceConfig } from "./types";
 
-// Shared by every app/(site)/services/<pest-service>/page.tsx route: CMS
+// Shared by every app/(site)/services/<cleaning-service>/page.tsx route: CMS
 // content (Admin → Pages) if it exists, else the service's local copy, plus
-// the SEO entry from Admin → SEO Manager.
+// the SEO entry from Admin → SEO Manager and the Background Section hero.
 
-export async function pestServiceMetadata(config: PestServiceConfig): Promise<Metadata> {
+export async function cleaningServiceMetadata(config: CleaningServiceConfig): Promise<Metadata> {
   const page = (await fetchPublicServicePage(config.slug)) ?? config.pageContent;
   return buildMetadata(`/services/${config.slug}`, {
     title: `${page.heroTitle.replace(/\n/g, " ")} | CityCalls`,
@@ -19,7 +19,7 @@ export async function pestServiceMetadata(config: PestServiceConfig): Promise<Me
   });
 }
 
-export async function PestControlServicePage({ config }: { config: PestServiceConfig }) {
+export async function CleaningServicePage({ config }: { config: CleaningServiceConfig }) {
   const [content, background] = await Promise.all([
     fetchPublicServicePage(config.slug),
     fetchPageBackground(`/services/${config.slug}`),
@@ -27,7 +27,7 @@ export async function PestControlServicePage({ config }: { config: PestServiceCo
   return (
     <>
       <SeoJsonLd path={`/services/${config.slug}`} />
-      <PestControlServiceView config={config} content={content} background={background} />
+      <CleaningServiceView config={config} content={content} background={background} />
     </>
   );
 }

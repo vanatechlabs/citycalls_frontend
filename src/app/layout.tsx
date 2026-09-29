@@ -4,6 +4,8 @@ import { AppProviders } from "@/components/providers/AppProviders";
 import SocialSidebar from "@/components/layout/SocialSidebar/SocialSidebar";
 import { FloatingActionButtons } from "@/components/layout/FloatingActionButtons/FloatingActionButtons";
 import { BookingDrawer } from "@/components/booking/BookingDrawer/BookingDrawer";
+import { fetchSocialLinks } from "@/lib/api/socialLinks";
+import { DEFAULT_OG_IMAGE, SITE_URL } from "@/lib/seo/seoMetadata";
 import "./globals.css";
 
 const inter = Inter({
@@ -19,6 +21,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "CityCalls | Trusted Home & Professional Services in Ghaziabad",
   description:
     "CityCalls is Ghaziabad's premier marketplace for trusted, background-verified home services. Book AC repair, deep cleaning, pest control, salon at home, and more in under 60 minutes.",
@@ -39,11 +42,13 @@ export const metadata: Metadata = {
       "Verified professionals. Transparent pricing. Doorstep service across Ghaziabad in under 60 minutes. Book your service today.",
     type: "website",
     siteName: "CityCalls",
+    images: [DEFAULT_OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: "CityCalls | Trusted Home Services",
     description: "Ghaziabad's top-rated home services marketplace. Book AC repair, cleaning, pest control and more instantly.",
+    images: [DEFAULT_OG_IMAGE.url],
   },
   icons: {
     icon: [
@@ -56,7 +61,10 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  // Admin → Social Media: sidebar links and the call / WhatsApp buttons.
+  const socialLinks = await fetchSocialLinks();
+
   return (
     <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable}`}>
       <body suppressHydrationWarning>
@@ -64,8 +72,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           {children}
 
           {/* Global floating UI — shown on every page. */}
-          <SocialSidebar />
-          <FloatingActionButtons />
+          <SocialSidebar links={socialLinks} />
+          <FloatingActionButtons links={socialLinks} />
           <BookingDrawer />
         </AppProviders>
       </body>
