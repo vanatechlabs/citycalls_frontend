@@ -6,6 +6,7 @@ import {
   Sofa, SprayCan, X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { serviceCategories } from "@/data/services";
@@ -49,6 +50,16 @@ function categoryIcon(id: string) {
   return LayoutGrid;
 }
 
+// True when `pathname` is `href` itself or a page below it.
+export function isCurrentPath(pathname: string, href: string) {
+  const clean = (value: string) => value.replace(/\/+$/, "") || "/";
+  const current = clean(pathname);
+  const target = clean(href);
+  return current === target || (target !== "/" && current.startsWith(`${target}/`));
+}
+
+const serviceHref = (service: NavServiceItem) => service.path || `/services/${service.slug}`;
+
 const MOBILE_LINKS = [
   { href: "/about", label: "About", icon: Info },
   { href: "/blogs", label: "Blogs", icon: Newspaper },
@@ -77,6 +88,7 @@ const fallbackNavCategories: NavCategory[] = serviceCategories
   .sort((a, b) => NAV_ORDER.indexOf(a.id) - NAV_ORDER.indexOf(b.id));
 
 export function Navbar() {
+  const pathname = usePathname() ?? "/";
   const [openCat, setOpenCat] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileCat, setMobileCat] = useState<string | null>(null);
@@ -86,8 +98,8 @@ export function Navbar() {
 
   function openMobileMenu() {
     setMobileMenuMounted(true);
-    // Start with the first category's services showing.
-    setMobileCat((current) => current ?? navCategories[0]?.id ?? null);
+    // Start with the current page's category (else the first one) showing.
+    setMobileCat(currentCat ?? navCategories[0]?.id ?? null);
     setMobileOpen(true);
   }
 
@@ -99,6 +111,9 @@ export function Navbar() {
   // hardcoded fallback (so there's no flash of an empty navbar) and is
   // replaced once the admin-configured menus load successfully.
   const [navCategories, setNavCategories] = useState(fallbackNavCategories);
+  // The menu whose services include the page being viewed.
+  const currentCat =
+    navCategories.find((cat) => cat.services.some((service) => isCurrentPath(pathname, serviceHref(service))))?.id ?? null;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -180,6 +195,9 @@ export function Navbar() {
           <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/[0.10] via-transparent to-transparent" />
           {navCategories.map((cat) => {
             const isOpen = openCat === cat.id;
+            // The page being viewed belongs to this menu — keep it highlighted
+            // the same way as on hover.
+            const isCurrent = currentCat === cat.id;
             return (
               <div
                 key={cat.id}
@@ -188,14 +206,15 @@ export function Navbar() {
                 onMouseLeave={() => setOpenCat(null)}
               >
                 <button
+                  aria-current={isCurrent ? "page" : undefined}
                   className={`relative flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-semibold tracking-wide transition-all duration-200 2xl:px-4 ${
-                    isOpen ? NAV_ITEM_ACTIVE : NAV_ITEM_IDLE
+                    isOpen || isCurrent ? NAV_ITEM_ACTIVE : NAV_ITEM_IDLE
                   }`}
                 >
                   {cat.label}
                   <ChevronDown
                     size={14}
-                    className={`transition-transform duration-300 ${isOpen ? "rotate-180 text-primary" : "opacity-50"}`}
+                    className={`transition-transform duration-300 ${isOpen ? "rotate-180 text-primary" : isCurrent ? "text-primary" : "opacity-50"}`}
                   />
                 </button>
                 {isOpen && <MegaMenu category={cat} onNavigate={() => setOpenCat(null)} />}
@@ -204,13 +223,19 @@ export function Navbar() {
           })}
           <Link
             href="/blogs"
-            className={`relative whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-semibold tracking-wide transition-all duration-200 2xl:px-4 ${NAV_ITEM_IDLE}`}
+            aria-current={isCurrentPath(pathname, "/blogs") ? "page" : undefined}
+            className={`relative whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-semibold tracking-wide transition-all duration-200 2xl:px-4 ${
+              isCurrentPath(pathname, "/blogs") ? NAV_ITEM_ACTIVE : NAV_ITEM_IDLE
+            }`}
           >
             Blogs
           </Link>
           <Link
             href="/contact"
-            className={`relative whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-semibold tracking-wide transition-all duration-200 2xl:px-4 ${NAV_ITEM_IDLE}`}
+            aria-current={isCurrentPath(pathname, "/contact") ? "page" : undefined}
+            className={`relative whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-semibold tracking-wide transition-all duration-200 2xl:px-4 ${
+              isCurrentPath(pathname, "/contact") ? NAV_ITEM_ACTIVE : NAV_ITEM_IDLE
+            }`}
           >
             Contact
           </Link>
@@ -370,12 +395,17 @@ export function Navbar() {
                           transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                           className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]"
                         >
-                          {cat.services.map((service) => (
+                          {cat.services.map((service) => {
+                            const isCurrentService = isCurrentPath(pathname, serviceHref(service));
+                            return (
                             <Link
                               key={service.slug}
-                              href={service.path || `/services/${service.slug}`}
+                              href={serviceHref(service)}
                               onClick={closeMobileMenu}
-                              className="group flex items-center gap-3 border-b border-white/[0.06] px-3 py-2.5 transition-colors last:border-b-0 hover:bg-white/[0.06]"
+                              aria-current={isCurrentService ? "page" : undefined}
+                              className={`group flex items-center gap-3 border-b border-white/[0.06] px-3 py-2.5 transition-colors last:border-b-0 hover:bg-white/[0.06] ${
+                                isCurrentService ? "bg-white/[0.06]" : ""
+                              }`}
                             >
                               {service.image ? (
                                 // eslint-disable-next-line @next/next/no-img-element
@@ -385,10 +415,11 @@ export function Navbar() {
                                   <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                                 </span>
                               )}
-                              <span className="flex-1 text-[13px] font-medium text-white/85 group-hover:text-white">{service.name}</span>
-                              <ChevronRight size={14} className="text-white/30 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+                              <span className={`flex-1 text-[13px] font-medium group-hover:text-white ${isCurrentService ? "text-white" : "text-white/85"}`}>{service.name}</span>
+                              <ChevronRight size={14} className={`transition-transform group-hover:translate-x-0.5 group-hover:text-primary ${isCurrentService ? "text-primary" : "text-white/30"}`} />
                             </Link>
-                          ))}
+                            );
+                          })}
                         </motion.div>
                       ))}
                   </AnimatePresence>
@@ -403,7 +434,10 @@ export function Navbar() {
                       key={href}
                       href={href}
                       onClick={closeMobileMenu}
-                      className="flex flex-col items-center gap-1.5 rounded-2xl border border-white/10 bg-white/[0.04] py-3 text-[12px] font-semibold text-white/85 transition-colors hover:border-primary/30 hover:bg-white/[0.08]"
+                      aria-current={isCurrentPath(pathname, href) ? "page" : undefined}
+                      className={`flex flex-col items-center gap-1.5 rounded-2xl border py-3 text-[12px] font-semibold text-white/85 transition-colors hover:border-primary/30 hover:bg-white/[0.08] ${
+                        isCurrentPath(pathname, href) ? "border-primary/30 bg-white/[0.08]" : "border-white/10 bg-white/[0.04]"
+                      }`}
                     >
                       <LinkIcon size={17} className="text-primary" />
                       {label}

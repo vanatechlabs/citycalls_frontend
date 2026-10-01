@@ -124,7 +124,7 @@ export function HeroSection({ service, content, background }: HeroProps) {
 
           {/* Title — per-word slide-up reveal, masked per line */}
           <h1
-            className="mb-4 text-[32px] font-bold leading-[1.12] tracking-tight text-white sm:text-[38px] md:text-[44px] lg:text-[52px]"
+            className="mb-4 text-[32px] font-bold leading-[1.12] tracking-tight text-white sm:text-[38px] md:text-[44px] lg:text-[min(52px,3.6vw,7vh)]"
             style={{ letterSpacing: "-0.01em", textShadow: HERO_TEXT_SHADOW }}
           >
             {lines.map((line, li) => (
@@ -147,7 +147,7 @@ export function HeroSection({ service, content, background }: HeroProps) {
             initial={{ opacity: 0, y: 16, filter: "blur(6px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{ duration: 0.7, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-7 max-w-xl text-[14px] font-medium leading-relaxed tracking-wide text-white/90 md:text-[15px] lg:text-base"
+            className="mb-7 max-w-xl text-[14px] font-medium leading-relaxed tracking-wide text-white/90 md:text-[15px] lg:text-[clamp(14px,2.6vh,16px)]"
             style={{ textShadow: HERO_TEXT_SHADOW }}
           >
             {background?.description || content?.heroDescription || service.short || "Cooling issues, gas refill, ice buildup — sorted at your doorstep."}

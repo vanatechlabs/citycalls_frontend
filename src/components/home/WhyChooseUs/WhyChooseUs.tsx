@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { BadgeCheck, HandCoins, HomeIcon, ShieldCheck, Timer, Wrench } from "lucide-react";
 
 const features = [
@@ -12,10 +12,33 @@ const features = [
   { icon: ShieldCheck, title: "30-day warranty", description: "Every job covered post-service." },
 ];
 
+// Cards come in one after another once the grid scrolls into view.
+const gridVariants: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.16, delayChildren: 0.15 } },
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 36, scale: 0.94 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { type: "spring", stiffness: 120, damping: 18, mass: 0.8 },
+  },
+};
+
 export function WhyChooseUs() {
   return (
-    <section className="py-8 bg-ink overflow-hidden border-t border-white/5">
-      <div className="container-x mx-auto px-4 max-w-7xl">
+    <section className="relative py-8 bg-ink overflow-hidden border-t border-white/5">
+      {/* Coloured light behind the glass cards, so the frosting has something to blur */}
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="absolute left-[8%] top-[45%] h-72 w-72 rounded-full bg-primary/25 blur-[100px]" />
+        <div className="absolute right-[10%] top-[30%] h-64 w-64 rounded-full bg-[#d4af37]/15 blur-[100px]" />
+        <div className="absolute bottom-0 left-1/2 h-56 w-[36rem] -translate-x-1/2 rounded-full bg-emerald-500/15 blur-[110px]" />
+      </div>
+
+      <div className="container-x relative mx-auto px-4 max-w-7xl">
         {/* Header */}
         <motion.div 
           initial="hidden"
@@ -50,37 +73,49 @@ export function WhyChooseUs() {
             className="text-3xl md:text-4xl lg:text-[40px] font-serif text-white leading-tight font-bold"
           >
             Six reasons CityCalls is <br className="hidden md:block" />
-            <span className="text-primary">Ghaziabad's default.</span>
+            <span className="text-primary">Ghaziabad&apos;s default.</span>
           </motion.h2>
           <motion.p 
             variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }} 
             className="text-white/50 mt-6 max-w-2xl mx-auto text-[14px] leading-relaxed"
           >
-            We don't just fix appliances — we build trust and long-lasting partnerships through transparency, quality, and exceptional doorstep service.
+            We don&apos;t just fix appliances — we build trust and long-lasting partnerships through transparency, quality, and exceptional doorstep service.
           </motion.p>
         </motion.div>
 
         {/* List Layout */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-12">
+        <motion.div
+          variants={gridVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.25 }}
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
+        >
           {features.map((feature, i) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: false, amount: 0.2 }}
-              transition={{ delay: i * 0.1, duration: 0.6, type: "spring", bounce: 0.4 }}
-              className="flex gap-5 group"
+              variants={cardVariants}
+              // Frosted glass card
+              className="group relative flex items-center gap-4 overflow-hidden rounded-2xl border border-white/[0.12] bg-gradient-to-br from-white/[0.09] via-white/[0.04] to-white/[0.015] px-4 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_20px_40px_-24px_rgba(0,0,0,0.8)] backdrop-blur-xl backdrop-saturate-150 transition-[border-color,box-shadow,transform] duration-500 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_24px_48px_-20px_rgba(124,179,66,0.45)]"
             >
-              <div className="w-14 h-14 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:border-primary transition-all duration-300 shadow-sm">
-                <feature.icon size={22} className="text-primary group-hover:text-white transition-colors" strokeWidth={1.75} />
+              {/* glossy top + light sweep on hover */}
+              <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/[0.07] to-transparent" />
+              <span aria-hidden className="pointer-events-none absolute -inset-y-6 -left-1/2 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/[0.12] to-transparent opacity-0 transition-all duration-1000 group-hover:left-[130%] group-hover:opacity-100" />
+              <span aria-hidden className="pointer-events-none absolute right-3 top-2 text-[26px] font-black leading-none text-white/[0.05] transition-colors duration-500 group-hover:text-primary/15">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+
+              <div className="relative w-11 h-11 overflow-hidden rounded-xl border border-white/20 bg-gradient-to-br from-white/[0.14] to-white/[0.03] flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_8px_18px_-8px_rgba(0,0,0,0.6)] backdrop-blur-md group-hover:bg-primary group-hover:border-primary/70 transition-all duration-300">
+                <span aria-hidden className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent" />
+                <feature.icon size={20} className="relative text-primary group-hover:text-white transition-colors" strokeWidth={1.75} />
               </div>
-              <div className="pt-1">
-                <h3 className="text-[15px] font-bold text-white mb-2 uppercase tracking-wide group-hover:text-primary transition-colors">{feature.title}</h3>
-                <p className="text-[13px] text-white/50 leading-relaxed max-w-[200px]">{feature.description}</p>
+              <div className="relative min-w-0 pr-8">
+                <h3 className="truncate text-[14px] font-bold text-white mb-0.5 uppercase tracking-wide group-hover:text-primary transition-colors">{feature.title}</h3>
+                <p className="truncate text-[13px] text-white/60 leading-snug" title={feature.description}>{feature.description}</p>
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

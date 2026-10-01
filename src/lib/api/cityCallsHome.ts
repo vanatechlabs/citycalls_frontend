@@ -110,3 +110,23 @@ export async function fetchCityCallsHeroSlides(signal?: AbortSignal): Promise<Pu
   const payload = await response.json() as ApiEnvelope<PublicHeroSlide[]>;
   return Array.isArray(payload.data) ? payload.data : [];
 }
+
+// Admin → Website Section → Features: the "Home repairs everywhere…" section.
+export type PublicFeatureIcon =
+  | 'wrench' | 'zap' | 'sparkles' | 'shield-check' | 'droplets' | 'wind' | 'bug' | 'paint-roller' | 'house' | 'settings';
+
+export interface PublicHomeFeatures {
+  // One heading line per "\n".
+  heading: string;
+  highlight: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+  imageBadge: string;
+  items: { icon: PublicFeatureIcon; title: string; description: string }[];
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
+export async function fetchCityCallsHomeFeatures(signal?: AbortSignal): Promise<PublicHomeFeatures> {
+  return fetchPublic<PublicHomeFeatures>('features', signal);
+}

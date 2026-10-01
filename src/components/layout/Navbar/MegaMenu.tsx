@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   ArrowRight,
   ChevronRight,
@@ -8,6 +9,7 @@ import {
   LayoutGrid,
 } from "lucide-react";
 import { motion, type Variants } from "framer-motion";
+import { isCurrentPath } from "./Navbar";
 
 const a1 = "/assets/icons/a1.png";
 const a2 = "/assets/icons/a2.png";
@@ -97,6 +99,7 @@ const rowVariants: Variants = {
 };
 
 export function MegaMenu({ category, onNavigate }: MegaMenuProps) {
+  const pathname = usePathname() ?? "/";
   const categoryHeaderTitle = `${category.label.toUpperCase()}${
     category.label.toUpperCase().endsWith("SERVICES") ? "" : " SERVICES"
   }`;
@@ -134,12 +137,18 @@ export function MegaMenu({ category, onNavigate }: MegaMenuProps) {
         <motion.div variants={listVariants} initial="hidden" animate="visible" className="relative space-y-0.5 p-1.5">
           {category.services.map((s, index) => {
             const iconSrc = s.image || getServiceIconImage(s.slug, s.name, index);
+            const href = s.path || `/services/${s.slug}`;
+            // The page being viewed stays highlighted the same way as on hover.
+            const isCurrent = isCurrentPath(pathname, href);
             return (
               <motion.div key={s.slug} variants={rowVariants}>
                 <Link
-                  href={s.path || `/services/${s.slug}`}
+                  href={href}
                   onClick={onNavigate}
-                  className="group flex items-center gap-3 rounded-xl px-2.5 py-2 transition-all duration-200 hover:bg-white/[0.08] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+                  aria-current={isCurrent ? "page" : undefined}
+                  className={`group flex items-center gap-3 rounded-xl px-2.5 py-2 transition-all duration-200 hover:bg-white/[0.08] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] ${
+                    isCurrent ? "bg-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]" : ""
+                  }`}
                 >
                   <img
                     src={iconSrc}
@@ -148,12 +157,12 @@ export function MegaMenu({ category, onNavigate }: MegaMenuProps) {
                       isHomeCleaning ? "scale-[1.25] group-hover:scale-[1.35]" : "group-hover:scale-110"
                     }`}
                   />
-                  <span className="text-[13px] font-semibold text-white tracking-normal group-hover:text-primary transition-colors duration-150 truncate">
+                  <span className={`text-[13px] font-semibold tracking-normal group-hover:text-primary transition-colors duration-150 truncate ${isCurrent ? "text-primary" : "text-white"}`}>
                     {s.name}
                   </span>
                   <ChevronRight
                     size={14}
-                    className="ml-auto shrink-0 text-slate-500 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200"
+                    className={`ml-auto shrink-0 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200 ${isCurrent ? "text-primary" : "text-slate-500"}`}
                   />
                 </Link>
               </motion.div>

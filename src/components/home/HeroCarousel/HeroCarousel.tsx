@@ -356,7 +356,7 @@ export function HeroCarousel() {
       {/* Floating "New Launched" mini spotlight widget (Fixed bottom-left) */}
       <LaunchSpotlight />
 
-      <div className="relative z-20 mx-auto flex h-full w-full max-w-7xl items-center px-4 py-8">
+      <div className="relative z-20 mx-auto flex h-full w-full max-w-7xl items-center px-4 py-8 lg:px-8 2xl:px-4">
         <div className="flex w-full flex-col lg:flex-row lg:items-center gap-8 md:gap-10">
           {/* Left: headline & copy */}
           {/* Pulled left only on wide screens — on small laptops the container has
@@ -378,7 +378,7 @@ export function HeroCarousel() {
                     // wrapper would stop the glass chip's backdrop blur.
                     animate={{ clipPath: "inset(0 0% 0 0)", transitionEnd: { clipPath: "none" } }}
                     transition={{ duration: 0.6, delay: 0.1, ease: [0.65, 0, 0.35, 1] }}
-                    className="inline-block mb-6"
+                    className="inline-block mb-6 lg:mb-[clamp(14px,3vh,24px)]"
                   >
                     {slide.id === 1 ? (
                       <div style={{ fontFamily: "var(--font-plus-jakarta-sans), sans-serif", display: "flex", alignItems: "center", gap: "10px" }}>
@@ -413,10 +413,10 @@ export function HeroCarousel() {
 
                 {/* Title — per-word slide-up reveal, masked per line */}
                 <h1
-                  className={`mb-4 leading-[1.12] tracking-tight ${slide.id === 1 ? "" : "text-[32px] sm:text-[38px] md:text-[44px] lg:text-[52px] font-bold text-white"}`}
+                  className={`mb-4 leading-[1.12] tracking-tight ${slide.id === 1 ? "" : "text-[32px] sm:text-[38px] md:text-[44px] lg:text-[min(52px,3.6vw,7vh)] font-bold text-white"}`}
                   style={
                     slide.id === 1
-                      ? { fontFamily: "var(--font-plus-jakarta-sans), sans-serif", fontSize: "clamp(36px, 5vw, 56px)", fontWeight: 800, lineHeight: 1.12, letterSpacing: "-0.02em" }
+                      ? { fontFamily: "var(--font-plus-jakarta-sans), sans-serif", fontSize: "clamp(30px, min(5vw, 7.5vh), 56px)", fontWeight: 800, lineHeight: 1.12, letterSpacing: "-0.02em" }
                       : {
                           fontFamily: "var(--font-plus-jakarta-sans), sans-serif",
                           letterSpacing: "-0.01em",
@@ -458,10 +458,10 @@ export function HeroCarousel() {
                     transition={{ duration: 0.7, delay: 0.6, ease: CINEMATIC_EASE }}
                     style={
                       slide.id === 1
-                        ? { fontFamily: "var(--font-plus-jakarta-sans), sans-serif", fontSize: "clamp(15px, 1.6vw, 17px)", color: "#334155", lineHeight: 1.65, fontWeight: 600 }
+                        ? { fontFamily: "var(--font-plus-jakarta-sans), sans-serif", fontSize: "clamp(14px, min(1.6vw, 2.6vh), 17px)", color: "#334155", lineHeight: 1.65, fontWeight: 600 }
                         : { fontFamily: "var(--font-plus-jakarta-sans), sans-serif", textShadow: HERO_TEXT_SHADOW }
                     }
-                    className={`mb-8 max-w-xl leading-relaxed line-clamp-3 ${slide.id === 1 ? "" : "text-[14px] md:text-[15px] lg:text-base font-medium text-white/90 tracking-wide"}`}
+                    className={`mb-8 max-w-xl leading-relaxed line-clamp-3 ${slide.id === 1 ? "" : "text-[14px] md:text-[15px] lg:text-[clamp(14px,2.6vh,16px)] lg:max-w-[min(36rem,44vw)] font-medium text-white/90 tracking-wide"}`}
                   >
                     {slide.description}
                   </motion.p>
@@ -552,7 +552,7 @@ export function HeroCarousel() {
                 <div className="inline-block mb-6">
                   <div className="text-[12px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider whitespace-nowrap">placeholder</div>
                 </div>
-                <h1 className="text-[32px] sm:text-[38px] md:text-[44px] lg:text-[52px] font-semibold mb-6 leading-[1.08]">
+                <h1 className="text-[32px] sm:text-[38px] md:text-[44px] lg:text-[min(52px,3.6vw,7vh)] font-semibold mb-6 leading-[1.08]">
                   <span className="block pb-1">placeholder line</span>
                   <span className="block pb-1">placeholder line</span>
                 </h1>

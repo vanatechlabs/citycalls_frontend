@@ -1,10 +1,10 @@
 "use client";
 
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView, AnimatePresence, type Variants } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, PhoneCall, ChevronDown } from "lucide-react";
 import { allServices } from "@/data/services";
-import { useRef, useState } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import { BookingModal } from "@/components/booking/BookingModal";
 
 const headingWords = ["Everything", "your", "home", "needs", "—"];
@@ -15,7 +15,7 @@ const lineVariants = {
   visible: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
 };
 
-const wordVariants: any = {
+const wordVariants: Variants = {
   hidden: { y: "100%", opacity: 0 },
   visible: {
     y: "0%",
@@ -25,7 +25,7 @@ const wordVariants: any = {
 };
 
 // --- Cool "rise + blur + shine sweep" card animation (no layout, no stretch) ---
-const cardVariants: any = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 45, scale: 0.9, filter: "blur(6px)" },
   visible: (i: number) => ({
     opacity: 1,
@@ -50,7 +50,7 @@ const cardVariants: any = {
 };
 
 // Diagonal light-sweep that plays once as each card enters
-const shineVariants: any = {
+const shineVariants: Variants = {
   hidden: { x: "-130%", opacity: 0 },
   visible: (i: number) => ({
     x: "130%",
@@ -63,7 +63,7 @@ const shineVariants: any = {
   }),
 };
 
-const dividerVariants: any = {
+const dividerVariants: Variants = {
   hidden: { scaleX: 0 },
   visible: (i: number) => ({
     scaleX: 1,
@@ -72,6 +72,70 @@ const dividerVariants: any = {
 };
 
 const CARDS_PER_ROW = 4;
+
+// Card hover: the image slowly grows over the card while the white text area
+// dissolves, then the name, line and Book Service button rise in one by one.
+// Leaving reverses it quickly, without the entrance delays.
+const CARD_HOVER_STYLES = `
+  .svc-media {
+    height: 10rem;
+    transition: height 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+    will-change: height;
+  }
+  .svc-card:hover .svc-media { height: 100%; }
+
+  .svc-img {
+    transform: scale(1.01);
+    transition: transform 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+  .svc-card:hover .svc-img { transform: scale(1.1); }
+
+  .svc-shade {
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .svc-card:hover .svc-shade {
+    opacity: 1;
+    transition: opacity 0.8s ease 0.1s;
+  }
+
+  /* white text area: comes back only once the image has started shrinking */
+  .svc-body {
+    transition: opacity 0.45s ease 0.25s, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s, filter 0.45s ease 0.25s;
+  }
+  .svc-card:hover .svc-body {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(3px);
+    transition: opacity 0.3s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
+  }
+
+  .svc-reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.2s ease, transform 0.25s ease;
+  }
+  .svc-card:hover .svc-reveal {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease var(--d, 0s), transform 0.65s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s);
+  }
+  .svc-line {
+    width: 0;
+    transition: width 0.2s ease;
+  }
+  .svc-card:hover .svc-line {
+    width: 3.5rem;
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.5s;
+  }
+  .svc-actions { pointer-events: none; }
+  .svc-card:hover .svc-actions { pointer-events: auto; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .svc-media, .svc-img, .svc-shade, .svc-body, .svc-reveal, .svc-line { transition: none !important; }
+  }
+`;
 
 export function ServicesGrid() {
   const sectionRef = useRef(null);
@@ -110,6 +174,7 @@ export function ServicesGrid() {
 
   return (
     <section ref={sectionRef} id="services" className="pt-8 pb-8 bg-gray-50 overflow-hidden">
+      <style>{CARD_HOVER_STYLES}</style>
       <div className="container-x mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         {/* Header */}
         <div className="mb-10">
@@ -242,10 +307,10 @@ export function ServicesGrid() {
                   animate={isInView ? "visible" : "hidden"}
                   exit="exit"
                   whileHover={{ y: -6 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="group relative bg-card border-2 border-border overflow-hidden rounded-md hover:shadow-2xl hover:border-primary-dark transition-shadow duration-300 flex flex-col"
+                  transition={{ type: "spring", stiffness: 180, damping: 24 }}
+                  className="svc-card group relative bg-card border-2 border-border overflow-hidden rounded-md hover:shadow-2xl hover:border-primary-dark transition-[box-shadow,border-color] duration-700 flex flex-col"
                 >
-                  <div className="h-1 w-0 bg-primary group-hover:w-full transition-all duration-500 absolute top-0 left-0 z-20" />
+                  <div className="h-1 w-0 bg-primary group-hover:w-full transition-all duration-500 absolute top-0 left-0 z-40" />
 
                   {/* Shine sweep on entrance */}
                   <motion.div
@@ -256,19 +321,46 @@ export function ServicesGrid() {
                     className="pointer-events-none absolute inset-0 z-30 w-1/2 skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/50 to-transparent"
                   />
 
-                  <Link href={`/services/${service.slug}`} className="block relative h-40 overflow-hidden">
-                    <img
-                      src={service.image}
-                      alt={service.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
+                  {/* Image — grows over the whole card on hover (covering the
+                      white text area) and reveals the Book Service button. */}
+                  <div className="svc-media absolute inset-x-0 top-0 z-20 overflow-hidden">
+                    <Link href={`/services/${service.slug}`} className="block h-full w-full" tabIndex={-1}>
+                      <img
+                        src={service.image}
+                        alt={service.name}
+                        className="svc-img w-full h-full object-cover"
+                      />
+                    </Link>
+                    <div className="svc-shade pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
                     <div className="absolute top-2.5 left-2.5 rounded-full bg-background/90 backdrop-blur px-2 py-0.5 text-[10px] font-bold text-ink shadow-sm tracking-wide">
                       {service.price}
                     </div>
-                  </Link>
+
+                    <div className="svc-actions absolute inset-x-0 bottom-0 p-4">
+                      <h3
+                        className="svc-reveal text-[15px] font-bold uppercase tracking-wider text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.5)]"
+                        style={{ "--d": "0.3s" } as CSSProperties}
+                      >
+                        {service.name}
+                      </h3>
+                      <div className="svc-line mb-3 mt-1.5 h-0.5 bg-primary" />
+                      <button
+                        type="button"
+                        onClick={() => openModal(service.slug)}
+                        style={{ "--d": "0.42s" } as CSSProperties}
+                        className="svc-reveal inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2.5 text-[11px] font-bold uppercase tracking-widest text-white shadow-lg transition-colors duration-300 hover:bg-primary-dark"
+                      >
+                        <PhoneCall className="h-4 w-4" strokeWidth={2} />
+                        Book Service
+                        <ArrowRight className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                  {/* keeps the image's space in the normal (not hovered) layout */}
+                  <div aria-hidden className="h-40 shrink-0" />
 
                   <div
-                    className="relative z-10 -mt-5 ml-4 cursor-pointer"
+                    className="svc-body relative z-30 -mt-5 ml-4 cursor-pointer"
                     onClick={() => openModal(service.slug)}
                   >
                     <div className="w-10 h-10 flex items-center justify-center bg-card border-2 border-border rounded-md group-hover:bg-primary-dark group-hover:border-primary-dark transition-all duration-300 shadow-md">
@@ -279,7 +371,7 @@ export function ServicesGrid() {
                     </div>
                   </div>
 
-                  <div className="relative z-10 px-4 pt-2 pb-4 flex flex-col flex-1">
+                  <div className="svc-body relative z-10 px-4 pt-2 pb-4 flex flex-col flex-1">
                     <div className="absolute -top-4 right-2 text-5xl font-black text-muted-foreground/10 group-hover:text-primary/20 transition-colors duration-500 leading-none select-none pointer-events-none">
                       {(idx + 1).toString().padStart(2, "0")}
                     </div>

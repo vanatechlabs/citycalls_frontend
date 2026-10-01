@@ -4,119 +4,128 @@ import React, { useEffect, useState } from "react";
 import { Phone } from "lucide-react";
 import type { PublicSocialLinks } from "@/lib/api/socialLinks";
 
-const CallFloat = ({ phoneNumber }: { phoneNumber: string }) => {
+// Glossy glass buttons on a solid brand colour: `--from` / `--to` are the
+// colour gradient, `--tint` ("r, g, b") drives the glow and rings.
+const FLOAT_STYLES = `
+  @keyframes floatPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
 
-  return (
-    <>
-      <style>{`
-        @keyframes phonePulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-        }
+  @keyframes floatRing {
+    0% { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(1.75); opacity: 0; }
+  }
 
-        @keyframes ringPulse {
-          0% { transform: scale(1); opacity: 0.8; }
-          100% { transform: scale(1.8); opacity: 0; }
-        }
+  .glass-float-btn {
+    position: relative;
+    z-index: 50;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 55%),
+      linear-gradient(145deg, var(--from), var(--to));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      inset 0 -2px 6px rgba(var(--tint), 0.35),
+      0 10px 26px -8px rgba(var(--tint), 0.75),
+      0 4px 12px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    animation: floatPulse 2.4s ease-in-out infinite;
+  }
 
-        .call-float-btn {
-          position: relative;
-          z-index: 50;
-          width: 44px;
-          height: 44px;
-          background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 4px 16px rgba(30, 58, 138, 0.4);
-          cursor: pointer;
-          transition: all 0.3s ease;
-          animation: phonePulse 2s ease-in-out infinite;
-        }
+  /* glossy top half */
+  .glass-float-btn::before {
+    content: "";
+    position: absolute;
+    inset: 1px 4px 50% 4px;
+    border-radius: 9999px 9999px 40% 40%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0));
+    pointer-events: none;
+  }
 
-        .call-float-btn:hover {
-          transform: scale(1.1) !important;
-          box-shadow: 0 8px 24px rgba(30, 58, 138, 0.6);
-          background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
-        }
+  .glass-float-btn:hover {
+    transform: scale(1.1) !important;
+    animation-play-state: paused;
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.04) 55%),
+      linear-gradient(145deg, var(--from), var(--to));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 0 0 5px rgba(var(--tint), 0.16),
+      0 14px 32px -8px rgba(var(--tint), 0.9);
+  }
 
-        .call-ring {
-          position: absolute;
-          inset: -3px;
-          border-radius: 50%;
-          border: 2px solid #3b82f6;
-          animation: ringPulse 2s ease-out infinite;
-        }
+  .glass-float-ring {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(var(--tint), 0.7);
+    animation: floatRing 2.4s ease-out infinite;
+    pointer-events: none;
+  }
+  .glass-float-ring:nth-of-type(2) { animation-delay: 0.8s; }
+  .glass-float-ring:nth-of-type(3) { animation-delay: 1.6s; }
 
-        .call-ring:nth-child(2) {
-          animation-delay: 0.5s;
-        }
+  .glass-float-icon {
+    position: relative;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+  }
 
-        .call-ring:nth-child(3) {
-          animation-delay: 1s;
-        }
+  @media (max-width: 1024px) {
+    .glass-float-btn { width: 42px; height: 42px; }
+  }
+  @media (max-width: 640px) {
+    .glass-float-btn { width: 38px; height: 38px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .glass-float-btn, .glass-float-ring { animation: none; }
+  }
+`;
 
-        .call-icon {
-          color: white;
-          animation: phonePulse 2s ease-in-out infinite;
-        }
-
-        @media (max-width: 1024px) {
-          .call-float-btn {
-            width: 40px;
-            height: 40px;
-          }
-        }
-
-        @media (max-width: 640px) {
-          .call-float-btn {
-            width: 36px;
-            height: 36px;
-          }
-        }
-      `}</style>
-
-      <a
-        href={`tel:${phoneNumber}`}
-        className="call-float-btn"
-        aria-label="Call us"
-      >
-        <div className="call-ring"></div>
-        <div className="call-ring"></div>
-        <div className="call-ring"></div>
-        <Phone className="call-icon" size={18} strokeWidth={2.5} />
-        <span className="sr-only">Call Us</span>
-      </a>
-    </>
-  );
-};
+const CallFloat = ({ phoneNumber }: { phoneNumber: string }) => (
+  <a
+    href={`tel:${phoneNumber}`}
+    className="glass-float-btn"
+    style={{ "--tint": "37, 99, 235", "--from": "#3b82f6", "--to": "#1e3a8a" } as React.CSSProperties}
+    aria-label="Call us"
+  >
+    <span className="glass-float-ring" />
+    <span className="glass-float-ring" />
+    <span className="glass-float-ring" />
+    <Phone className="glass-float-icon" size={18} strokeWidth={2.5} />
+    <span className="sr-only">Call Us</span>
+  </a>
+);
 
 const WhatsAppFloat = ({ phoneNumber, message }: { phoneNumber: string; message: string }) => {
-
   const whatsappUrl = `https://wa.me/${phoneNumber}${message ? `?text=${encodeURIComponent(message)}` : ""}`;
 
   return (
-    <>
-      {phoneNumber && (
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Chat on WhatsApp"
-          className="relative block"
-        >
-          <div className="relative w-9 h-9 md:w-11 md:h-11 bg-[#25D366] rounded-full flex items-center justify-center shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-110">
-            <svg className="w-4 h-4 md:w-5 md:h-5 relative z-10" fill="white" viewBox="0 0 24 24">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-            </svg>
-            <span className="sr-only">Chat on WhatsApp</span>
-            <div className="absolute inset-0 rounded-full bg-[#25D366] opacity-75 animate-ping" />
-            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/20 to-transparent animate-pulse" />
-          </div>
-        </a>
-      )}
-    </>
+    <a
+      href={whatsappUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Chat on WhatsApp"
+      className="glass-float-btn"
+      style={{ "--tint": "37, 211, 102", "--from": "#3ee07f", "--to": "#128c4a" } as React.CSSProperties}
+    >
+      <span className="glass-float-ring" />
+      <span className="glass-float-ring" />
+      <svg className="glass-float-icon h-5 w-5" fill="white" viewBox="0 0 24 24" aria-hidden>
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+      </svg>
+      <span className="sr-only">Chat on WhatsApp</span>
+    </a>
   );
 };
 
@@ -143,6 +152,7 @@ export const FloatingActionButtons = ({ links }: { links: PublicSocialLinks }) =
         pointerEvents: isCollapsed ? "none" : "auto",
       }}
     >
+      <style>{FLOAT_STYLES}</style>
       {/* A number left empty in admin hides its button. */}
       {links.callNumber && <CallFloat phoneNumber={links.callNumber} />}
       {links.whatsappNumber && <WhatsAppFloat phoneNumber={links.whatsappNumber} message={links.whatsappMessage ?? ""} />}
