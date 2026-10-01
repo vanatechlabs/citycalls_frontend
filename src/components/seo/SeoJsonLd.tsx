@@ -10,7 +10,9 @@ export async function SeoJsonLd({ path }: { path: string }) {
   try {
     // Re-serialise so only valid JSON reaches the page, and escape "<" so the
     // content can never close the <script> tag early.
-    json = JSON.stringify(JSON.parse(seo.schemaMarkup)).replace(/</g, "\\u003c");
+    // Entries saved before the backend stripped a pasted <script> wrapper.
+    const raw = seo.schemaMarkup.trim().replace(/^<script\b[^>]*>/i, "").replace(/<\/script>$/i, "");
+    json = JSON.stringify(JSON.parse(raw)).replace(/</g, "\\u003c");
   } catch {
     return null;
   }
