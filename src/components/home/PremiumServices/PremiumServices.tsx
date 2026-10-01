@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, type Variants } from "framer-motion";
 import { Wrench, Zap, Sparkles, ShieldCheck, ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -37,38 +37,38 @@ const processes = [
 
 const headingLines = ["Home repairs everywhere,", "impactful online services,", "enhanced experiences"];
 
-const lineVariants = {
+const lineVariants: Variants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
 };
 
-const wordVariants = {
+const wordVariants: Variants = {
   hidden: { y: "100%", opacity: 0 },
   visible: {
     y: "0%",
     opacity: 1,
-    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as any },
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 32, scale: 0.94, filter: "blur(4px)" },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
     scale: 1,
     filter: "blur(0px)",
-    transition: { delay: 0.5 + i * 0.1, duration: 0.55, ease: [0.22, 1, 0.36, 1] as any },
+    transition: { delay: 0.5 + i * 0.1, duration: 0.55, ease: [0.22, 1, 0.36, 1] },
   }),
 };
 
-const iconVariants = {
+const iconVariants: Variants = {
   hidden: { opacity: 0, scale: 0.5, rotate: -12 },
   visible: (i: number) => ({
     opacity: 1,
     scale: 1,
     rotate: 0,
-    transition: { delay: 0.5 + i * 0.1 + 0.2, duration: 0.4, ease: "backOut" as any },
+    transition: { delay: 0.5 + i * 0.1 + 0.2, duration: 0.4, ease: "backOut" },
   }),
 };
 
@@ -99,8 +99,12 @@ export function PremiumServices() {
   const isImageVisible = hovered || autoRevealed;
 
   return (
-    <section ref={sectionRef} className="pt-10 pb-10 bg-[#FAF9F6] overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+    <section ref={sectionRef} className="relative pt-10 pb-10 bg-[#FAF9F6] overflow-hidden">
+      {/* soft background shapes */}
+      <div aria-hidden className="pointer-events-none absolute -right-32 top-10 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-amber-200/30 blur-3xl" />
+
+      <div className="container relative mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         {/* Heading Section */}
         <div className="mb-16 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
           <div className="max-w-3xl">

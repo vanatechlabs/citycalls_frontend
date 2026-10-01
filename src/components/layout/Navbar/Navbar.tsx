@@ -1,14 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown, Menu, Phone, X, Sun, Moon, ArrowRight } from "lucide-react";
+import {
+  ArrowRight, ArrowUpRight, Bug, ChevronDown, ChevronRight, Info, LayoutGrid, Newspaper, Phone, Refrigerator, Scissors,
+  Sofa, SprayCan, X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { serviceCategories } from "@/data/services";
 import { fetchCityCallsNavbarMenus } from "@/lib/api/navbar";
-import { useBooking } from "@/context/BookingContext";
 import { Logo } from "@/components/layout/Logo/Logo";
 import { MegaMenu } from "./MegaMenu";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const NAV_ORDER = ["home-appliance", "home-cleaning", "sofa-cleaning", "pest-control"];
 
@@ -32,15 +35,65 @@ interface NavCategory {
 // hardcoded catalog data (which also powers the /services/:slug detail
 // pages — those keep working unchanged regardless of where the navbar link
 // itself came from).
+// Menu items inside the glass pill: open item gets a raised glass chip.
+const NAV_ITEM_IDLE = "text-white/75 hover:bg-white/[0.08] hover:text-white";
+const NAV_ITEM_ACTIVE =
+  "bg-white/[0.14] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_4px_14px_-4px_rgba(0,0,0,0.5)] ring-1 ring-white/15";
+
+// Icon for a navbar menu in the mobile drawer, by its slug.
+function categoryIcon(id: string) {
+  if (/appliance/.test(id)) return Refrigerator;
+  if (/pest/.test(id)) return Bug;
+  if (/sofa/.test(id)) return Sofa;
+  if (/clean/.test(id)) return SprayCan;
+  return LayoutGrid;
+}
+
+const MOBILE_LINKS = [
+  { href: "/about", label: "About", icon: Info },
+  { href: "/blogs", label: "Blogs", icon: Newspaper },
+  { href: "/contact", label: "Contact", icon: Phone },
+];
+
+// Mobile menu opens as a circle growing out of the hamburger button
+// (16px header padding + half of the 40px button = 36px from the right; the
+// 64px-tall header puts its centre 32px down).
+const MENU_ORIGIN = "calc(100% - 36px) 32px";
+const MENU_CLOSED = `circle(0% at ${MENU_ORIGIN})`;
+const MENU_OPEN = `circle(150% at ${MENU_ORIGIN})`;
+
+// Menu contents rise in one after another once the circle has opened.
+const drawerListVariants: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.06, delayChildren: 0.25 } },
+};
+const drawerItemVariants: Variants = {
+  hidden: { opacity: 0, y: 18 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
+};
+
 const fallbackNavCategories: NavCategory[] = serviceCategories
   .filter((cat) => NAV_ORDER.includes(cat.id))
   .sort((a, b) => NAV_ORDER.indexOf(a.id) - NAV_ORDER.indexOf(b.id));
 
 export function Navbar() {
-  const { openDrawer } = useBooking();
   const [openCat, setOpenCat] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileCat, setMobileCat] = useState<string | null>(null);
+  // The drawer is portalled to <body> once first opened: inside the header
+  // its position: fixed would be trapped by the header's backdrop-filter.
+  const [mobileMenuMounted, setMobileMenuMounted] = useState(false);
+
+  function openMobileMenu() {
+    setMobileMenuMounted(true);
+    // Start with the first category's services showing.
+    setMobileCat((current) => current ?? navCategories[0]?.id ?? null);
+    setMobileOpen(true);
+  }
+
+  function closeMobileMenu() {
+    setMobileOpen(false);
+  }
   const [scrolled, setScrolled] = useState(false);
   // Managed from Admin → Website Section → Navbar List. Starts as the
   // hardcoded fallback (so there's no flash of an empty navbar) and is
@@ -96,87 +149,84 @@ export function Navbar() {
   }, []);
 
   return (
-    <header className={`sticky top-0 z-[100] text-white border-b border-white/5 transition-colors duration-300 ${scrolled ? 'bg-ink/95 backdrop-blur shadow-soft' : 'bg-ink'}`}>
-      <div className="w-full px-4 lg:px-6 xl:px-8 flex items-center justify-between h-16 md:h-[72px] max-w-[1600px] mx-auto">
-        <div className="ml-8">
-          <Logo />
-        </div>
+    <header
+      className={`sticky top-0 z-[100] text-white transition-[background-color,box-shadow] duration-500 ${
+        // Scrolled: real frosted glass over the page content behind it.
+        scrolled
+          ? "bg-ink/55 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_14px_40px_-16px_rgba(0,0,0,0.75)]"
+          : "bg-ink"
+      }`}
+    >
+      {/* Soft gold light behind the buttons + a glass top edge */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-20 right-[6%] h-40 w-80 rounded-full bg-[#d4af37]/20 blur-3xl" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+      </div>
 
-        <nav className="hidden lg:flex items-center gap-0.5">
-          {navCategories.map((cat) => (
-            <div
-              key={cat.id}
-              className="relative"
-              onMouseEnter={() => setOpenCat(cat.id)}
-              onMouseLeave={() => setOpenCat(null)}
-            >
-              <button className="group relative flex items-center gap-1 px-1.5 xl:px-2.5 py-2 text-[12px] font-sans font-semibold uppercase tracking-wider text-white/90 hover:text-white transition-colors duration-200 rounded-md whitespace-nowrap">
-                {cat.label}
-                <ChevronDown
-                  size={14}
-                  className={`transition-transform duration-300 ${openCat === cat.id ? "rotate-180 text-primary" : "opacity-60"}`}
-                />
-                <span
-                  className={`absolute left-1.5 right-1.5 xl:left-2.5 xl:right-2.5 -bottom-[1px] h-[2px] bg-primary origin-left transition-transform duration-300 ${
-                    openCat === cat.id ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+      <div
+        className={`relative mx-auto flex w-full max-w-[1600px] items-center justify-between gap-4 px-4 transition-[height] duration-300 lg:px-6 2xl:px-10 ${
+          scrolled ? "h-16" : "h-16 md:h-[76px]"
+        }`}
+      >
+        <Logo />
+
+        {/* Glass menu pill — dropdowns open below each item (MegaMenu). No
+            backdrop-filter here: it would stop the dropdown's own blur from
+            seeing the page behind it. */}
+        {/* Full menu from xl (1280px) up — below that it doesn't fit beside the
+            buttons, so the hamburger menu takes over. */}
+        <nav className="relative hidden xl:flex items-center gap-0.5 rounded-full border border-white/15 bg-white/[0.07] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-1px_0_rgba(255,255,255,0.04),0_10px_30px_-10px_rgba(0,0,0,0.6)]">
+          {/* top sheen */}
+          <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/[0.10] via-transparent to-transparent" />
+          {navCategories.map((cat) => {
+            const isOpen = openCat === cat.id;
+            return (
+              <div
+                key={cat.id}
+                className="relative"
+                onMouseEnter={() => setOpenCat(cat.id)}
+                onMouseLeave={() => setOpenCat(null)}
+              >
+                <button
+                  className={`relative flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-semibold tracking-wide transition-all duration-200 2xl:px-4 ${
+                    isOpen ? NAV_ITEM_ACTIVE : NAV_ITEM_IDLE
                   }`}
-                />
-              </button>
-              {openCat === cat.id && <MegaMenu category={cat} onNavigate={() => setOpenCat(null)} />}
-            </div>
-          ))}
+                >
+                  {cat.label}
+                  <ChevronDown
+                    size={14}
+                    className={`transition-transform duration-300 ${isOpen ? "rotate-180 text-primary" : "opacity-50"}`}
+                  />
+                </button>
+                {isOpen && <MegaMenu category={cat} onNavigate={() => setOpenCat(null)} />}
+              </div>
+            );
+          })}
           <Link
             href="/blogs"
-            className="group relative flex items-center px-1.5 xl:px-2.5 py-2 text-[12px] font-sans font-semibold uppercase tracking-wider text-white/90 hover:text-white transition-colors duration-200 rounded-md whitespace-nowrap"
+            className={`relative whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-semibold tracking-wide transition-all duration-200 2xl:px-4 ${NAV_ITEM_IDLE}`}
           >
             Blogs
-            <span className="absolute left-1.5 right-1.5 xl:left-2.5 xl:right-2.5 -bottom-[1px] h-[2px] bg-primary origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
           </Link>
           <Link
             href="/contact"
-            className="group relative flex items-center px-1.5 xl:px-2.5 py-2 text-[12px] font-sans font-semibold uppercase tracking-wider text-white/90 hover:text-white transition-colors duration-200 rounded-md whitespace-nowrap"
+            className={`relative whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-semibold tracking-wide transition-all duration-200 2xl:px-4 ${NAV_ITEM_IDLE}`}
           >
             Contact
-            <span className="absolute left-1.5 right-1.5 xl:left-2.5 xl:right-2.5 -bottom-[1px] h-[2px] bg-primary origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
           </Link>
-
-
         </nav>
 
-        <div className="flex items-center gap-2">
-          <style>{`
-            @keyframes swing {
-              0%, 100% { transform: rotate(-2.5deg); }
-              50% { transform: rotate(2.5deg); }
-            }
-            .animate-swing {
-              animation: swing 1.8s ease-in-out infinite;
-              transform-origin: top center;
-            }
-            @keyframes dropIn {
-              from { opacity: 0; transform: translateY(-20px); }
-              to { opacity: 1; transform: translateY(0); }
-            }
-            .animate-drop-in {
-              animation: dropIn 0.5s ease-out 0.2s both;
-            }
-          `}</style>
-          <div className="hidden md:flex items-center gap-3 mr-14 animate-drop-in">
-            {/* Beauty Saloon pendant — RIGHT */}
-            <div className="relative justify-center flex mr-5">
-              <div className="relative origin-top group animate-swing">
-                <span className="absolute left-1/2 -top-[18px] -translate-x-1/2 w-[2px] h-[18px] bg-gradient-to-b from-primary to-primary-dark" />
-                <a
-                  href="https://salon.citycalls.in/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="Btn"
-                ></a>
-              </div>
-            </div>
+        <div className="flex items-center gap-2.5">
+          <div className="hidden md:flex items-center gap-2.5">
+            {/* Beauty Saloon — gold glass pill (styles: .beauty-btn in globals.css) */}
+            <a href="https://salon.citycalls.in/" target="_blank" rel="noopener noreferrer" className="beauty-btn group">
+              <Scissors size={15} className="beauty-btn__icon" />
+              <span className="beauty-btn__text">Beauty Saloon</span>
+              <ArrowUpRight size={14} className="text-[#e9c96a] transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </a>
 
             {/* Help Now — New UI Button */}
-            <a href="https://helpnow.citycalls.in/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 bg-gradient-to-b from-[#FFCF24] to-[#FDBA00] hover:from-[#FFE066] hover:to-[#F5B50A] transition-all duration-300 rounded-full pl-2 pr-1 py-1.5 shadow-[0_4px_14px_rgba(253,186,0,0.4)] border border-[#E5A800]">
+            <a href="https://helpnow.citycalls.in/" target="_blank" rel="noopener noreferrer" className="helpnow-btn flex items-center gap-1 bg-gradient-to-b from-[#FFCF24] to-[#FDBA00] hover:from-[#FFE066] hover:to-[#F5B50A] rounded-full pl-2 pr-1 py-1.5 shadow-[0_4px_14px_rgba(253,186,0,0.4)] border border-[#E5A800]">
               {/* Left Icon (House + Sparkles) */}
               <div className="flex items-center gap-1">
                 <div className="relative flex items-center pr-1">
@@ -219,88 +269,189 @@ export function Navbar() {
               </div>
             </a>
           </div>
+          {/* Hamburger — three staggered lines on a glass button */}
           <button
-            onClick={() => setMobileOpen(true)}
-            aria-label="Menu"
-            className="lg:hidden grid place-items-center h-10 w-10 rounded-full bg-white/10 hover:bg-white/15"
+            onClick={openMobileMenu}
+            aria-label="Open menu"
+            aria-expanded={mobileOpen}
+            className="group xl:hidden grid place-items-center h-10 w-10 rounded-full border border-white/15 bg-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] transition-colors hover:bg-white/[0.14]"
           >
-            <Menu size={18} />
+            <span className="flex w-[18px] flex-col items-end gap-[4px]">
+              <span className="h-[2px] w-full rounded-full bg-white" />
+              <span className="h-[2px] w-3/4 rounded-full bg-primary transition-all duration-300 group-hover:w-full" />
+              <span className="h-[2px] w-1/2 rounded-full bg-white transition-all duration-300 group-hover:w-full" />
+            </span>
           </button>
         </div>
       </div>
 
+      {/* Thin brand-green accent line along the bottom edge */}
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
-          <div className="absolute right-0 top-0 bottom-0 w-[85%] max-w-sm bg-ink text-white flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b border-white/10">
-              <Logo />
-              <button onClick={() => setMobileOpen(false)} aria-label="Close" className="p-2">
-                <X size={20} />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto py-2">
-              {navCategories.map((cat) => (
-                <div key={cat.id} className="border-b border-white/5">
-                  <button
-                    onClick={() => setMobileCat(mobileCat === cat.id ? null : cat.id)}
-                    className="w-full flex items-center justify-between px-5 py-3.5 text-[13px] font-sans font-semibold uppercase tracking-wider"
-                  >
-                    {cat.label}
-                    <ChevronDown size={16} className={`transition-transform ${mobileCat === cat.id ? "rotate-180" : ""}`} />
-                  </button>
-                  {mobileCat === cat.id && (
-                    <div className="pb-3 bg-white/[0.03]">
-                      {cat.services.map((s) => (
-                        <Link
-                          key={s.slug}
-                          href={s.path || `/services/${s.slug}`}
-                          onClick={() => setMobileOpen(false)}
-                          className="block px-8 py-2.5 text-sm text-white/75 hover:text-primary"
+      {mobileMenuMounted && createPortal(
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              key="mobile-menu"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Menu"
+              initial={{ clipPath: MENU_CLOSED }}
+              animate={{ clipPath: MENU_OPEN }}
+              exit={{ clipPath: MENU_CLOSED, transition: { duration: 0.45, ease: [0.65, 0, 0.35, 1] } }}
+              transition={{ duration: 0.65, ease: [0.65, 0, 0.35, 1] }}
+              className="fixed inset-0 z-[150] flex flex-col overflow-hidden bg-[#0b0f17] text-white xl:hidden"
+            >
+              {/* soft light from the top-right, where the menu grew from */}
+              <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/[0.06] blur-3xl" />
+
+              <div className="relative flex h-16 shrink-0 items-center justify-between border-b border-white/10 px-4">
+                <Logo />
+                <button
+                  onClick={closeMobileMenu}
+                  aria-label="Close menu"
+                  className="grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] transition-all duration-300 hover:rotate-90 hover:bg-white/[0.14]"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <motion.div
+                variants={drawerListVariants}
+                initial="hidden"
+                animate="visible"
+                className="relative flex-1 overflow-y-auto px-4 py-5"
+              >
+                <motion.p variants={drawerItemVariants} className="px-1 pb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">
+                  Our Services
+                </motion.p>
+
+                {/* Category tiles — tap one to show its services below */}
+                <motion.div variants={drawerItemVariants} className="grid grid-cols-2 gap-2.5">
+                  {navCategories.map((cat) => {
+                    const Icon = categoryIcon(cat.id);
+                    const isActive = mobileCat === cat.id;
+                    return (
+                      <button
+                        key={cat.id}
+                        onClick={() => setMobileCat(cat.id)}
+                        aria-pressed={isActive}
+                        className={`relative flex flex-col items-start gap-3 overflow-hidden rounded-2xl border p-3.5 text-left transition-all duration-300 ${
+                          isActive
+                            ? "border-primary/40 bg-primary/[0.12] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_10px_24px_-12px_rgba(124,179,66,0.6)]"
+                            : "border-white/10 bg-white/[0.04] hover:bg-white/[0.07]"
+                        }`}
+                      >
+                        <span className={`grid h-10 w-10 place-items-center rounded-xl ring-1 transition-colors ${
+                          isActive ? "bg-primary text-[#0b0f17] ring-primary" : "bg-white/[0.06] text-primary ring-white/10"
+                        }`}>
+                          <Icon size={19} />
+                        </span>
+                        <span>
+                          <span className="block text-[14px] font-semibold leading-tight">{cat.label}</span>
+                          <span className="mt-0.5 block text-[11px] text-white/45">{cat.services.length} services</span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </motion.div>
+
+                {/* Services of the selected category */}
+                <motion.div variants={drawerItemVariants} className="mt-3">
+                  <AnimatePresence mode="wait" initial={false}>
+                    {navCategories
+                      .filter((cat) => cat.id === mobileCat)
+                      .map((cat) => (
+                        <motion.div
+                          key={cat.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                          className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]"
                         >
-                          {s.name}
-                        </Link>
+                          {cat.services.map((service) => (
+                            <Link
+                              key={service.slug}
+                              href={service.path || `/services/${service.slug}`}
+                              onClick={closeMobileMenu}
+                              className="group flex items-center gap-3 border-b border-white/[0.06] px-3 py-2.5 transition-colors last:border-b-0 hover:bg-white/[0.06]"
+                            >
+                              {service.image ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={service.image} alt="" className="h-8 w-8 shrink-0 rounded-lg bg-white/[0.06] object-contain p-0.5" />
+                              ) : (
+                                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/[0.06]">
+                                  <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                                </span>
+                              )}
+                              <span className="flex-1 text-[13px] font-medium text-white/85 group-hover:text-white">{service.name}</span>
+                              <ChevronRight size={14} className="text-white/30 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+                            </Link>
+                          ))}
+                        </motion.div>
                       ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-              <Link href="/about" onClick={() => setMobileOpen(false)} className="block px-5 py-3.5 text-[13px] font-sans font-semibold uppercase tracking-wider border-b border-white/5">
-                About
-              </Link>
-              <Link href="/blogs" onClick={() => setMobileOpen(false)} className="block px-5 py-3.5 text-[13px] font-sans font-semibold uppercase tracking-wider border-b border-white/5">
-                Blogs
-              </Link>
-              <Link href="/contact" onClick={() => setMobileOpen(false)} className="block px-5 py-3.5 text-[13px] font-sans font-semibold uppercase tracking-wider border-b border-white/5">
-                Contact
-              </Link>
+                  </AnimatePresence>
+                </motion.div>
 
-            </div>
-            <div className="p-4 border-t border-white/10 flex flex-col gap-3">
-              <div className="flex justify-center w-full">
+                <motion.p variants={drawerItemVariants} className="px-1 pb-3 pt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">
+                  Company
+                </motion.p>
+                <motion.div variants={drawerItemVariants} className="grid grid-cols-3 gap-2">
+                  {MOBILE_LINKS.map(({ href, label, icon: LinkIcon }) => (
+                    <Link
+                      key={href}
+                      href={href}
+                      onClick={closeMobileMenu}
+                      className="flex flex-col items-center gap-1.5 rounded-2xl border border-white/10 bg-white/[0.04] py-3 text-[12px] font-semibold text-white/85 transition-colors hover:border-primary/30 hover:bg-white/[0.08]"
+                    >
+                      <LinkIcon size={17} className="text-primary" />
+                      {label}
+                    </Link>
+                  ))}
+                </motion.div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                className="relative flex flex-col gap-2.5 border-t border-white/10 p-4"
+              >
+                {/* .beauty-btn padding/width come from globals.css, so override inline */}
                 <a
                   href="https://salon.citycalls.in/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="Btn"
-                  onClick={() => setMobileOpen(false)}
-                ></a>
-              </div>
-              <a
-                href="https://helpnow.citycalls.in/" target="_blank" rel="noopener noreferrer"
-                className="help-now-btn-mobile"
-                onClick={() => setMobileOpen(false)}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M14.2199 21.63C13.0399 21.63 11.3699 20.8 10.0499 16.83L9.32988 14.67L7.16988 13.95C3.20988 12.63 2.37988 10.96 2.37988 9.78001C2.37988 8.61001 3.20988 6.93001 7.16988 5.60001L15.6599 2.77001C17.7799 2.06001 19.5499 2.27001 20.6399 3.35001C21.7299 4.43001 21.9399 6.21001 21.2299 8.33001L18.3999 16.82C17.0699 20.8 15.3999 21.63 14.2199 21.63ZM7.63988 7.03001C4.85988 7.96001 3.86988 9.06001 3.86988 9.78001C3.86988 10.5 4.85988 11.6 7.63988 12.52L10.1599 13.36C10.3799 13.43 10.5599 13.61 10.6299 13.83L11.4699 16.35C12.3899 19.13 13.4999 20.12 14.2199 20.12C14.9399 20.12 16.0399 19.13 16.9699 16.35L19.7999 7.86001C20.3099 6.32001 20.2199 5.06001 19.5699 4.41001C18.9199 3.76001 17.6599 3.68001 16.1299 4.19001L7.63988 7.03001Z" fill="currentColor"></path>
-                  <path d="M10.11 14.4C9.92005 14.4 9.73005 14.33 9.58005 14.18C9.29005 13.89 9.29005 13.41 9.58005 13.12L13.16 9.53C13.45 9.24 13.93 9.24 14.22 9.53C14.51 9.82 14.51 10.3 14.22 10.59L10.64 14.18C10.5 14.33 10.3 14.4 10.11 14.4Z" fill="currentColor"></path>
-                </svg>
-                Help Now
-              </a>
-            </div>
-          </div>
-        </div>
+                  onClick={closeMobileMenu}
+                  className="beauty-btn"
+                  style={{ width: "100%", justifyContent: "center", padding: "12px 16px", fontSize: "14px" }}
+                >
+                  <Scissors size={16} className="beauty-btn__icon" />
+                  <span className="beauty-btn__text">Beauty Saloon</span>
+                  <ArrowUpRight size={15} className="text-[#e9c96a]" />
+                </a>
+                <a
+                  href="https://helpnow.citycalls.in/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={closeMobileMenu}
+                  className="helpnow-btn flex w-full items-center justify-center gap-2 rounded-full border border-[#E5A800] bg-gradient-to-b from-[#FFCF24] to-[#FDBA00] py-3 text-black shadow-[0_6px_18px_rgba(253,186,0,0.35)]"
+                >
+                  <span className="text-[15px] tracking-tight">
+                    <span className="font-extrabold">Help</span>
+                    <span className="font-serif font-bold italic">Now</span>
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-wide opacity-80">House Help Services</span>
+                  <span className="grid h-6 w-6 place-items-center rounded-full bg-white/95">
+                    <ArrowRight size={13} strokeWidth={2.5} />
+                  </span>
+                </a>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
       )}
     </header>
   );

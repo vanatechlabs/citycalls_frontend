@@ -159,19 +159,34 @@ const SocialSidebar = ({ links }: { links: PublicSocialLinks }) => {
           }
         }
 
+        /* Frosted glass that reads on both the dark hero and white sections */
         .sidebar-glass {
-          background: rgba(255, 255, 255, 0.75);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
+          background: linear-gradient(160deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.12) 55%, rgba(255, 255, 255, 0.22) 100%);
+          backdrop-filter: blur(22px) saturate(170%);
+          -webkit-backdrop-filter: blur(22px) saturate(170%);
           border-radius: 32px;
-          border: 1.5px solid rgba(255, 255, 255, 0.85);
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.55);
+          box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.75),
+            inset 0 -1px 0 rgba(255, 255, 255, 0.15),
+            0 12px 40px rgba(15, 23, 42, 0.22),
+            0 2px 8px rgba(15, 23, 42, 0.08);
           padding: 8px 6px;
           display: flex;
           flex-direction: column;
           gap: 8px;
           position: relative;
           transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* top sheen */
+        .sidebar-glass::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: inherit;
+          background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent 42%);
+          pointer-events: none;
         }
 
         .sidebar-glass.is-collapsed {
@@ -213,14 +228,14 @@ const SocialSidebar = ({ links }: { links: PublicSocialLinks }) => {
           width: 36px;
           height: 36px;
           border-radius: 50%;
-          background: rgba(15, 23, 42, 0.85);
+          background: linear-gradient(160deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.6));
           color: #ffffff;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          border: 2px solid rgba(255, 255, 255, 0.6);
-          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+          border: 1px solid rgba(255, 255, 255, 0.45);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 6px 16px rgba(15, 23, 42, 0.3);
           transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
           position: relative;
           z-index: 10;
@@ -271,10 +286,14 @@ const SocialSidebar = ({ links }: { links: PublicSocialLinks }) => {
           justify-content: center;
           width: 36px;
           height: 36px;
-          background: white;
+          /* glass chip; --brand is set per icon */
+          background: linear-gradient(145deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.45));
           border-radius: 9999px;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-          border: 2px solid;
+          border: 1px solid rgba(255, 255, 255, 0.8);
+          box-shadow:
+            inset 0 1px 0 #ffffff,
+            0 0 0 1.5px color-mix(in srgb, var(--brand) 45%, transparent),
+            0 4px 12px rgba(15, 23, 42, 0.14);
           transition: all 0.3s;
           overflow: hidden;
           text-decoration: none;
@@ -283,6 +302,11 @@ const SocialSidebar = ({ links }: { links: PublicSocialLinks }) => {
         .social-button:hover {
           animation: buttonShake 0.5s ease-in-out;
           transform: scale(1.1);
+          background: linear-gradient(145deg, #ffffff, rgba(255, 255, 255, 0.7));
+          box-shadow:
+            inset 0 1px 0 #ffffff,
+            0 0 0 2px var(--brand),
+            0 6px 18px color-mix(in srgb, var(--brand) 45%, transparent);
         }
 
         .social-button:active {
@@ -335,11 +359,12 @@ const SocialSidebar = ({ links }: { links: PublicSocialLinks }) => {
 
         .tooltip-content {
           padding: 6px 14px;
-          border-radius: 8px;
+          border-radius: 10px;
           color: white;
           font-size: 12px;
           font-weight: bold;
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+          border: 1px solid rgba(255, 255, 255, 0.25);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 10px 24px rgba(0, 0, 0, 0.2);
           position: relative;
         }
 
@@ -437,7 +462,7 @@ const SocialSidebar = ({ links }: { links: PublicSocialLinks }) => {
                   rel="noopener noreferrer"
                   aria-label={`Visit our ${social.label} page`}
                   className="social-button"
-                  style={{ borderColor: social.color }}
+                  style={{ "--brand": social.color } as React.CSSProperties}
                 >
                   <div className="icon-wrapper">
                     <Icon size={16} color={social.color} />

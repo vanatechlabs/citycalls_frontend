@@ -1,20 +1,21 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import gsap from "gsap";
-import { Sparkles, X, ChevronUp, ChevronDown } from "lucide-react";
+import { useEffect, useState, type CSSProperties } from "react";
+import { AnimatePresence, motion, useReducedMotion, type Variants } from "framer-motion";
+import { ChevronDown, ChevronUp, Sparkles, X } from "lucide-react";
 import { fetchCityCallsLaunchSpotlight, resolveWebsiteImageUrl } from "@/lib/api/cityCallsHome";
 
 const cara5 = "/assets/Banner/cara8.png";
 const h2 = "/assets/Banner/h2.png";
 
 /* ============================================================================
-   LAUNCH SPOTLIGHT — Fixed Bottom-Left Floating Overlay Card
-   - Fixed at bottom-left (mirroring Call & WhatsApp float at bottom-right)
-   - 100% of text and tags overlaid directly on top of the image (No bottom text strip)
-   - Slide 1: HelpNow (Mustard Theme) -> links to /help-now
-   - Slide 2: Beauty & Salon (Royal Gold Theme) -> links to http://localhost:3000
-   - Modern rounded corners (rounded-xl) with compact landscape aspect ratio
+   LAUNCH SPOTLIGHT — floating bottom-left card (mirrors the Call & WhatsApp
+   floats on the right). Slides come from Admin → Pages → Launch Spotlight.
+
+   Cinematic slide change: the new image wipes in from the right while coming
+   into focus, the old one drifts left and blurs out, a light sweep crosses
+   the card and the title rises in word by word. Story-style progress bars
+   show the time left; hovering the card pauses it.
 ============================================================================ */
 
 interface SpotlightTheme {
@@ -29,7 +30,7 @@ interface SpotlightItem {
   altText: string;
   badgeText: string;
   serviceName: string; // Overlay title on image
-  category: string;    // Category badge over image
+  category: string;    // Small line above the title
   link: string;        // Service page route / url
   theme: SpotlightTheme;
   // Admin overlay darkness 0–100 %; null/undefined = default gradient.
@@ -77,7 +78,8 @@ const fallbackSpotlightItems: SpotlightItem[] = [
   },
 ];
 
-const SPOTLIGHT_INTERVAL = 4000;
+const SPOTLIGHT_INTERVAL = 5000;
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 function hexToRgba(hex: string, alpha: number): string {
   const value = hex.replace("#", "");
@@ -89,28 +91,32 @@ function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
 
+// Title words rise out of a mask while coming into focus.
+const titleVariants: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.25 } },
+};
+const wordVariants: Variants = {
+  hidden: { y: "110%", opacity: 0, filter: "blur(6px)" },
+  visible: { y: "0%", opacity: 1, filter: "blur(0px)", transition: { duration: 0.6, ease: EASE } },
+};
+
 export function LaunchSpotlight() {
+  const reduceMotion = useReducedMotion();
   // Empty until the API answers, so a slide switched off in admin never
   // flashes up; the bundled cards are only used if the API can't be reached.
   const [spotlightItems, setSpotlightItems] = useState<SpotlightItem[]>([]);
   const [idx, setIdx] = useState(0);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isClosed, setIsClosed] = useState(false);
-
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const glowRef = useRef<HTMLDivElement>(null);
-  const imgTrackRef = useRef<HTMLDivElement>(null);
-  const ribbonShineRef = useRef<HTMLSpanElement>(null);
-  const captionRef = useRef<HTMLHeadingElement>(null);
-  const categoryRef = useRef<HTMLSpanElement>(null);
-  const tagRef = useRef<HTMLDivElement>(null);
-  const sparkleRef = useRef<HTMLDivElement>(null);
+  // Hovering the card pauses the slideshow (and its progress bar).
+  const [isPaused, setIsPaused] = useState(false);
 
   const item = spotlightItems[idx] ?? spotlightItems[0];
   const theme = item?.theme ?? fallbackSpotlightItems[0].theme;
   // Parts left empty in admin are not drawn (no icon-only badge or lone arrow).
   const showBadge = !!item?.badgeText;
+  const hasMany = spotlightItems.length > 1;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -143,108 +149,10 @@ export function LaunchSpotlight() {
     return () => controller.abort();
   }, []);
 
-  // Entrance animation: slides up from bottom-left once the first card is in.
-  const hasItems = spotlightItems.length > 0;
-  useEffect(() => {
-    if (!hasItems || !wrapRef.current) return;
-    gsap.fromTo(
-      wrapRef.current,
-      { y: 60, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.9, ease: "power3.out", delay: 1.2 }
-    );
-  }, [hasItems]);
-
-  // Ambient pulsating glow — recolors per active item's theme
-  useEffect(() => {
-    if (!glowRef.current) return;
-    const tl = gsap.timeline({ repeat: -1, yoyo: true });
-    tl.to(glowRef.current, {
-      opacity: 0.85,
-      boxShadow: `0 0 22px ${theme.accentMid}, 0 0 2px ${theme.accentSoft}`,
-      duration: 1.8,
-      ease: "sine.inOut",
-    });
-    return () => { tl.kill(); };
-  }, [theme.accentMid, theme.accentSoft]);
-
-  // Ribbon shine sweep loop
-  useEffect(() => {
-    if (!ribbonShineRef.current) return;
-    const tl = gsap.timeline({ repeat: -1, repeatDelay: 2.2 });
-    tl.fromTo(
-      ribbonShineRef.current,
-      { xPercent: -180 },
-      { xPercent: 180, duration: 1.1, ease: "power2.inOut" }
-    );
-    return () => { tl.kill(); };
-  }, [showBadge, isMinimized]);
-
-  // "NEW LAUNCH" tag wiggle animation
-  useEffect(() => {
-    if (!tagRef.current) return;
-    const tl = gsap.timeline({ repeat: -1, repeatDelay: 1.6 });
-    tl.to(tagRef.current, { rotate: -4, scale: 1.06, duration: 0.12, ease: "power1.out" })
-      .to(tagRef.current, { rotate: 3, duration: 0.12, ease: "power1.inOut" })
-      .to(tagRef.current, { rotate: -2, duration: 0.1, ease: "power1.inOut" })
-      .to(tagRef.current, { rotate: 0, scale: 1, duration: 0.15, ease: "back.out(3)" });
-    return () => { tl.kill(); };
-  }, [showBadge, isMinimized]);
-
-  // Sparkle icon spin + pulse
-  useEffect(() => {
-    if (!sparkleRef.current) return;
-    const spin = gsap.to(sparkleRef.current, {
-      rotate: 360,
-      duration: 3.2,
-      repeat: -1,
-      ease: "none",
-    });
-    const pulse = gsap.to(sparkleRef.current, {
-      scale: 1.25,
-      duration: 0.6,
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut",
-    });
-    return () => { spin.kill(); pulse.kill(); };
-  }, [showBadge, isMinimized]);
-
-  // Auto-cycle items
-  useEffect(() => {
-    if (isClosed || isMinimized || spotlightItems.length < 2) return;
-    const t = setInterval(() => {
-      setIdx((p) => (p + 1) % spotlightItems.length);
-    }, SPOTLIGHT_INTERVAL);
-    return () => clearInterval(t);
-  }, [isClosed, isMinimized, spotlightItems.length]);
-
-  // Image & text change transition
-  useEffect(() => {
-    if (!imgTrackRef.current) return;
-    gsap.fromTo(
-      imgTrackRef.current,
-      { opacity: 0.25, scale: 1.08 },
-      { opacity: 1, scale: 1, duration: 0.6, ease: "power2.out" }
-    );
-    if (captionRef.current) {
-      gsap.fromTo(
-        captionRef.current,
-        { opacity: 0, y: 8 },
-        { opacity: 1, y: 0, duration: 0.45, ease: "power2.out", delay: 0.05 }
-      );
-    }
-    if (categoryRef.current) {
-      gsap.fromTo(
-        categoryRef.current,
-        { opacity: 0, y: 4 },
-        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
-      );
-    }
-  }, [idx]);
-
   if (isClosed || !item) return null;
 
-  // Handle card click
+  const goNext = () => setIdx((current) => (current + 1) % spotlightItems.length);
+
   const handleCardClick = () => {
     // A slide saved without a link isn't clickable.
     if (!item.link) return;
@@ -255,197 +163,304 @@ export function LaunchSpotlight() {
     }
   };
 
+  const themeVars = { "--spot-interval": `${SPOTLIGHT_INTERVAL}ms` } as CSSProperties;
+
   return (
-    <div
-      ref={wrapRef}
+    <motion.div
+      initial={{ y: 60, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.9, delay: 1.2, ease: EASE }}
       className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-[90] select-none"
+      style={themeVars}
     >
-      {/* Minimized Pill View */}
-      {isMinimized ? (
-        <button
-          onClick={() => setIsMinimized(false)}
-          className="relative flex items-center gap-2 bg-[#090f09]/95 text-white border px-3.5 py-2 rounded-full shadow-2xl transition-all cursor-pointer backdrop-blur-md group hover:scale-105"
-          style={{ borderColor: `${theme.accent}90` }}
-          aria-label="Expand New Launch Spotlight"
-        >
-          {/* Ping badge */}
-          <span className="absolute -top-1 -right-1 flex h-3 w-3">
-            <span
-              className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-              style={{ backgroundColor: theme.accent }}
-            />
-            <span
-              className="relative inline-flex rounded-full h-3 w-3"
-              style={{ backgroundColor: theme.accent }}
-            />
-          </span>
+      <style>{`
+        @keyframes spot-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+        @keyframes spot-shine { 0%, 60% { transform: translateX(-160%) skewX(-20deg); } 100% { transform: translateX(260%) skewX(-20deg); } }
+        .spot-progress-fill { transform-origin: left; animation: spot-progress var(--spot-interval) linear forwards; }
+        .spot-paused .spot-progress-fill { animation-play-state: paused; }
+        .spot-badge-shine { animation: spot-shine 3.4s ease-in-out infinite; }
+        /* Bell-like shake on the text tags: still most of the time, then a quick wiggle */
+        @keyframes spot-shake {
+          0%, 76%, 100% { transform: rotate(0deg) translateX(0); }
+          79% { transform: rotate(-8deg) translateX(-1px); }
+          82% { transform: rotate(7deg) translateX(1px); }
+          85% { transform: rotate(-6deg); }
+          88% { transform: rotate(4deg); }
+          91% { transform: rotate(-2deg); }
+          94% { transform: rotate(1deg); }
+        }
+        .spot-shake { animation: spot-shake 3.2s ease-in-out infinite; transform-origin: 50% 50%; }
+        .spot-shake-late { animation-delay: 1.6s; }
+        @media (prefers-reduced-motion: reduce) {
+          .spot-badge-shine, .spot-shake { animation: none; }
+        }
+      `}</style>
 
-          <span
-            className="h-2 w-2 rounded-full animate-pulse"
-            style={{ backgroundColor: theme.accent }}
-          />
-          <span
-            className="text-[11px] font-extrabold uppercase tracking-widest"
-            style={{ color: theme.accent }}
+      <AnimatePresence mode="wait" initial={false}>
+        {isMinimized ? (
+          /* Minimised: a glass pill that re-opens the card */
+          <motion.button
+            key="pill"
+            initial={{ opacity: 0, scale: 0.8, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 10 }}
+            transition={{ duration: 0.3, ease: EASE }}
+            onClick={() => setIsMinimized(false)}
+            className="group relative flex items-center gap-2 rounded-full border bg-[#090f09]/80 px-3.5 py-2 text-white shadow-[0_12px_30px_-10px_rgba(0,0,0,0.7)] backdrop-blur-xl transition-transform hover:scale-105"
+            style={{ borderColor: hexToRgba(theme.accent, 0.55) }}
+            aria-label="Expand New Launch Spotlight"
           >
-            {item.serviceName}
-          </span>
-          <ChevronUp size={14} className="text-white/70 group-hover:text-white transition-colors" />
-        </button>
-      ) : (
-        /* Expanded Overlay Card (All content directly over image) */
-        <div className="relative w-[210px] sm:w-[240px] md:w-[260px]">
-          {/* Ambient Themed Border Glow */}
-          <div
-            ref={glowRef}
-            className="absolute -inset-[1.5px] pointer-events-none opacity-40 rounded-lg transition-all duration-700"
-            style={{
-              background: `linear-gradient(135deg, ${theme.accentSoft}, rgba(255,255,255,0.2), ${theme.accentMid})`,
-            }}
-          />
-
-          {showBadge && (
-          <>
-          {/* Corner ping badge */}
-          <span className="absolute -top-1.5 -right-1.5 z-30 flex h-3.5 w-3.5">
-            <span
-              className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-              style={{ backgroundColor: theme.accent }}
-            />
-            <span
-              className="relative inline-flex rounded-full h-3.5 w-3.5 border-2 border-[#070b07]"
-              style={{ backgroundColor: theme.accent }}
-            />
-          </span>
-
-          {/* Top-left Protruding "NEW LAUNCH" Tag (Floating Above the Image) */}
-          <div className="absolute -top-2.5 left-3 z-40">
-            {/* Soft pulsing ring behind the tag */}
-            <span
-              className="absolute -inset-0.5 rounded-full animate-ping opacity-30 pointer-events-none"
-              style={{ backgroundColor: theme.accent }}
-            />
-            <div
-              ref={tagRef}
-              className="relative overflow-hidden text-black text-[9px] sm:text-[10px] font-semibold px-2.5 py-0.5 uppercase tracking-wider flex items-center gap-1.5 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.4)] border border-white/30"
-              style={{ backgroundColor: theme.accent, transformOrigin: "left center" }}
+            <span className="absolute -right-1 -top-1 flex h-3 w-3">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" style={{ backgroundColor: theme.accent }} />
+              <span className="relative inline-flex h-3 w-3 rounded-full" style={{ backgroundColor: theme.accent }} />
+            </span>
+            <Sparkles size={13} style={{ color: theme.accent }} />
+            <span className="text-[11px] font-extrabold uppercase tracking-widest" style={{ color: theme.accent }}>
+              {item.serviceName || item.badgeText || "New Launch"}
+            </span>
+            <ChevronUp size={14} className="text-white/70 transition-colors group-hover:text-white" />
+          </motion.button>
+        ) : (
+          <motion.div
+            key="card"
+            initial={{ opacity: 0, scale: 0.92, y: 16 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 16 }}
+            transition={{ duration: 0.35, ease: EASE }}
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            className={`relative w-[215px] sm:w-[275px] ${isPaused ? "spot-paused" : ""}`}
+          >
+            {/* Attention nudge — a small hop every few seconds (stops while hovered) */}
+            <motion.div
+              animate={reduceMotion || isPaused ? { y: 0 } : { y: [0, -8, 0, -3, 0] }}
+              transition={reduceMotion || isPaused ? { duration: 0.2 } : { duration: 0.9, repeat: Infinity, repeatDelay: 5, ease: "easeOut" }}
+              className="relative"
             >
-              <div ref={sparkleRef} className="flex items-center justify-center">
-                <Sparkles size={11} className="text-black fill-black" />
-              </div>
-              <span className="relative z-10">{item.badgeText}</span>
-              <span
-                ref={ribbonShineRef}
-                className="absolute inset-0 z-0"
-                style={{
-                  background:
-                    "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.95) 50%, transparent 70%)",
-                }}
-              />
-            </div>
-          </div>
-          </>
-          )}
-
-          {/* Main Card Shell — 100% Integrated Overlay Card */}
-          <div
-            ref={cardRef}
-            onClick={handleCardClick}
-            className={`relative bg-[#070b07] overflow-hidden rounded-lg group ${item.link ? "cursor-pointer" : "cursor-default"}`}
-            style={{ boxShadow: CARD_SHADOW }}
-          >
-            {/* Image Container with compact height */}
-            <div className="relative h-[110px] sm:h-[120px] md:h-[128px] w-full overflow-hidden bg-black">
-              <div ref={imgTrackRef} className="h-full w-full">
-                <img
-                  src={item.image}
-                  alt={item.altText}
-                  className="h-full w-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
+            {/* Radar rings in the slide's accent colour, rippling out of the frame */}
+            {!reduceMotion &&
+              [0, 1].map((ring) => (
+                <motion.span
+                  key={ring}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 rounded-2xl border-2"
+                  style={{ borderColor: theme.accent }}
+                  initial={{ opacity: 0, scale: 1 }}
+                  animate={{ opacity: [0.7, 0], scale: [1, 1.14] }}
+                  transition={{ duration: 2.2, repeat: Infinity, delay: 1.6 + ring * 1.1, ease: "easeOut" }}
                 />
-              </div>
+              ))}
 
-              {/* Multi-layered cinematic gradient overlays for high text contrast */}
-              {typeof item.overlayOpacity === "number" ? (
-                <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: overlayGradient(item.overlayOpacity) }} />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/30 pointer-events-none" />
-              )}
+            {/* "Just launched" callout floating above the card */}
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 1, y: [0, -4, 0] }}
+              transition={{
+                opacity: { delay: 1.8, duration: 0.4 },
+                y: reduceMotion ? { delay: 1.8, duration: 0.4 } : { delay: 1.8, duration: 1.6, repeat: Infinity, ease: "easeInOut" },
+              }}
+              className="pointer-events-none absolute -top-10 right-1 z-40"
+            >
+              <span
+                className="spot-shake flex items-center gap-1.5 whitespace-nowrap rounded-full border border-white/50 px-2.5 py-1 text-[10px] font-bold text-black shadow-[0_8px_20px_-6px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.6)]"
+                style={{ backgroundImage: `linear-gradient(135deg, ${theme.accent}, ${hexToRgba(theme.accent, 0.8)})` }}
+              >
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-black/60" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-black" />
+                </span>
+                {item.link ? "Just launched · Tap to explore" : "Just launched"}
+              </span>
+              {/* little pointer down to the card */}
+              <span
+                className="absolute -bottom-1 right-5 h-2 w-2 rotate-45 border-b border-r border-white/50"
+                style={{ backgroundColor: hexToRgba(theme.accent, 0.85) }}
+              />
+            </motion.div>
+            {/* Soft accent glow under the card */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -inset-3 -z-10 rounded-3xl opacity-60 blur-2xl transition-colors duration-700"
+              style={{ background: `radial-gradient(ellipse at 50% 70%, ${theme.accentMid}, transparent 70%)` }}
+            />
 
-              {/* Top Bar (Floating over image) - Minimize & Close Buttons */}
-              <div className="absolute top-2 right-2 z-20 flex items-center gap-1">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsMinimized(true);
-                  }}
-                  className="p-1 bg-black/60 hover:bg-black/90 backdrop-blur-md rounded-full text-white/75 hover:text-white transition-colors cursor-pointer border border-white/15"
-                  title="Minimize"
+            {showBadge && (
+              <>
+                {/* Corner ping */}
+                <span className="absolute -right-1.5 -top-1.5 z-30 flex h-3.5 w-3.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" style={{ backgroundColor: theme.accent }} />
+                  <span className="relative inline-flex h-3.5 w-3.5 rounded-full border-2 border-[#070b07]" style={{ backgroundColor: theme.accent }} />
+                </span>
+
+                {/* "NEW LAUNCH" glass tag floating over the top edge */}
+                <motion.div
+                  key={`${item.id}-badge`}
+                  initial={reduceMotion ? false : { opacity: 0, y: -6, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.45, delay: 0.15, ease: EASE }}
+                  className="absolute -top-3 left-3 z-40"
                 >
-                  <ChevronDown size={12} />
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsClosed(true);
-                  }}
-                  className="p-1 bg-black/60 hover:bg-black/90 backdrop-blur-md rounded-full text-white/75 hover:text-white transition-colors cursor-pointer border border-white/15"
-                  title="Close"
-                >
-                  <X size={12} />
-                </button>
-              </div>
+                  <div
+                    className="spot-shake spot-shake-late relative flex items-center gap-1.5 overflow-hidden rounded-full border border-white/40 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-black shadow-[0_6px_16px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.6)] sm:text-[10px]"
+                    style={{ backgroundImage: `linear-gradient(135deg, ${hexToRgba(theme.accent, 1)}, ${hexToRgba(theme.accent, 0.75)})` }}
+                  >
+                    <Sparkles size={11} className="fill-black" />
+                    <span className="relative z-10">{item.badgeText}</span>
+                    <span aria-hidden className="spot-badge-shine absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent via-white/80 to-transparent" />
+                  </div>
+                </motion.div>
+              </>
+            )}
 
-              {/* Bottom Info Overlay (Directly on the Image) */}
-              <div className="absolute bottom-2 left-2.5 right-2.5 z-20 flex items-end justify-between">
-                {/* Service Name & Category */}
-                <div className="flex flex-col gap-0.5">
-                  {item.category && (
-                    <span
-                      ref={categoryRef}
-                      className="text-[8px] sm:text-[9px] font-semibold uppercase tracking-wider text-white/80"
+            {/* Glass frame — frosted border around the picture, like a mounted photo */}
+            <div
+              className="relative rounded-2xl border border-white/45 bg-gradient-to-br from-white/30 via-white/10 to-white/20 p-1.5 backdrop-blur-xl backdrop-saturate-150"
+              style={{
+                boxShadow: `${CARD_SHADOW}, inset 0 1px 0 rgba(255,255,255,0.6), 0 18px 40px -16px rgba(0,0,0,0.75)`,
+              }}
+            >
+              <div
+                onClick={handleCardClick}
+                className={`group relative overflow-hidden rounded-xl bg-[#070b07] ring-1 ring-black/20 ${item.link ? "cursor-pointer" : "cursor-default"}`}
+              >
+                <div className="relative h-[100px] w-full overflow-hidden bg-black sm:h-[120px]">
+                  {/* Image wipe: new slide slides in from the right and comes into focus */}
+                  <AnimatePresence initial={false}>
+                    <motion.div
+                      key={item.id}
+                      initial={reduceMotion ? { opacity: 0 } : { clipPath: "inset(0 0 0 100%)", filter: "blur(6px) brightness(1.35)", scale: 1.12 }}
+                      animate={reduceMotion ? { opacity: 1, zIndex: 1 } : { clipPath: "inset(0 0 0 0%)", filter: "blur(0px) brightness(1)", scale: 1, zIndex: 1 }}
+                      exit={reduceMotion ? { opacity: 0, zIndex: 0 } : { x: "-12%", filter: "blur(4px) brightness(0.7)", opacity: 0.4, zIndex: 0 }}
+                      transition={{ duration: 0.9, ease: [0.65, 0, 0.35, 1] }}
+                      className="absolute inset-0"
                     >
-                      {item.category}
-                    </span>
-                  )}
-                  {item.serviceName && (
-                    <h3
-                      ref={captionRef}
-                      className="text-white text-[13px] sm:text-[14px] font-extrabold tracking-tight leading-none drop-shadow-md flex items-center gap-1 group-hover:text-[var(--hover-color)] transition-colors"
-                      style={{ "--hover-color": theme.accent } as React.CSSProperties}
-                    >
-                      {item.serviceName}
-                      {item.link && (
-                        <span className="text-xs transition-transform duration-300 group-hover:translate-x-1" style={{ color: theme.accent }}>
-                          &rarr;
-                        </span>
+                      {/* slow camera push-in while the slide is on screen */}
+                      <motion.img
+                        src={item.image}
+                        alt={item.altText}
+                        initial={{ scale: 1 }}
+                        animate={reduceMotion ? undefined : { scale: 1.1 }}
+                        transition={{ duration: SPOTLIGHT_INTERVAL / 1000 + 1, ease: "linear" }}
+                        className="h-full w-full object-cover"
+                      />
+                      {typeof item.overlayOpacity === "number" ? (
+                        <div className="pointer-events-none absolute inset-0" style={{ backgroundImage: overlayGradient(item.overlayOpacity) }} />
+                      ) : (
+                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/30" />
                       )}
-                    </h3>
-                  )}
-                </div>
+                    </motion.div>
+                  </AnimatePresence>
 
-                {/* Progress Indicators (Overlaid at bottom right) */}
-                <div className="flex gap-1 items-center mb-0.5">
-                  {spotlightItems.map((s, i) => (
+                  {/* Light sweep on every change */}
+                  {!reduceMotion && (
+                    <motion.div
+                      key={`${item.id}-sweep`}
+                      aria-hidden
+                      initial={{ x: "-120%", opacity: 0 }}
+                      animate={{ x: "220%", opacity: [0, 1, 0] }}
+                      transition={{ duration: 1.2, delay: 0.3, ease: EASE }}
+                      className="pointer-events-none absolute inset-y-0 left-0 z-10 w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent"
+                    />
+                  )}
+
+                  {/* Glass controls */}
+                  <div className="absolute right-2 top-2 z-20 flex items-center gap-1">
                     <button
-                      key={s.id}
                       onClick={(e) => {
                         e.stopPropagation();
-                        setIdx(i);
+                        setIsMinimized(true);
+                        setIsPaused(false);
                       }}
-                      className={`h-[3px] rounded-full transition-all duration-300 cursor-pointer ${
-                        i === idx ? "w-4" : "w-1.5 bg-white/30 hover:bg-white/60"
-                      }`}
-                      style={i === idx ? { backgroundColor: theme.accent } : undefined}
-                      aria-label={`Slide ${i + 1}`}
-                    />
-                  ))}
+                      className="rounded-full border border-white/20 bg-black/40 p-1 text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] backdrop-blur-md transition-colors hover:bg-black/70 hover:text-white"
+                      title="Minimize"
+                      aria-label="Minimize"
+                    >
+                      <ChevronDown size={12} />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsClosed(true);
+                      }}
+                      className="rounded-full border border-white/20 bg-black/40 p-1 text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] backdrop-blur-md transition-colors hover:bg-black/70 hover:text-white"
+                      title="Close"
+                      aria-label="Close"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+
+                  {/* Title block over the image */}
+                  <div className="absolute inset-x-2.5 bottom-3 z-20">
+                    {item.category && (
+                      <motion.span
+                        key={`${item.id}-category`}
+                        initial={reduceMotion ? false : { opacity: 0, letterSpacing: "0.35em" }}
+                        animate={{ opacity: 0.85, letterSpacing: "0.12em" }}
+                        transition={{ duration: 0.8, delay: 0.2, ease: EASE }}
+                        className="mb-1 block text-[8px] font-semibold uppercase text-white sm:text-[9px]"
+                      >
+                        {item.category}
+                      </motion.span>
+                    )}
+                    {item.serviceName && (
+                      <motion.h3
+                        key={`${item.id}-title`}
+                        variants={titleVariants}
+                        initial={reduceMotion ? false : "hidden"}
+                        animate="visible"
+                        className="flex flex-wrap items-center text-[14px] font-extrabold leading-none tracking-tight text-white drop-shadow-md sm:text-[16px]"
+                      >
+                        {item.serviceName.split(" ").map((word, i) => (
+                          <span key={i} className="mr-[0.25em] inline-block overflow-hidden pb-0.5">
+                            <motion.span variants={wordVariants} className="inline-block">
+                              {word}
+                            </motion.span>
+                          </span>
+                        ))}
+                        {item.link && (
+                          <span className="text-xs transition-transform duration-300 group-hover:translate-x-1" style={{ color: theme.accent }}>
+                            &rarr;
+                          </span>
+                        )}
+                      </motion.h3>
+                    )}
+                  </div>
+
+                  {/* Story-style progress — the active bar fills, then the next slide comes */}
+                  {hasMany && (
+                    <div className="absolute inset-x-2.5 bottom-1.5 z-20 flex gap-1">
+                      {spotlightItems.map((s, i) => (
+                        <button
+                          key={s.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIdx(i);
+                          }}
+                          className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/25"
+                          aria-label={`Slide ${i + 1}`}
+                        >
+                          {i < idx && <span className="block h-full w-full" style={{ backgroundColor: theme.accent }} />}
+                          {i === idx && (
+                            <span
+                              key={`${s.id}-${idx}`}
+                              className="spot-progress-fill block h-full w-full"
+                              style={{ backgroundColor: theme.accent }}
+                              onAnimationEnd={goNext}
+                            />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-    </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 

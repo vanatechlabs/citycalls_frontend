@@ -7,7 +7,7 @@ import {
   Home,
   LayoutGrid,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 const a1 = "/assets/icons/a1.png";
 const a2 = "/assets/icons/a2.png";
@@ -68,28 +68,31 @@ function getServiceIconImage(slug: string, name: string, index: number): string 
   return iconList[index % iconList.length];
 }
 
-const panelVariants = {
+const panelVariants: Variants = {
   hidden: { opacity: 0, clipPath: "inset(0 0 100% 0)" },
   visible: {
     opacity: 1,
     clipPath: "inset(0 0 0% 0)",
-    transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] as any },
+    transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
+    // A clip-path left on the wrapper would stop the glass panel's
+    // backdrop blur from seeing the page behind it.
+    transitionEnd: { clipPath: "none" },
   },
 };
 
-const listVariants = {
+const listVariants: Variants = {
   hidden: {},
   visible: {
     transition: { staggerChildren: 0.04, delayChildren: 0.08 },
   },
 };
 
-const rowVariants = {
+const rowVariants: Variants = {
   hidden: { opacity: 0, x: -8 },
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] as any },
+    transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
@@ -97,6 +100,9 @@ export function MegaMenu({ category, onNavigate }: MegaMenuProps) {
   const categoryHeaderTitle = `${category.label.toUpperCase()}${
     category.label.toUpperCase().endsWith("SERVICES") ? "" : " SERVICES"
   }`;
+  // Home Cleaning's icons have more empty space around them, so they're drawn
+  // larger inside the same box (the row and text don't move).
+  const isHomeCleaning = category.id === "home-cleaning" || /^home cleaning$/i.test(category.label.trim());
 
   return (
     <motion.div
@@ -106,9 +112,13 @@ export function MegaMenu({ category, onNavigate }: MegaMenuProps) {
       exit={{ opacity: 0, y: 4, transition: { duration: 0.12 } }}
       className="absolute left-0 top-full pt-2.5 z-50"
     >
-      <div className="w-[315px] rounded-xl border border-white/10 bg-[#0c121e] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] overflow-hidden">
+      {/* Frosted glass panel — dark tint stays readable even where the blur
+          can't reach (e.g. while the header itself is blurred on scroll). */}
+      <div className="relative w-[320px] overflow-hidden rounded-xl border border-white/15 bg-gradient-to-b from-[#141c2b]/80 to-[#0a0f19]/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_30px_60px_-15px_rgba(0,0,0,0.75)] backdrop-blur-2xl backdrop-saturate-150">
+        {/* glass sheen */}
+        <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/[0.08] to-transparent" />
         {/* Header: Home Icon + CityCalls Logo + Divider + Category Name */}
-        <div className="px-4 py-3.5 flex items-center gap-2 border-b border-white/[0.08] bg-white/[0.02]">
+        <div className="relative px-4 py-3.5 flex items-center gap-2 border-b border-white/10 bg-white/[0.04]">
           <Home className="w-4 h-4 text-primary shrink-0" strokeWidth={2.2} />
           <span className="text-[13px] font-semibold tracking-tight flex items-center">
             <span className="text-primary">City</span>
@@ -121,7 +131,7 @@ export function MegaMenu({ category, onNavigate }: MegaMenuProps) {
         </div>
 
         {/* Services List */}
-        <motion.div variants={listVariants} initial="hidden" animate="visible" className="divide-y divide-white/[0.06]">
+        <motion.div variants={listVariants} initial="hidden" animate="visible" className="relative space-y-0.5 p-1.5">
           {category.services.map((s, index) => {
             const iconSrc = s.image || getServiceIconImage(s.slug, s.name, index);
             return (
@@ -129,12 +139,14 @@ export function MegaMenu({ category, onNavigate }: MegaMenuProps) {
                 <Link
                   href={s.path || `/services/${s.slug}`}
                   onClick={onNavigate}
-                  className="group flex items-center gap-3.5 px-4 py-2.5 hover:bg-white/[0.04] transition-colors duration-150"
+                  className="group flex items-center gap-3 rounded-xl px-2.5 py-2 transition-all duration-200 hover:bg-white/[0.08] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
                 >
                   <img
                     src={iconSrc}
                     alt={s.name}
-                    className="w-8 h-8 object-contain shrink-0 group-hover:scale-110 transition-transform duration-200"
+                    className={`h-9 w-9 shrink-0 object-contain transition-transform duration-200 ${
+                      isHomeCleaning ? "scale-[1.25] group-hover:scale-[1.35]" : "group-hover:scale-110"
+                    }`}
                   />
                   <span className="text-[13px] font-semibold text-white tracking-normal group-hover:text-primary transition-colors duration-150 truncate">
                     {s.name}
@@ -150,11 +162,11 @@ export function MegaMenu({ category, onNavigate }: MegaMenuProps) {
         </motion.div>
 
         {/* Bottom Button: View All Services card */}
-        <div className="p-3 border-t border-white/[0.06]">
+        <div className="relative p-3 border-t border-white/10">
           <Link
             href="/services"
             onClick={onNavigate}
-            className="flex items-center justify-between px-4 py-2.5 rounded-lg bg-[#070b13] border border-white/[0.08] hover:border-primary/50 hover:bg-white/[0.03] transition-all duration-200 group/btn"
+            className="flex items-center justify-between px-4 py-2.5 rounded-xl border border-white/12 bg-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] hover:border-primary/50 hover:bg-white/[0.1] transition-all duration-200 group/btn"
           >
             <div className="flex items-center gap-2.5">
               <LayoutGrid className="w-4 h-4 text-primary shrink-0" />

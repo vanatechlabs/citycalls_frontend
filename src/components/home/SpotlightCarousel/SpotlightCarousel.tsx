@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Fan,
+  Flame,
   Sparkles,
   Zap,
   Droplets,
@@ -172,12 +173,49 @@ export function SpotlightCarousel() {
       <div className="container mx-auto px-6 relative z-10 max-w-7xl">
         {/* HEADER */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-5 py-2 bg-white border-2 border-primary/20 rounded-full mb-4 shadow">
-            <Tag className="w-4 h-4 text-primary" />
-            <span className="text-xs font-bold tracking-widest text-primary">
-              LIMITED TIME OFFERS
-            </span>
-            <Sparkles className="w-4 h-4 text-primary" />
+          {/* Ticket-style chip: light coupon with a rotating green/gold rim,
+              a flame and a perforated divider */}
+          <div className="mb-4 inline-block rounded-full p-[1.5px] offer-ticket-rim shadow-[0_12px_30px_-12px_rgba(62,137,20,0.6)]">
+            <div className="relative flex items-center overflow-hidden rounded-full bg-gradient-to-r from-white via-[#f6faee] to-white py-1.5 pl-1.5 pr-4">
+              <span aria-hidden className="offer-ticket-shine pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+
+              {/* flame */}
+              <span className="offer-ticket-flame relative grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-amber-300 to-orange-500 shadow-[0_0_14px_rgba(251,146,60,0.6)]">
+                <Flame className="h-4 w-4 fill-white/30 text-white" />
+              </span>
+
+              {/* perforation */}
+              <span aria-hidden className="mx-2.5 h-5 border-l-2 border-dashed border-primary/30" />
+
+              <span className="offer-ticket-text relative whitespace-nowrap text-[11px] font-extrabold tracking-[0.22em] sm:text-xs">
+                LIMITED TIME OFFERS
+              </span>
+
+            </div>
+            <style>{`
+              @property --offer-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+              @keyframes offer-ticket-spin { to { --offer-angle: 360deg; } }
+              @keyframes offer-ticket-shine { 0%, 60% { transform: translateX(-150%) skewX(-20deg); } 100% { transform: translateX(500%) skewX(-20deg); } }
+              @keyframes offer-ticket-text { to { background-position: 200% 0; } }
+              @keyframes offer-ticket-flame { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.12) rotate(-6deg); } }
+              .offer-ticket-rim {
+                background: conic-gradient(from var(--offer-angle), #7cb342, #fcd34d, #e7f3d6 35%, #7cb342 55%, #fcd34d, #7cb342);
+                animation: offer-ticket-spin 4s linear infinite;
+              }
+              .offer-ticket-shine { animation: offer-ticket-shine 3.6s ease-in-out infinite; }
+              .offer-ticket-text {
+                background: linear-gradient(90deg, #3e8914, #5d9e1f, #b7791f, #5d9e1f, #3e8914);
+                background-size: 200% 100%;
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                animation: offer-ticket-text 4s linear infinite;
+              }
+              .offer-ticket-flame { animation: offer-ticket-flame 1.4s ease-in-out infinite; }
+              @media (prefers-reduced-motion: reduce) {
+                .offer-ticket-rim, .offer-ticket-shine, .offer-ticket-text, .offer-ticket-flame { animation: none; }
+              }
+            `}</style>
           </div>
 
           <h2 className="text-3xl md:text-4xl font-extrabold font-display">
