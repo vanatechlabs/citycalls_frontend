@@ -40,6 +40,14 @@ interface Slide {
   titleParts?: string[];
   description?: string;
   hideButtons?: boolean;
+  overlayOpacity?: number | null;
+}
+
+// The default overlay below is from-black/55 via-black/35 to-black/18; a
+// slide's admin setting scales it so its darkest (bottom) edge is `opacity` %.
+function overlayGradient(opacity: number) {
+  const alpha = (value: number) => ((opacity * value) / 55 / 100).toFixed(3);
+  return `linear-gradient(to top, rgba(0,0,0,${alpha(55)}), rgba(0,0,0,${alpha(35)}), rgba(0,0,0,${alpha(18)}))`;
 }
 
 const fallbackSlides: Slide[] = [
@@ -153,6 +161,7 @@ export function HeroCarousel() {
           subtitle: item.subtitle,
           titleParts: [item.titleLine1, item.titleLine2],
           description: item.description,
+          overlayOpacity: item.overlayOpacity,
         })));
         setCurrent(0);
       })
@@ -198,7 +207,11 @@ export function HeroCarousel() {
         />
       </div>
 
-      <div className={`absolute inset-0 z-10 transition-opacity duration-700 ${slide.hasText ? (slide.id === 1 ? "bg-transparent" : "bg-gradient-to-t from-black/55 via-black/35 to-black/18") : "bg-black/5"}`} />
+      {slide.hasText && typeof slide.overlayOpacity === "number" ? (
+        <div className="absolute inset-0 z-10 transition-opacity duration-700" style={{ backgroundImage: overlayGradient(slide.overlayOpacity) }} />
+      ) : (
+        <div className={`absolute inset-0 z-10 transition-opacity duration-700 ${slide.hasText ? (slide.id === 1 ? "bg-transparent" : "bg-gradient-to-t from-black/55 via-black/35 to-black/18") : "bg-black/5"}`} />
+      )}
 
       {/* Shutter reveal — alternating blinds open on every slide change */}
       <div className="absolute inset-0 z-30 flex pointer-events-none">

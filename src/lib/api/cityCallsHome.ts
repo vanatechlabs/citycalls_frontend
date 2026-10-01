@@ -10,6 +10,8 @@ export interface PublicHeroSlide {
   titleLine2: string;
   description: string;
   sortOrder: number;
+  // Overlay darkness 0–90 % set in admin; null/undefined = default gradient.
+  overlayOpacity?: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -35,6 +37,8 @@ export interface PublicLaunchSpotlightSlide {
   link: string;
   accentColor: string;
   sortOrder: number;
+  // Overlay darkness 0–100 % set in admin; null/undefined = default.
+  overlayOpacity?: number | null;
 }
 
 export interface PublicOfferStrip {

@@ -32,7 +32,19 @@ interface SpotlightItem {
   category: string;    // Category badge over image
   link: string;        // Service page route / url
   theme: SpotlightTheme;
+  // Admin overlay darkness 0–100 %; null/undefined = default gradient.
+  overlayOpacity?: number | null;
 }
+
+// Default card overlay is from-black/95 via-black/40 to-black/30; an admin
+// setting scales it so its darkest (bottom) edge is `opacity` %.
+function overlayGradient(opacity: number) {
+  const alpha = (value: number) => ((opacity * value) / 95 / 100).toFixed(3);
+  return `linear-gradient(to top, rgba(0,0,0,${alpha(95)}), rgba(0,0,0,${alpha(40)}), rgba(0,0,0,${alpha(30)}))`;
+}
+
+// Thin outline around the card.
+const CARD_SHADOW = "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset";
 
 const fallbackSpotlightItems: SpotlightItem[] = [
   {
@@ -78,7 +90,9 @@ function hexToRgba(hex: string, alpha: number): string {
 }
 
 export function LaunchSpotlight() {
-  const [spotlightItems, setSpotlightItems] = useState<SpotlightItem[]>(fallbackSpotlightItems);
+  // Empty until the API answers, so a slide switched off in admin never
+  // flashes up; the bundled cards are only used if the API can't be reached.
+  const [spotlightItems, setSpotlightItems] = useState<SpotlightItem[]>([]);
   const [idx, setIdx] = useState(0);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isClosed, setIsClosed] = useState(false);
@@ -95,6 +109,8 @@ export function LaunchSpotlight() {
 
   const item = spotlightItems[idx] ?? spotlightItems[0];
   const theme = item?.theme ?? fallbackSpotlightItems[0].theme;
+  // Parts left empty in admin are not drawn (no icon-only badge or lone arrow).
+  const showBadge = !!item?.badgeText;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -109,6 +125,7 @@ export function LaunchSpotlight() {
           serviceName: slide.heading,
           category: slide.subheading,
           link: slide.link,
+          overlayOpacity: slide.overlayOpacity,
           theme: {
             accent: slide.accentColor,
             accentSoft: hexToRgba(slide.accentColor, 0.82),
@@ -119,21 +136,23 @@ export function LaunchSpotlight() {
       })
       .catch((error: unknown) => {
         if (error instanceof DOMException && error.name === "AbortError") return;
-        // Keep the bundled cards visible when the CMS API is unavailable.
+        // Show the bundled cards when the CMS API is unavailable.
+        setSpotlightItems(fallbackSpotlightItems);
       });
 
     return () => controller.abort();
   }, []);
 
-  // Entrance animation: slides up from bottom-left
+  // Entrance animation: slides up from bottom-left once the first card is in.
+  const hasItems = spotlightItems.length > 0;
   useEffect(() => {
-    if (!wrapRef.current) return;
+    if (!hasItems || !wrapRef.current) return;
     gsap.fromTo(
       wrapRef.current,
       { y: 60, opacity: 0 },
       { y: 0, opacity: 1, duration: 0.9, ease: "power3.out", delay: 1.2 }
     );
-  }, []);
+  }, [hasItems]);
 
   // Ambient pulsating glow — recolors per active item's theme
   useEffect(() => {
@@ -158,7 +177,7 @@ export function LaunchSpotlight() {
       { xPercent: 180, duration: 1.1, ease: "power2.inOut" }
     );
     return () => { tl.kill(); };
-  }, []);
+  }, [showBadge, isMinimized]);
 
   // "NEW LAUNCH" tag wiggle animation
   useEffect(() => {
@@ -169,7 +188,7 @@ export function LaunchSpotlight() {
       .to(tagRef.current, { rotate: -2, duration: 0.1, ease: "power1.inOut" })
       .to(tagRef.current, { rotate: 0, scale: 1, duration: 0.15, ease: "back.out(3)" });
     return () => { tl.kill(); };
-  }, []);
+  }, [showBadge, isMinimized]);
 
   // Sparkle icon spin + pulse
   useEffect(() => {
@@ -188,7 +207,7 @@ export function LaunchSpotlight() {
       ease: "sine.inOut",
     });
     return () => { spin.kill(); pulse.kill(); };
-  }, []);
+  }, [showBadge, isMinimized]);
 
   // Auto-cycle items
   useEffect(() => {
@@ -227,6 +246,8 @@ export function LaunchSpotlight() {
 
   // Handle card click
   const handleCardClick = () => {
+    // A slide saved without a link isn't clickable.
+    if (!item.link) return;
     if (/^https?:\/\//i.test(item.link)) {
       window.open(item.link, "_blank", "noopener,noreferrer");
     } else {
@@ -283,6 +304,8 @@ export function LaunchSpotlight() {
             }}
           />
 
+          {showBadge && (
+          <>
           {/* Corner ping badge */}
           <span className="absolute -top-1.5 -right-1.5 z-30 flex h-3.5 w-3.5">
             <span
@@ -321,12 +344,15 @@ export function LaunchSpotlight() {
               />
             </div>
           </div>
+          </>
+          )}
 
           {/* Main Card Shell — 100% Integrated Overlay Card */}
           <div
             ref={cardRef}
             onClick={handleCardClick}
-            className="relative bg-[#070b07] border border-white/20 shadow-[0_15px_35px_rgba(0,0,0,0.9)] overflow-hidden rounded-lg cursor-pointer group"
+            className={`relative bg-[#070b07] overflow-hidden rounded-lg group ${item.link ? "cursor-pointer" : "cursor-default"}`}
+            style={{ boxShadow: CARD_SHADOW }}
           >
             {/* Image Container with compact height */}
             <div className="relative h-[110px] sm:h-[120px] md:h-[128px] w-full overflow-hidden bg-black">
@@ -339,7 +365,11 @@ export function LaunchSpotlight() {
               </div>
 
               {/* Multi-layered cinematic gradient overlays for high text contrast */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/30 pointer-events-none" />
+              {typeof item.overlayOpacity === "number" ? (
+                <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: overlayGradient(item.overlayOpacity) }} />
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/30 pointer-events-none" />
+              )}
 
               {/* Top Bar (Floating over image) - Minimize & Close Buttons */}
               <div className="absolute top-2 right-2 z-20 flex items-center gap-1">
@@ -369,22 +399,28 @@ export function LaunchSpotlight() {
               <div className="absolute bottom-2 left-2.5 right-2.5 z-20 flex items-end justify-between">
                 {/* Service Name & Category */}
                 <div className="flex flex-col gap-0.5">
-                  <span
-                    ref={categoryRef}
-                    className="text-[8px] sm:text-[9px] font-semibold uppercase tracking-wider text-white/80"
-                  >
-                    {item.category}
-                  </span>
-                  <h3
-                    ref={captionRef}
-                    className="text-white text-[13px] sm:text-[14px] font-extrabold tracking-tight leading-none drop-shadow-md flex items-center gap-1 group-hover:text-[var(--hover-color)] transition-colors"
-                    style={{ "--hover-color": theme.accent } as React.CSSProperties}
-                  >
-                    {item.serviceName}
-                    <span className="text-xs transition-transform duration-300 group-hover:translate-x-1" style={{ color: theme.accent }}>
-                      &rarr;
+                  {item.category && (
+                    <span
+                      ref={categoryRef}
+                      className="text-[8px] sm:text-[9px] font-semibold uppercase tracking-wider text-white/80"
+                    >
+                      {item.category}
                     </span>
-                  </h3>
+                  )}
+                  {item.serviceName && (
+                    <h3
+                      ref={captionRef}
+                      className="text-white text-[13px] sm:text-[14px] font-extrabold tracking-tight leading-none drop-shadow-md flex items-center gap-1 group-hover:text-[var(--hover-color)] transition-colors"
+                      style={{ "--hover-color": theme.accent } as React.CSSProperties}
+                    >
+                      {item.serviceName}
+                      {item.link && (
+                        <span className="text-xs transition-transform duration-300 group-hover:translate-x-1" style={{ color: theme.accent }}>
+                          &rarr;
+                        </span>
+                      )}
+                    </h3>
+                  )}
                 </div>
 
                 {/* Progress Indicators (Overlaid at bottom right) */}

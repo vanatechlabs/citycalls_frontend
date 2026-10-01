@@ -26,6 +26,18 @@ export const DEFAULT_SOCIAL_LINKS: PublicSocialLinks = {
   callNumber: '+917428808884',
 };
 
+// Numbers saved before the backend added the country code ("7428808884").
+function normaliseNumbers(links: PublicSocialLinks): PublicSocialLinks {
+  const digits = (value?: string) => value?.replace(/[^\d]/g, '') ?? '';
+  const whatsapp = digits(links.whatsappNumber);
+  const call = digits(links.callNumber);
+  return {
+    ...links,
+    whatsappNumber: whatsapp.length === 10 ? `91${whatsapp}` : whatsapp,
+    callNumber: call.length === 10 ? `+91${call}` : call.length === 12 && call.startsWith('91') ? `+${call}` : links.callNumber,
+  };
+}
+
 export async function fetchSocialLinks(): Promise<PublicSocialLinks> {
   try {
     const response = await fetch(`${API_BASE_URL}/public/websites/city-calls/social-links`, {
@@ -34,7 +46,7 @@ export async function fetchSocialLinks(): Promise<PublicSocialLinks> {
     });
     if (!response.ok) return DEFAULT_SOCIAL_LINKS;
     const payload = (await response.json()) as { data: PublicSocialLinks | null };
-    return payload.data ?? DEFAULT_SOCIAL_LINKS;
+    return payload.data ? normaliseNumbers(payload.data) : DEFAULT_SOCIAL_LINKS;
   } catch {
     return DEFAULT_SOCIAL_LINKS;
   }
