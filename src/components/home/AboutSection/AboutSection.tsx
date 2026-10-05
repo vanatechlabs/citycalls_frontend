@@ -2,58 +2,119 @@
 
 import Link from "next/link";
 import { ArrowRight, Target, Eye } from "lucide-react";
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-const about1 = "/assets/Images/about1.png";
-const about2 = "/assets/Images/about2.png";
-const about3 = "/assets/Images/about3.png";
+import { motion, useInView, type Variants } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { fetchCityCallsHomeAbout, resolveWebsiteImageUrl, type PublicHomeAbout } from "@/lib/api/cityCallsHome";
 
-const headingWords = ["Home", "Services", "Partner"];
+// Shown until (or if) Admin → Website Section → About can't be loaded.
+const fallbackAbout: PublicHomeAbout = {
+  eyebrow: "About CityCalls",
+  heading: "Your Trusted Home Services Partner in Ghaziabad",
+  highlight: "Home Services Partner",
+  description:
+    "We provide reliable and professional home services right at your doorstep. With a verified team of experts, " +
+    "transparent pricing, and a customer-first approach, we ensure every repair and service is a stress-free experience.",
+  points: [
+    "Background-verified and highly trained professionals",
+    "Transparent, upfront pricing with no hidden charges",
+    "Flexible bookings tailored to your schedule",
+    "Dedicated customer support for a hassle-free experience",
+  ],
+  missionTitle: "Our Mission",
+  missionText: "To deliver safe, punctual, and premium home services that consistently exceed customer expectations.",
+  visionTitle: "Our Vision",
+  visionText: "To be the leading and most trusted home service brand, setting new benchmarks in quality and reliability.",
+  buttonText: "Discover More",
+  buttonLink: "/about",
+  images: [
+    { image: "/assets/Images/about1.png", alt: "CityCalls Professional Cleaning" },
+    { image: "/assets/Images/about2.png", alt: "CityCalls Technician with Happy Family" },
+    { image: "/assets/Images/about3.png", alt: "CityCalls Team Collaboration" },
+  ],
+  status: "ACTIVE",
+};
 
-const containerVariants = {
+// "Your Trusted Home Services Partner in Ghaziabad" + "Home Services Partner"
+// → the text before, the highlighted words, and the text after.
+function splitHeading(heading: string, highlight: string) {
+  const index = highlight ? heading.indexOf(highlight) : -1;
+  if (index < 0) return { before: heading, words: [] as string[], after: "" };
+  return {
+    before: heading.slice(0, index).trim(),
+    words: highlight.split(/\s+/).filter(Boolean),
+    after: heading.slice(index + highlight.length).trim(),
+  };
+}
+
+const containerVariants: Variants = {
   hidden: {},
   visible: {
     transition: { staggerChildren: 0.12, delayChildren: 0.05 },
   },
 };
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 18 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as any },
+    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
-const wordVariants = {
+const wordVariants: Variants = {
   hidden: { y: "100%", opacity: 0 },
   visible: {
     y: "0%",
     opacity: 1,
-    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as any },
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
-const listContainerVariants = {
+const listContainerVariants: Variants = {
   hidden: {},
   visible: {
     transition: { staggerChildren: 0.09, delayChildren: 0.05 },
   },
 };
 
-const listItemVariants = {
+const listItemVariants: Variants = {
   hidden: { opacity: 0, x: -14 },
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.4, ease: "easeOut" as any },
+    transition: { duration: 0.4, ease: "easeOut" },
   },
 };
 
 export function AboutSection() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.25 });
+  const [content, setContent] = useState<PublicHomeAbout>(fallbackAbout);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchCityCallsHomeAbout(controller.signal)
+      .then((data) => {
+        if (data) setContent({ ...fallbackAbout, ...data });
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        console.warn("Using bundled About section because the CMS content could not be loaded.");
+      });
+    return () => controller.abort();
+  }, []);
+
+  const { before, words, after } = splitHeading(content.heading, content.highlight);
+  const images = [0, 1, 2].map((i) => content.images?.[i] ?? fallbackAbout.images[i]);
+  const imageSrc = (i: number) => (images[i]?.image ? resolveWebsiteImageUrl(images[i].image) : undefined);
+  const points = content.points.filter(Boolean);
+  const pillars = [
+    { title: content.missionTitle, text: content.missionText },
+    { title: content.visionTitle, text: content.visionText },
+  ];
+
+  if (content.status === "INACTIVE") return null;
 
   return (
     <section ref={sectionRef} className="pt-6 md:pt-10 pb-8 md:pb-12 bg-white overflow-hidden">
@@ -76,24 +137,27 @@ export function AboutSection() {
                 className="h-px w-8 bg-primary"
               />
               <span className="uppercase tracking-[0.3em] text-primary font-bold text-xs">
-                About CityCalls
+                {content.eyebrow}
               </span>
             </motion.div>
 
             {/* Heading — per-word reveal */}
             <h2 className="text-2xl md:text-3xl lg:text-[34px] font-extrabold text-slate-900 leading-tight mb-6 font-display">
-              <span className="inline-block overflow-hidden pb-1 align-bottom">
-                <motion.span variants={wordVariants} className="inline-block will-change-transform">
-                  Your Trusted&nbsp;
-                </motion.span>
-              </span>
+              {before && (
+                <span className="inline-block overflow-hidden pb-1 align-bottom">
+                  <motion.span variants={wordVariants} className="inline-block will-change-transform">
+                    {before}&nbsp;
+                  </motion.span>
+                </span>
+              )}
+              {words.length > 0 && (
               <span className="relative inline-block text-primary whitespace-nowrap align-bottom">
                 <span className="inline-block overflow-hidden pb-1">
                   <motion.span
                     variants={containerVariants}
                     className="inline-flex"
                   >
-                    {headingWords.map((word, i) => (
+                    {words.map((word, i) => (
                       <motion.span
                         key={i}
                         variants={wordVariants}
@@ -122,30 +186,26 @@ export function AboutSection() {
                   />
                 </motion.svg>
               </span>
-              <span className="inline-block overflow-hidden pb-1 align-bottom">
-                <motion.span variants={wordVariants} className="inline-block will-change-transform">
-                  &nbsp;in Ghaziabad
-                </motion.span>
-              </span>
+              )}
+              {after && (
+                <span className="inline-block overflow-hidden pb-1 align-bottom">
+                  <motion.span variants={wordVariants} className="inline-block will-change-transform">
+                    &nbsp;{after}
+                  </motion.span>
+                </span>
+              )}
             </h2>
 
             <motion.p
               variants={fadeUp}
               className="text-gray-800 text-sm mb-4 leading-relaxed max-w-lg"
             >
-              We provide reliable and professional home services right at your doorstep. With a
-              verified team of experts, transparent pricing, and a customer-first approach, we
-              ensure every repair and service is a stress-free experience.
+              {content.description}
             </motion.p>
 
             {/* Feature list — staggered */}
             <motion.ul variants={listContainerVariants} className="mb-5 space-y-1.5">
-              {[
-                "Background-verified and highly trained professionals",
-                "Transparent, upfront pricing with no hidden charges",
-                "Flexible bookings tailored to your schedule",
-                "Dedicated customer support for a hassle-free experience",
-              ].map((item, idx) => (
+              {points.map((item, idx) => (
                 <motion.li key={idx} variants={listItemVariants} className="flex items-center gap-2">
                   <motion.div
                     initial={{ scale: 0 }}
@@ -186,11 +246,8 @@ export function AboutSection() {
                   <Target className="w-3.5 h-3.5 text-primary" />
                 </motion.div>
                 <div>
-                  <h3 className="text-sm font-bold text-gray-900 mb-0.5">Our Mission</h3>
-                  <p className="text-[12px] text-gray-600 leading-relaxed">
-                    To deliver safe, punctual, and premium home services that consistently exceed
-                    customer expectations.
-                  </p>
+                  <h3 className="text-sm font-bold text-gray-900 mb-0.5">{pillars[0].title}</h3>
+                  <p className="text-[12px] text-gray-600 leading-relaxed">{pillars[0].text}</p>
                 </div>
               </motion.div>
 
@@ -210,15 +267,13 @@ export function AboutSection() {
                   <Eye className="w-3.5 h-3.5 text-[#4D4D4D]" />
                 </motion.div>
                 <div>
-                  <h3 className="text-sm font-bold text-gray-900 mb-0.5">Our Vision</h3>
-                  <p className="text-[12px] text-gray-600 leading-relaxed">
-                    To be the leading and most trusted home service brand, setting new benchmarks
-                    in quality and reliability.
-                  </p>
+                  <h3 className="text-sm font-bold text-gray-900 mb-0.5">{pillars[1].title}</h3>
+                  <p className="text-[12px] text-gray-600 leading-relaxed">{pillars[1].text}</p>
                 </div>
               </motion.div>
             </div>
 
+            {content.buttonText && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -226,13 +281,14 @@ export function AboutSection() {
               className="flex justify-start mt-4"
             >
               <Link
-                href="/about"
+                href={content.buttonLink || "/about"}
                 className="group inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-[13px] font-bold text-primary border-2 border-primary bg-transparent hover:bg-primary hover:text-white transition-all shadow-sm w-fit"
               >
-                Discover More
+                {content.buttonText}
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
+            )}
           </motion.div>
 
           {/* Images — clip-mask reveal grid */}
@@ -251,8 +307,8 @@ export function AboutSection() {
                   initial={{ scale: 1.15 }}
                   animate={isInView ? { scale: 1 } : {}}
                   transition={{ duration: 0.9, ease: "easeOut" }}
-                  src={about1}
-                  alt="CityCalls Professional Cleaning"
+                  src={imageSrc(0)}
+                  alt={images[0]?.alt || "CityCalls Professional Cleaning"}
                   className="w-full h-full object-cover"
                 />
               </motion.div>
@@ -267,8 +323,8 @@ export function AboutSection() {
                   initial={{ scale: 1.15 }}
                   animate={isInView ? { scale: 1 } : {}}
                   transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
-                  src={about2}
-                  alt="CityCalls Technician with Happy Family"
+                  src={imageSrc(1)}
+                  alt={images[1]?.alt || "CityCalls Technician with Happy Family"}
                   className="w-full h-full object-cover"
                 />
               </motion.div>
@@ -283,8 +339,8 @@ export function AboutSection() {
                   initial={{ scale: 1.15 }}
                   animate={isInView ? { scale: 1 } : {}}
                   transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-                  src={about3}
-                  alt="CityCalls Team Collaboration"
+                  src={imageSrc(2)}
+                  alt={images[2]?.alt || "CityCalls Team Collaboration"}
                   className="w-full h-full object-cover"
                 />
               </motion.div>

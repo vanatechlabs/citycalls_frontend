@@ -4,11 +4,58 @@ import { motion, useInView, AnimatePresence, type Variants } from "framer-motion
 import Link from "next/link";
 import { ArrowRight, PhoneCall, ChevronDown } from "lucide-react";
 import { allServices } from "@/data/services";
-import { useRef, useState, type CSSProperties } from "react";
+import {
+  fetchCityCallsOurServices,
+  resolveWebsiteImageUrl,
+  type PublicOurServicesSection,
+  type PublicServiceCard,
+} from "@/lib/api/cityCallsHome";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { BookingModal } from "@/components/booking/BookingModal";
 
-const headingWords = ["Everything", "your", "home", "needs", "—"];
-const highlightWords = ["one", "tap", "away."];
+// Shown until (or if) Admin → Website Section → Our Services can't be loaded.
+const fallbackSection: PublicOurServicesSection = {
+  eyebrow: "Our services",
+  heading: "Everything your home needs — one tap away.",
+  highlight: "one tap away.",
+  description: "Handpicked, background-verified professionals across appliance repair, cleaning, pest control, beauty and more.",
+  buttonText: "Explore All Services",
+  buttonLink: "/services",
+  status: "ACTIVE",
+};
+
+const FALLBACK_SLUGS = [
+  "refrigerator-service", "ac-service", "washing-machine-services", "television-repair-services",
+  "microwave-oven-services", "geyser-repair-services", "chimney-repair-services", "general-pest-control",
+  "termite-control", "sofa-shampooing", "kitchen-cleaning", "beauty-salon-services",
+];
+
+const fallbackCards: PublicServiceCard[] = FALLBACK_SLUGS.flatMap((slug, i) => {
+  const service = allServices.find((s) => s.slug === slug);
+  return service
+    ? [{
+        _id: `default-${i}`,
+        name: service.name,
+        path: `/services/${slug}`,
+        shortDescription: service.short ?? "",
+        image: service.image ?? "",
+        imageAlt: service.name,
+        priceText: service.price ?? "",
+        sortOrder: i,
+      }]
+    : [];
+});
+
+// "/services/ac-service" → "ac-service" (what the booking form is keyed by).
+const slugOf = (path: string) => path.split("/").filter(Boolean).pop() ?? "";
+
+// Heading words before the highlight, and the highlighted words.
+function headingParts(heading: string, highlight: string) {
+  const index = highlight ? heading.indexOf(highlight) : -1;
+  const words = (text: string) => text.split(/\s+/).filter(Boolean);
+  if (index < 0) return { plain: words(heading), highlighted: [] as string[] };
+  return { plain: words(heading.slice(0, index)), highlighted: words(highlight) };
+}
 
 const lineVariants = {
   hidden: {},
@@ -143,34 +190,39 @@ export function ServicesGrid() {
   const [modalOpen, setModalOpen] = useState(false);
   const [activeSlug, setActiveSlug] = useState("");
   const [visibleRows, setVisibleRows] = useState(1);
+  const [section, setSection] = useState<PublicOurServicesSection>(fallbackSection);
+  const [cards, setCards] = useState<PublicServiceCard[]>(fallbackCards);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchCityCallsOurServices(controller.signal)
+      .then((data) => {
+        if (data?.section) setSection({ ...fallbackSection, ...data.section });
+        if (Array.isArray(data?.services)) setCards(data.services);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        console.warn("Using bundled services because the CMS cards could not be loaded.");
+      });
+    return () => controller.abort();
+  }, []);
+
+  const { plain: headingWords, highlighted: highlightWords } = headingParts(section.heading, section.highlight);
 
   const openModal = (slug: string) => {
     setActiveSlug(slug);
     setModalOpen(true);
   };
 
-  const slugs = [
-    "refrigerator-service",
-    "ac-service",
-    "washing-machine-services",
-    "television-repair-services",
-    "microwave-oven-services",
-    "geyser-repair-services",
-    "chimney-repair-services",
-    "general-pest-control",
-    "termite-control",
-    "sofa-shampooing",
-    "kitchen-cleaning",
-    "beauty-salon-services",
-  ];
-
-  const totalRows = Math.ceil(slugs.length / CARDS_PER_ROW);
-  const visibleSlugs = slugs.slice(0, visibleRows * CARDS_PER_ROW);
+  const totalRows = Math.ceil(cards.length / CARDS_PER_ROW);
+  const visibleCards = cards.slice(0, visibleRows * CARDS_PER_ROW);
   const isFullyExpanded = visibleRows >= totalRows;
 
   const handleToggle = () => {
     setVisibleRows((prev) => (prev >= totalRows ? 1 : prev + 1));
   };
+
+  if (section.status === "INACTIVE" || cards.length === 0) return null;
 
   return (
     <section ref={sectionRef} id="services" className="pt-8 pb-8 bg-gray-50 overflow-hidden">
@@ -192,7 +244,7 @@ export function ServicesGrid() {
               className="h-px w-8 bg-primary-dark"
             />
             <span className="uppercase tracking-[0.3em] text-primary-dark font-bold text-[12px]">
-              Our services
+              {section.eyebrow}
             </span>
             <motion.div
               initial={{ scaleX: 0 }}
@@ -220,6 +272,7 @@ export function ServicesGrid() {
                 ))}
               </motion.span>
             </span>{" "}
+            {highlightWords.length > 0 && (
             <span className="text-primary relative inline-block">
               <span className="inline overflow-hidden">
                 <motion.span
@@ -256,6 +309,7 @@ export function ServicesGrid() {
                 />
               </motion.svg>
             </span>
+            )}
           </h2>
 
           {/* Paragraph + Show More/Less inline row */}
@@ -266,8 +320,7 @@ export function ServicesGrid() {
             className="mt-4 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
           >
             <p className="text-muted-foreground max-w-2xl">
-              Handpicked, background-verified professionals across appliance repair, cleaning, pest
-              control, beauty and more.
+              {section.description}
             </p>
 
             {totalRows > 1 && (
@@ -295,12 +348,20 @@ export function ServicesGrid() {
         */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <AnimatePresence mode="popLayout" initial={false}>
-            {visibleSlugs.map((slug, idx) => {
-              const service = allServices.find((s) => s.slug === slug);
-              if (!service) return null;
+            {visibleCards.map((card, idx) => {
+              const slug = slugOf(card.path);
+              const service = {
+                slug,
+                name: card.name,
+                image: card.image ? resolveWebsiteImageUrl(card.image) : undefined,
+                imageAlt: card.imageAlt || card.name,
+                price: card.priceText,
+                short: card.shortDescription,
+                href: card.path,
+              };
               return (
                 <motion.div
-                  key={service.slug}
+                  key={card._id}
                   custom={idx}
                   variants={cardVariants}
                   initial="hidden"
@@ -324,17 +385,19 @@ export function ServicesGrid() {
                   {/* Image — grows over the whole card on hover (covering the
                       white text area) and reveals the Book Service button. */}
                   <div className="svc-media absolute inset-x-0 top-0 z-20 overflow-hidden">
-                    <Link href={`/services/${service.slug}`} className="block h-full w-full" tabIndex={-1}>
+                    <Link href={service.href} className="block h-full w-full" tabIndex={-1}>
                       <img
                         src={service.image}
-                        alt={service.name}
+                        alt={service.imageAlt}
                         className="svc-img w-full h-full object-cover"
                       />
                     </Link>
                     <div className="svc-shade pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-                    <div className="absolute top-2.5 left-2.5 rounded-full bg-background/90 backdrop-blur px-2 py-0.5 text-[10px] font-bold text-ink shadow-sm tracking-wide">
-                      {service.price}
-                    </div>
+                    {service.price && (
+                      <div className="absolute top-2.5 left-2.5 rounded-full bg-background/90 backdrop-blur px-2 py-0.5 text-[10px] font-bold text-ink shadow-sm tracking-wide">
+                        {service.price}
+                      </div>
+                    )}
 
                     <div className="svc-actions absolute inset-x-0 bottom-0 p-4">
                       <h3
@@ -376,7 +439,7 @@ export function ServicesGrid() {
                       {(idx + 1).toString().padStart(2, "0")}
                     </div>
 
-                    <Link href={`/services/${service.slug}`} className="block">
+                    <Link href={service.href} className="block">
                       <h3 className="text-[15px] font-bold text-ink group-hover:text-primary mb-1.5 uppercase tracking-wider transition-colors duration-300">
                         {service.name}
                       </h3>
@@ -418,13 +481,15 @@ export function ServicesGrid() {
           transition={{ duration: 0.5, delay: 1.1 }}
           className="mt-6 text-center"
         >
+          {section.buttonText && (
           <Link
-            href="/services"
+            href={section.buttonLink || "/services"}
             className="inline-flex items-center justify-center gap-2.5 bg-primary-dark hover:bg-primary text-primary-foreground px-8 py-3 font-bold uppercase tracking-widest text-[11px] shadow-lg transition-all duration-300 group rounded-md"
           >
-            Explore All Services
+            {section.buttonText}
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
           </Link>
+          )}
           <p className="mt-3 text-muted-foreground text-[10px] font-semibold uppercase tracking-widest">
             Your trusted home service partner
           </p>

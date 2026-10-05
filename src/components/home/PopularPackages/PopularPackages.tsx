@@ -5,114 +5,90 @@ import Link from "next/link";
 import { ArrowRight, Clock, Star, ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useBooking } from "@/context/BookingContext";
-
-// Import images
-const a1 = "/assets/Images/a1.webp";
-const a2 = "/assets/Images/a2.webp";
-const a3 = "/assets/Images/a3.webp";
-const a4 = "/assets/Images/a4.webp";
-const a5 = "/assets/Images/a5.webp";
-const a6 = "/assets/Images/a6.webp";
-const ac1 = "/assets/Images/ac1.png";
-const ac2 = "/assets/Images/ac2.png";
+import {
+  fetchCityCallsPopularPackages,
+  resolveWebsiteImageUrl,
+  type PublicPackagesSection,
+  type PublicPopularPackage,
+} from "@/lib/api/cityCallsHome";
 
 const ITEMS_PER_VIEW = 4;
 const AUTO_SLIDE_DELAY = 4500;
 
-const servicePackages = [
-  {
-    id: 101,
-    name: "Split AC Servicing",
-    duration: "1 hr",
-    price: 499,
-    image: ac1,
-    featured: true,
-  },
-  {
-    id: 102,
-    name: "Window AC Servicing",
-    duration: "1 hr",
-    price: 449,
-    image: ac2,
-    featured: true,
-  },
-  {
-    id: 1,
-    name: "Complete Pest Control",
-    duration: "2-3 hrs",
-    price: 1299,
-    image: a1,
-    featured: true,
-  },
-  {
-    id: 2,
-    name: "Geyser Service & Repair",
-    duration: "45 mins",
-    price: 299,
-    image: a2,
-    featured: true,
-  },
-  {
-    id: 3,
-    name: "Chimney Deep Cleaning",
-    duration: "1.5 hrs",
-    price: 899,
-    image: a3,
-    featured: false,
-  },
-  {
-    id: 4,
-    name: "Premium Sofa Cleaning",
-    duration: "2 hrs",
-    price: 899,
-    image: a4,
-    featured: true,
-  },
-  {
-    id: 5,
-    name: "RO Water Purifier Service",
-    duration: "1 hr",
-    price: 399,
-    image: a5,
-    featured: false,
-  },
-  {
-    id: 6,
-    name: "Full Home Deep Cleaning",
-    duration: "5-6 hrs",
-    price: 3499,
-    image: a6,
-    featured: true,
-  }
-];
+// Shown until (or if) Admin → Website Section → Popular Packages can't be loaded.
+const fallbackSection: PublicPackagesSection = {
+  eyebrow: "Top Choices",
+  heading: "EXPLORE OUR POPULAR PACKAGES",
+  highlight: "POPULAR PACKAGES",
+  description:
+    "Discover the most frequently booked home service packages by our customers in Ghaziabad. Enjoy transparent pricing and guaranteed professional service.",
+  buttonText: "Explore All Services",
+  buttonLink: "/services",
+  status: "ACTIVE",
+};
+
+const fallbackPackages: PublicPopularPackage[] = [
+  { name: "Split AC Servicing", duration: "1 hr", price: 499, image: "/assets/Images/ac1.png", imageAlt: "Technician servicing a split AC", featured: true },
+  { name: "Window AC Servicing", duration: "1 hr", price: 449, image: "/assets/Images/ac2.png", imageAlt: "Technician servicing a window AC", featured: true },
+  { name: "Complete Pest Control", duration: "2-3 hrs", price: 1299, image: "/assets/Images/a1.webp", imageAlt: "Pest control treatment at home", featured: true },
+  { name: "Geyser Service & Repair", duration: "45 mins", price: 299, image: "/assets/Images/a2.webp", imageAlt: "Geyser service and repair", featured: true },
+  { name: "Chimney Deep Cleaning", duration: "1.5 hrs", price: 899, image: "/assets/Images/a3.webp", imageAlt: "Kitchen chimney deep cleaning", featured: false },
+  { name: "Premium Sofa Cleaning", duration: "2 hrs", price: 899, image: "/assets/Images/a4.webp", imageAlt: "Premium sofa cleaning at home", featured: true },
+  { name: "RO Water Purifier Service", duration: "1 hr", price: 399, image: "/assets/Images/a5.webp", imageAlt: "RO water purifier service", featured: false },
+  { name: "Full Home Deep Cleaning", duration: "5-6 hrs", price: 3499, image: "/assets/Images/a6.webp", imageAlt: "Full home deep cleaning service", featured: true },
+].map((pkg, i) => ({ ...pkg, _id: `default-${i}`, sortOrder: i }));
 
 export const PopularPackages = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [section, setSection] = useState<PublicPackagesSection>(fallbackSection);
+  const [servicePackages, setServicePackages] = useState<PublicPopularPackage[]>(fallbackPackages);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const total = servicePackages.length;
 
   useEffect(() => {
-    if (servicePackages.length <= ITEMS_PER_VIEW) return;
+    const controller = new AbortController();
+    fetchCityCallsPopularPackages(controller.signal)
+      .then((data) => {
+        if (data?.section) setSection({ ...fallbackSection, ...data.section });
+        if (Array.isArray(data?.packages)) {
+          setServicePackages(data.packages);
+          setCurrentIndex(0);
+        }
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        console.warn("Using bundled packages because the CMS packages could not be loaded.");
+      });
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    if (total <= ITEMS_PER_VIEW) return;
 
     timerRef.current = setInterval(() => {
-      nextSlide();
+      setCurrentIndex((prev) => (prev + 1) % total);
     }, AUTO_SLIDE_DELAY);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [currentIndex]);
+  }, [currentIndex, total]);
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % servicePackages.length);
+    setCurrentIndex((prev) => (prev + 1) % total);
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + servicePackages.length) % servicePackages.length);
+    setCurrentIndex((prev) => (prev - 1 + total) % total);
   };
 
-  const visiblePackages = Array.from({ length: Math.min(ITEMS_PER_VIEW, servicePackages.length) }).map(
-    (_, i) => servicePackages[(currentIndex + i) % servicePackages.length]
+  const highlightAt = section.highlight ? section.heading.indexOf(section.highlight) : -1;
+
+  const visiblePackages = Array.from({ length: Math.min(ITEMS_PER_VIEW, total) }).map(
+    (_, i) => servicePackages[(currentIndex + i) % total]
   );
+
+  if (section.status === "INACTIVE" || total === 0) return null;
 
   return (
     <section className="pt-6 md:pt-10 pb-12 bg-gray-50/50 overflow-hidden">
@@ -124,24 +100,32 @@ export const PopularPackages = () => {
             <div className="flex items-center gap-3 mb-3">
               <div className="h-px w-8 bg-primary" />
               <span className="uppercase tracking-[0.2em] text-primary font-bold text-[11px]">
-                Top Choices
+                {section.eyebrow}
               </span>
             </div>
             <h2 className="text-2xl md:text-3xl lg:text-[32px] font-display text-slate-900 leading-tight font-extrabold whitespace-nowrap">
-              EXPLORE OUR <span className="text-primary">POPULAR PACKAGES</span>
+              {highlightAt < 0 ? section.heading : (
+                <>
+                  {section.heading.slice(0, highlightAt)}
+                  <span className="text-primary">{section.highlight}</span>
+                  {section.heading.slice(highlightAt + section.highlight.length)}
+                </>
+              )}
             </h2>
             <p className="text-gray-500 mt-4 text-[14px] leading-relaxed max-w-xl">
-              Discover the most frequently booked home service packages by our customers in Ghaziabad. Enjoy transparent pricing and guaranteed professional service.
+              {section.description}
             </p>
           </div>
           
+          {section.buttonText && (
           <Link
-            href="/services"
+            href={section.buttonLink || "/services"}
             className="group flex items-center gap-1.5 px-5 py-2.5 border-2 border-primary rounded-full text-primary text-[12px] font-bold uppercase tracking-wide hover:bg-primary hover:text-white transition-all w-fit shrink-0 shadow-sm"
           >
-            Explore All Services
+            {section.buttonText}
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
           </Link>
+          )}
         </div>
 
         {/* Carousel Grid */}
@@ -175,7 +159,7 @@ export const PopularPackages = () => {
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
             >
               {visiblePackages.map((d, idx) => (
-                <PackageCard key={`${d.id}-${currentIndex}-${idx}`} d={d} idx={idx} />
+                <PackageCard key={`${d._id}-${currentIndex}-${idx}`} d={d} idx={idx} />
               ))}
             </motion.div>
           </AnimatePresence>
@@ -185,10 +169,11 @@ export const PopularPackages = () => {
   );
 };
 
-export function PackageCard({ d, idx }: { d: (typeof servicePackages)[number]; idx: number }) {
+export function PackageCard({ d, idx }: { d: PublicPopularPackage; idx: number }) {
   const { data, addToCart, openDrawer } = useBooking();
   const cart = data.cart || [];
-  const itemId = String(d.id);
+  const itemId = String(d._id);
+  const imageSrc = d.image ? resolveWebsiteImageUrl(d.image) : undefined;
   const isInCart = cart.some(item => item.id === itemId);
 
   const handleBook = (e: React.MouseEvent) => {
@@ -200,7 +185,7 @@ export function PackageCard({ d, idx }: { d: (typeof servicePackages)[number]; i
         name: d.name,
         duration: d.duration,
         price: d.price,
-        image: d.image
+        image: imageSrc
       });
     }
     openDrawer();
@@ -223,8 +208,8 @@ export function PackageCard({ d, idx }: { d: (typeof servicePackages)[number]; i
         <div className="relative h-[150px] overflow-hidden shrink-0">
           {/* Image */}
           <img
-            src={d.image}
-            alt={d.name}
+            src={imageSrc}
+            alt={d.imageAlt || d.name}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           />
           {/* Gradient Overlay */}
@@ -259,7 +244,7 @@ export function PackageCard({ d, idx }: { d: (typeof servicePackages)[number]; i
                 Starting from
               </div>
               <div className="text-lg font-medium text-primary flex items-baseline gap-1">
-                ₹{d.price.toLocaleString()}
+                ₹{d.price.toLocaleString("en-IN")}
                 <span className="text-[10px] text-gray-400 font-medium uppercase tracking-normal">/service</span>
               </div>
             </div>

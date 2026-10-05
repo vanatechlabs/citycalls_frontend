@@ -130,3 +130,95 @@ export interface PublicHomeFeatures {
 export async function fetchCityCallsHomeFeatures(signal?: AbortSignal): Promise<PublicHomeFeatures> {
   return fetchPublic<PublicHomeFeatures>('features', signal);
 }
+
+// Admin → Website Section → About: the "About CityCalls" section.
+export interface PublicHomeAbout {
+  eyebrow: string;
+  heading: string;
+  highlight: string;
+  description: string;
+  points: string[];
+  missionTitle: string;
+  missionText: string;
+  visionTitle: string;
+  visionText: string;
+  buttonText: string;
+  buttonLink: string;
+  // [0] tall left image, [1] top right, [2] bottom right.
+  images: { image: string; alt: string }[];
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
+export async function fetchCityCallsHomeAbout(signal?: AbortSignal): Promise<PublicHomeAbout> {
+  return fetchPublic<PublicHomeAbout>('about', signal);
+}
+
+// Admin → Website Section → Popular Packages: the cards and their heading.
+export interface PublicPopularPackage {
+  _id: string;
+  name: string;
+  duration: string;
+  price: number;
+  image: string;
+  imageAlt: string;
+  featured: boolean;
+  sortOrder: number;
+}
+
+export interface PublicPackagesSection {
+  eyebrow: string;
+  heading: string;
+  highlight: string;
+  description: string;
+  buttonText: string;
+  buttonLink: string;
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
+export async function fetchCityCallsPopularPackages(
+  signal?: AbortSignal
+): Promise<{ section: PublicPackagesSection; packages: PublicPopularPackage[] }> {
+  return fetchPublic('popular-packages', signal);
+}
+
+// Admin → Website Section → Our Services: the service cards and their heading.
+export interface PublicServiceCard {
+  _id: string;
+  name: string;
+  // Service page, e.g. "/services/ac-service" (follows the Navbar List link).
+  path: string;
+  shortDescription: string;
+  image: string;
+  imageAlt: string;
+  priceText: string;
+  sortOrder: number;
+}
+
+export interface PublicOurServicesSection {
+  eyebrow: string;
+  heading: string;
+  highlight: string;
+  description: string;
+  buttonText: string;
+  buttonLink: string;
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
+export async function fetchCityCallsOurServices(
+  signal?: AbortSignal
+): Promise<{ section: PublicOurServicesSection; services: PublicServiceCard[] }> {
+  return fetchPublic('our-services', signal);
+}
+
+// Admin → Website Section → Counters: the number cards.
+export type PublicCounterIcon =
+  | 'users' | 'shield-check' | 'timer' | 'star' | 'award' | 'thumbs-up' | 'wrench' | 'house' | 'clock' | 'map-pin';
+
+export interface PublicHomeCounters {
+  items: { value: number; suffix: string; label: string; icon: PublicCounterIcon; image: string; imageAlt: string }[];
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
+export async function fetchCityCallsHomeCounters(signal?: AbortSignal): Promise<PublicHomeCounters> {
+  return fetchPublic<PublicHomeCounters>('counters', signal);
+}

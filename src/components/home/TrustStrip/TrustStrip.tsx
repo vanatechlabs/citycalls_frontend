@@ -2,18 +2,39 @@
 
 import { useEffect, useRef, useState } from "react";
 import { animate, motion, useInView, type Variants } from "framer-motion";
-import { ShieldCheck, Star, Timer, Users, type LucideIcon } from "lucide-react";
-const s1 = "/assets/Services/s1.png";
-const s2 = "/assets/Services/s2.png";
-const s3 = "/assets/Services/s3.png";
-const s4 = "/assets/Services/s4.png";
+import {
+  Award, Clock, House, MapPin, ShieldCheck, Star, ThumbsUp, Timer, Users, Wrench, type LucideIcon,
+} from "lucide-react";
+import {
+  fetchCityCallsHomeCounters,
+  resolveWebsiteImageUrl,
+  type PublicCounterIcon,
+  type PublicHomeCounters,
+} from "@/lib/api/cityCallsHome";
 
-const countersData: { value: number; suffix: string; label: string; image: string; icon: LucideIcon }[] = [
-  { value: 10000, suffix: "+", label: "Happy Customers", image: s1, icon: Users },
-  { value: 100, suffix: "%", label: "Verified Professionals", image: s2, icon: ShieldCheck },
-  { value: 60, suffix: " min", label: "Average Response Time", image: s3, icon: Timer },
-  { value: 4.8, suffix: "★", label: "Average Rating", image: s4, icon: Star },
-];
+const COUNTER_ICONS: Record<PublicCounterIcon, LucideIcon> = {
+  users: Users,
+  "shield-check": ShieldCheck,
+  timer: Timer,
+  star: Star,
+  award: Award,
+  "thumbs-up": ThumbsUp,
+  wrench: Wrench,
+  house: House,
+  clock: Clock,
+  "map-pin": MapPin,
+};
+
+// Shown until (or if) Admin → Website Section → Counters can't be loaded.
+const fallbackCounters: PublicHomeCounters = {
+  items: [
+    { value: 10000, suffix: "+", label: "Happy Customers", icon: "users", image: "/assets/Services/s1.png", imageAlt: "CityCalls technician repairing a refrigerator" },
+    { value: 100, suffix: "%", label: "Verified Professionals", icon: "shield-check", image: "/assets/Services/s2.png", imageAlt: "Verified CityCalls technician servicing an AC" },
+    { value: 60, suffix: " min", label: "Average Response Time", icon: "timer", image: "/assets/Services/s3.png", imageAlt: "CityCalls technician repairing a washing machine" },
+    { value: 4.8, suffix: "★", label: "Average Rating", icon: "star", image: "/assets/Services/s4.png", imageAlt: "CityCalls technician repairing a television" },
+  ],
+  status: "ACTIVE",
+};
 
 const gridVariants: Variants = {
   hidden: {},
@@ -28,8 +49,25 @@ const cardVariants: Variants = {
 export function TrustStrip() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.5 });
-  const [counts, setCounts] = useState(countersData.map(() => 0));
+  const [content, setContent] = useState<PublicHomeCounters>(fallbackCounters);
+  const countersData = content.items;
+  const [counts, setCounts] = useState<number[]>(fallbackCounters.items.map(() => 0));
 
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchCityCallsHomeCounters(controller.signal)
+      .then((data) => {
+        if (data && Array.isArray(data.items)) setContent(data);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        console.warn("Using bundled counters because the CMS counters could not be loaded.");
+      });
+    return () => controller.abort();
+  }, []);
+
+  // Count up from 0 once the section is in view (again if the CMS data
+  // arrives after that).
   useEffect(() => {
     if (isInView) {
       countersData.forEach((c, i) => {
@@ -46,7 +84,9 @@ export function TrustStrip() {
         });
       });
     }
-  }, [isInView]);
+  }, [isInView, countersData]);
+
+  if (content.status === "INACTIVE" || countersData.length === 0) return null;
 
   return (
     <section
@@ -61,19 +101,19 @@ export function TrustStrip() {
           className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5"
         >
           {countersData.map((c, i) => {
-            const Icon = c.icon;
-            const number = c.value % 1 !== 0 ? counts[i].toFixed(1) : counts[i].toLocaleString("en-IN");
+            const Icon = COUNTER_ICONS[c.icon] ?? Users;
+            const shown = counts[i] ?? 0;
+            const number = c.value % 1 !== 0 ? shown.toFixed(1) : shown.toLocaleString("en-IN");
             return (
               <motion.div
-                key={c.label}
+                key={`${c.label}-${i}`}
                 variants={cardVariants}
                 className="group relative h-40 overflow-hidden rounded-2xl shadow-[0_16px_36px_-18px_rgba(15,23,42,0.6)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_48px_-18px_rgba(15,23,42,0.75)] sm:h-44"
               >
                 {/* Photo — seen through the glass */}
                 <img
-                  src={c.image}
-                  alt=""
-                  aria-hidden
+                  src={c.image ? resolveWebsiteImageUrl(c.image) : undefined}
+                  alt={c.imageAlt || c.label}
                   className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-black/45 via-black/30 to-black/55" />
@@ -91,7 +131,7 @@ export function TrustStrip() {
                   <div className="flex items-center justify-between">
                     <span className="relative grid h-10 w-10 place-items-center overflow-hidden rounded-xl border border-white/30 bg-white/15 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_6px_16px_-6px_rgba(0,0,0,0.5)] backdrop-blur-md transition-colors duration-500 group-hover:border-primary/60 group-hover:bg-primary/80">
                       <span aria-hidden className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/25 to-transparent" />
-                      <Icon size={19} className={`relative ${c.icon === Star ? "fill-white" : ""}`} />
+                      <Icon size={19} className={`relative ${c.icon === "star" ? "fill-white" : ""}`} />
                     </span>
                     <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_10px_rgba(124,179,66,1)]" />
                   </div>
