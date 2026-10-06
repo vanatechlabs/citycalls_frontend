@@ -421,7 +421,7 @@ export function Footer({ links = DEFAULT_SOCIAL_LINKS }: { links?: PublicSocialL
           className="mt-3 border-t border-white/[0.06]"
         >
           <div className="pt-5 pb-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[13.5px] text-white">
-            <p>© {new Date().getFullYear()} CityCalls. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} CityTimes India Co. All rights reserved.</p>
             <div className="flex items-center gap-5">
               <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
               <span className="w-px h-3 bg-[#6ebe26]" />
