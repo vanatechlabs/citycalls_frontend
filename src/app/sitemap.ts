@@ -32,7 +32,7 @@ async function fetchSitemapPages(): Promise<SitemapPage[] | null> {
 // Used only when the API is unreachable (e.g. during a Docker build).
 function localPages(): SitemapPage[] {
   const lastModified = new Date().toISOString();
-  return ["/", "/about", "/blogs", "/contact", ...allServices.map((s) => `/services/${s.slug}`)].map((path) => ({ path, lastModified }));
+  return ["/", "/about", "/blogs", "/contact", "/privacy", "/terms", ...allServices.map((s) => `/services/${s.slug}`)].map((path) => ({ path, lastModified }));
 }
 
 function priorityFor(path: string) {

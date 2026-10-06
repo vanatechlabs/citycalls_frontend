@@ -423,9 +423,9 @@ export function Footer({ links = DEFAULT_SOCIAL_LINKS }: { links?: PublicSocialL
           <div className="pt-5 pb-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[13.5px] text-white">
             <p>© {new Date().getFullYear()} CityTimes India Co. All rights reserved.</p>
             <div className="flex items-center gap-5">
-              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+              <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
               <span className="w-px h-3 bg-[#6ebe26]" />
-              <a href="#" className="hover:text-white transition-colors">Terms & Conditions</a>
+              <Link href="/terms" className="hover:text-white transition-colors">Terms & Conditions</Link>
             </div>
           </div>
         </motion.div>
