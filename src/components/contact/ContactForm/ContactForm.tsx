@@ -1,12 +1,45 @@
 "use client";
 
-import { Instagram, Mail, MapPin, Phone, Clock } from "lucide-react";
+import { CheckCircle, Instagram, Loader2, Mail, MapPin, Phone, Clock } from "lucide-react";
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { submitContactEnquiry } from "@/lib/api/bookings";
 
 export default function ContactForm() {
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "", subject: "", otherSubject: "" });
   const upd = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
+
+  // Sends the message to Admin → Enquiry Section → Contact Enquiry.
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (!/^[6-9]\d{9}$/.test(form.phone)) return setError("Please enter a valid 10-digit mobile number.");
+    const subject = form.subject === "Others" ? form.otherSubject.trim() : form.subject;
+    setSending(true);
+    try {
+      await submitContactEnquiry({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone,
+        subject: subject || undefined,
+        message: form.message.trim(),
+        page: "/contact",
+      });
+      setSent(true);
+      // Like the careers form: show the success card, then a fresh form after 4s.
+      setTimeout(() => {
+        setForm({ name: "", email: "", phone: "", message: "", subject: "", otherSubject: "" });
+        setSent(false);
+      }, 4000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not send your message. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  }
 
   return (
     <div className="bg-background p-8 lg:px-16 xl:px-24 lg:pb-16 flex flex-col justify-start pt-8 lg:pt-12">
@@ -68,13 +101,47 @@ export default function ContactForm() {
 
       <div className="font-bold text-sm uppercase tracking-widest mb-8">Send a Message</div>
       
+      <AnimatePresence mode="wait">
       {sent ? (
-         <div className="rounded-xl border border-primary/20 bg-primary/5 p-8 text-center">
-            <div className="font-bold text-lg text-primary-dark mb-2">Message sent successfully</div>
-            <p className="text-ink/70">Thank you for reaching out. We will get back to you shortly.</p>
-         </div>
+         // Same success card as the Design House careers form.
+         <motion.div
+            key="sent"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="flex min-h-[420px] flex-col items-center justify-center border-2 border-green-500 bg-green-50 p-12 shadow-lg"
+         >
+            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: "spring", stiffness: 200 }}>
+              <CheckCircle className="mb-6 h-24 w-24 text-green-500" />
+            </motion.div>
+            <motion.h3
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mb-4 text-center text-3xl font-bold text-gray-900"
+            >
+              Message Sent Successfully!
+            </motion.h3>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="mb-8 max-w-md text-center text-lg text-gray-600"
+            >
+              Thank you for reaching out! Our team will review your message and get back to you within 24 hours.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="flex items-center gap-2 text-sm text-gray-500"
+            >
+              <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
+              Form will reset automatically...
+            </motion.div>
+         </motion.div>
       ) : (
-         <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} className="space-y-10">
+         <motion.form key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onSubmit={(e) => void submit(e)} className="space-y-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <div className="relative border-b border-ink/20 focus-within:border-ink transition-colors">
                 <input required type="text" className="w-full pb-3 bg-transparent outline-none placeholder-ink/40 text-sm font-medium" placeholder="Full Name *" value={form.name} onChange={e => upd("name", e.target.value)} />
@@ -85,7 +152,7 @@ export default function ContactForm() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <div className="relative border-b border-ink/20 focus-within:border-ink transition-colors">
-                <input type="tel" className="w-full pb-3 bg-transparent outline-none placeholder-ink/40 text-sm font-medium" placeholder="Phone Number" value={form.phone} onChange={e => upd("phone", e.target.value.replace(/\D/g, "").slice(0, 10))} />
+                <input required type="tel" inputMode="numeric" className="w-full pb-3 bg-transparent outline-none placeholder-ink/40 text-sm font-medium" placeholder="Phone Number *" value={form.phone} onChange={e => upd("phone", e.target.value.replace(/\D/g, "").slice(0, 10))} />
               </div>
               <div className="relative border-b border-ink/20 focus-within:border-ink transition-colors">
                 <select 
@@ -121,11 +188,17 @@ export default function ContactForm() {
             <div className="relative border-b border-ink/20 focus-within:border-ink transition-colors">
               <textarea required rows={1} className="w-full pb-3 bg-transparent outline-none placeholder-ink/40 text-sm font-medium resize-none" placeholder="Your Message *" value={form.message} onChange={e => upd("message", e.target.value)} />
             </div>
-            <button className="w-full bg-ink text-primary font-bold text-sm tracking-widest uppercase py-5 hover:bg-ink/90 transition-colors mt-4">
-              Submit Inquiry
+            {error && <p className="text-sm font-semibold text-red-600">{error}</p>}
+            <button
+              disabled={sending}
+              className="w-full bg-ink text-primary font-bold text-sm tracking-widest uppercase py-5 hover:bg-ink/90 transition-colors mt-4 flex items-center justify-center gap-2 disabled:opacity-70"
+            >
+              {sending && <Loader2 className="h-4 w-4 animate-spin" />}
+              {sending ? "Sending…" : "Submit Inquiry"}
             </button>
-         </form>
+         </motion.form>
       )}
+      </AnimatePresence>
     </div>
   );
 }

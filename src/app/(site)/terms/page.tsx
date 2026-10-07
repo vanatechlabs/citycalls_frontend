@@ -20,7 +20,7 @@ const sections: LegalSection[] = [
       <>
         <p>
           These Terms &amp; Conditions apply when you use citycalls.in or book a service through CityCalls, a brand operated
-          by <strong>CityTimes India Co.</strong>, Raj Nagar, Ghaziabad, Uttar Pradesh (&quot;CityCalls&quot;, &quot;we&quot;, &quot;us&quot;).
+          by <strong>Citytimes India Co.</strong>, Raj Nagar, Ghaziabad, Uttar Pradesh (&quot;CityCalls&quot;, &quot;we&quot;, &quot;us&quot;).
         </p>
         <p>By booking a service or using the website, you agree to these terms. If you do not agree, please do not use our services.</p>
       </>
@@ -140,7 +140,7 @@ const sections: LegalSection[] = [
     title: "Using our website",
     body: (
       <p>
-        The CityCalls name, logo, content and design are owned by CityTimes India Co. You may not copy, misuse or try to
+        The CityCalls name, logo, content and design are owned by Citytimes India Co. You may not copy, misuse or try to
         disrupt the website, submit false bookings or impersonate others. Links to third-party websites are provided for
         convenience; we are not responsible for their content.
       </p>

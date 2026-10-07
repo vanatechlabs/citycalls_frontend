@@ -18,7 +18,7 @@ interface LegalPageProps {
   sections: LegalSection[];
 }
 
-const COMPANY = "CityTimes India Co.";
+const COMPANY = "Citytimes India Co.";
 
 // Shared layout for Privacy Policy and Terms & Conditions: a text-only hero
 // (no image), a sticky "On this page" list and numbered sections.

@@ -222,3 +222,29 @@ export interface PublicHomeCounters {
 export async function fetchCityCallsHomeCounters(signal?: AbortSignal): Promise<PublicHomeCounters> {
   return fetchPublic<PublicHomeCounters>('counters', signal);
 }
+
+// Admin → Pages Section → Testimonials: the review carousel and its heading.
+export interface PublicTestimonial {
+  _id: string;
+  name: string;
+  role: string;
+  location: string;
+  rating: number;
+  message: string;
+  // Initials badge colour.
+  color: string;
+  sortOrder: number;
+}
+
+export interface PublicTestimonialsSection {
+  eyebrow: string;
+  heading: string;
+  highlight: string;
+  minRating: number;
+}
+
+export async function fetchCityCallsTestimonials(
+  signal?: AbortSignal
+): Promise<{ section: PublicTestimonialsSection; testimonials: PublicTestimonial[] }> {
+  return fetchPublic('testimonials', signal);
+}

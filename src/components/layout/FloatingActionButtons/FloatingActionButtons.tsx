@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Phone } from "lucide-react";
 import type { PublicSocialLinks } from "@/lib/api/socialLinks";
+import { QuickBookFloat } from "@/components/booking/QuickBook/QuickBook";
 
 // Glossy glass buttons on a solid brand colour: `--from` / `--to` are the
 // colour gradient, `--tint` ("r, g, b") drives the glow and rings.
@@ -65,6 +66,7 @@ const FLOAT_STYLES = `
       0 14px 32px -8px rgba(var(--tint), 0.9);
   }
 
+  /* rays - used only by the Quick Book button */
   .glass-float-ring {
     position: absolute;
     inset: -3px;
@@ -87,6 +89,14 @@ const FLOAT_STYLES = `
   @media (max-width: 640px) {
     .glass-float-btn { width: 38px; height: 38px; }
   }
+  /* Call / WhatsApp sit a little smaller than Quick Book */
+  .glass-float-btn--sm { width: 40px; height: 40px; }
+  @media (max-width: 1024px) {
+    .glass-float-btn--sm { width: 38px; height: 38px; }
+  }
+  @media (max-width: 640px) {
+    .glass-float-btn--sm { width: 34px; height: 34px; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .glass-float-btn, .glass-float-ring { animation: none; }
   }
@@ -95,14 +105,11 @@ const FLOAT_STYLES = `
 const CallFloat = ({ phoneNumber }: { phoneNumber: string }) => (
   <a
     href={`tel:${phoneNumber}`}
-    className="glass-float-btn"
+    className="glass-float-btn glass-float-btn--sm"
     style={{ "--tint": "37, 99, 235", "--from": "#3b82f6", "--to": "#1e3a8a" } as React.CSSProperties}
     aria-label="Call us"
   >
-    <span className="glass-float-ring" />
-    <span className="glass-float-ring" />
-    <span className="glass-float-ring" />
-    <Phone className="glass-float-icon" size={18} strokeWidth={2.5} />
+    <Phone className="glass-float-icon" size={16} strokeWidth={2.5} />
     <span className="sr-only">Call Us</span>
   </a>
 );
@@ -116,12 +123,10 @@ const WhatsAppFloat = ({ phoneNumber, message }: { phoneNumber: string; message:
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"
-      className="glass-float-btn"
+      className="glass-float-btn glass-float-btn--sm"
       style={{ "--tint": "37, 211, 102", "--from": "#3ee07f", "--to": "#128c4a" } as React.CSSProperties}
     >
-      <span className="glass-float-ring" />
-      <span className="glass-float-ring" />
-      <svg className="glass-float-icon h-5 w-5" fill="white" viewBox="0 0 24 24" aria-hidden>
+      <svg className="glass-float-icon h-[18px] w-[18px]" fill="white" viewBox="0 0 24 24" aria-hidden>
         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
       </svg>
       <span className="sr-only">Chat on WhatsApp</span>
@@ -144,18 +149,26 @@ export const FloatingActionButtons = ({ links }: { links: PublicSocialLinks }) =
   }, []);
 
   return (
-    <div
-      className="fixed bottom-6 right-6 z-[100] flex flex-col items-center gap-4 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
-      style={{
-        transform: isCollapsed ? "translateY(40px) scale(0)" : "translateY(0) scale(1)",
-        opacity: isCollapsed ? 0 : 1,
-        pointerEvents: isCollapsed ? "none" : "auto",
-      }}
-    >
+    <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-center gap-2">
       <style>{FLOAT_STYLES}</style>
-      {/* A number left empty in admin hides its button. */}
-      {links.callNumber && <CallFloat phoneNumber={links.callNumber} />}
-      {links.whatsappNumber && <WhatsAppFloat phoneNumber={links.whatsappNumber} message={links.whatsappMessage ?? ""} />}
+      {/* Quick Book form: name, phone, service → Admin Leads. Stays visible
+          even when the social sidebar is closed. */}
+      <QuickBookFloat />
+      {/* Call / WhatsApp hide with the social sidebar; collapsing to zero
+          height lets Quick Book settle into their place. */}
+      <div
+        className="flex flex-col items-center gap-4 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+        style={{
+          transform: isCollapsed ? "translateY(40px) scale(0)" : "translateY(0) scale(1)",
+          opacity: isCollapsed ? 0 : 1,
+          maxHeight: isCollapsed ? 0 : 200,
+          pointerEvents: isCollapsed ? "none" : "auto",
+        }}
+      >
+        {/* A number left empty in admin hides its button. */}
+        {links.callNumber && <CallFloat phoneNumber={links.callNumber} />}
+        {links.whatsappNumber && <WhatsAppFloat phoneNumber={links.whatsappNumber} message={links.whatsappMessage ?? ""} />}
+      </div>
     </div>
   );
 };

@@ -50,3 +50,54 @@ export async function submitWebsiteBooking(payload: WebsiteBookingPayload): Prom
   }
   return body.data;
 }
+
+// Website "Quick Book" button (POST /public/quick-bookings) — lands in
+// Admin → Enquiry Section → Quick Booking.
+export interface QuickBookingPayload {
+  name: string;
+  phone: string;
+  serviceName: string;
+  servicePath?: string;
+  message?: string;
+  page?: string;
+}
+
+export async function submitQuickBooking(payload: QuickBookingPayload): Promise<{ referenceNo: string; serviceName: string }> {
+  const response = await fetch(`${API_BASE_URL}/public/quick-bookings`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const body = (await response.json().catch(() => null)) as
+    | { data?: { referenceNo: string; serviceName: string }; message?: string; errors?: { message: string }[] }
+    | null;
+  if (!response.ok || !body?.data) {
+    throw new Error(body?.errors?.[0]?.message || body?.message || "Could not send your request. Please try again or call us.");
+  }
+  return body.data;
+}
+
+export interface ContactEnquiryPayload {
+  name: string;
+  email: string;
+  phone: string;
+  subject?: string;
+  message: string;
+  page?: string;
+}
+
+// Contact page "Send a Message" → Admin → Enquiry Section → Contact Enquiry.
+export async function submitContactEnquiry(payload: ContactEnquiryPayload): Promise<{ referenceNo: string }> {
+  const response = await fetch(`${API_BASE_URL}/public/contact-enquiries`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const body = (await response.json().catch(() => null)) as
+    | { data?: { referenceNo: string }; message?: string; errors?: { message: string }[] }
+    | null;
+  if (!response.ok || !body?.data) {
+    throw new Error(body?.errors?.[0]?.message || body?.message || "Could not send your message. Please try again or call us.");
+  }
+  return body.data;
+}

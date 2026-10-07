@@ -215,10 +215,11 @@ export function Footer({ links = DEFAULT_SOCIAL_LINKS }: { links?: PublicSocialL
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.2fr_0.8fr_1fr_1fr]">
           {/* Brand */}
           <motion.div variants={fadeUp} className="pr-4">
-            <Logo />
+            {/* Bigger logo; the smaller gaps around it keep the footer height the same */}
+            <Logo large className="-mt-5" />
             <motion.p
               variants={fadeUp}
-              className="mt-6 text-[14px] leading-relaxed text-white/90"
+              className="mt-2 text-[14px] leading-relaxed text-white/90"
             >
               Trusted home services in Ghaziabad — verified technicians, transparent pricing,
               doorstep convenience.
@@ -421,7 +422,7 @@ export function Footer({ links = DEFAULT_SOCIAL_LINKS }: { links?: PublicSocialL
           className="mt-3 border-t border-white/[0.06]"
         >
           <div className="pt-5 pb-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[13.5px] text-white">
-            <p>© {new Date().getFullYear()} CityTimes India Co. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Citytimes India Co. All rights reserved.</p>
             <div className="flex items-center gap-5">
               <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
               <span className="w-px h-3 bg-[#6ebe26]" />

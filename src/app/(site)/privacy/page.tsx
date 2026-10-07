@@ -5,7 +5,7 @@ import { buildMetadata } from "@/lib/seo/seoMetadata";
 const fallbackMetadata: Metadata = {
   title: "Privacy Policy | CityCalls",
   description:
-    "How CityCalls (CityTimes India Co.) collects, uses, shares and protects your personal data when you book home services.",
+    "How CityCalls (Citytimes India Co.) collects, uses, shares and protects your personal data when you book home services.",
 };
 
 export function generateMetadata() {
@@ -19,7 +19,7 @@ const sections: LegalSection[] = [
     body: (
       <>
         <p>
-          CityCalls is a home services brand operated by <strong>CityTimes India Co.</strong> (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;),
+          CityCalls is a home services brand operated by <strong>Citytimes India Co.</strong> (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;),
           based in Raj Nagar, Ghaziabad, Uttar Pradesh. We connect customers with background-verified technicians for
           appliance repair, cleaning, pest control, beauty and other home services.
         </p>
@@ -144,7 +144,7 @@ const sections: LegalSection[] = [
     body: (
       <p>
         For any privacy concern or complaint, contact our Grievance Officer at <strong>hello@citycalls.in</strong> or
-        <strong> +91 74288 08884</strong> (Mon–Sun, 8:00 AM – 8:00 PM), or write to CityTimes India Co., Raj Nagar, Ghaziabad,
+        <strong> +91 74288 08884</strong> (Mon–Sun, 8:00 AM – 8:00 PM), or write to Citytimes India Co., Raj Nagar, Ghaziabad,
         Uttar Pradesh 201002. We acknowledge complaints within 48 hours and aim to resolve them within 30 days.
       </p>
     ),
