@@ -47,7 +47,7 @@ export async function fetchSeoMeta(path: string): Promise<PublicSeoMeta | null> 
 
 // Pulls property/name → content out of pasted <meta ...> tags, e.g.
 // <meta property="og:title" content="..."> → { "og:title": "..." }.
-function parseMetaTags(html?: string): Record<string, string> {
+export function parseMetaTags(html?: string): Record<string, string> {
   const tags: Record<string, string> = {};
   if (!html) return tags;
   for (const [tag] of html.matchAll(/<meta\b[^>]*>/gi)) {

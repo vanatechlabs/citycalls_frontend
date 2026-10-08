@@ -1,17 +1,17 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, type Variants } from "framer-motion";
 import Link from "next/link";
 import { Calendar, ArrowRight } from "lucide-react";
-import { blogs } from "@/data/blogs";
+import { formatBlogDate, type PublicBlogSummary } from "@/lib/api/blogs";
 import { useRef } from "react";
 
-const lineVariants: any = {
+const lineVariants: Variants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
 };
 
-const wordVariants: any = {
+const wordVariants: Variants = {
   hidden: { y: "100%", opacity: 0 },
   visible: {
     y: "0%",
@@ -20,7 +20,8 @@ const wordVariants: any = {
   },
 };
 
-export function BlogsPreview() {
+// The four newest blogs from Admin → Blog Section (passed in by the home page).
+export function BlogsPreview({ blogs }: { blogs: PublicBlogSummary[] }) {
   const recentBlogs = blogs.slice(0, 4);
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.15 });
@@ -139,7 +140,7 @@ export function BlogsPreview() {
                   <div className="flex items-center gap-2 text-[10px] text-muted-foreground mb-3 font-semibold uppercase tracking-wider relative z-10">
                     <span className="flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5 text-primary" />
-                      {blog.date}
+                      {formatBlogDate(blog.publishedAt)}
                     </span>
                   </div>
 

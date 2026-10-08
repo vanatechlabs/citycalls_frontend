@@ -248,3 +248,47 @@ export async function fetchCityCallsTestimonials(
 ): Promise<{ section: PublicTestimonialsSection; testimonials: PublicTestimonial[] }> {
   return fetchPublic('testimonials', signal);
 }
+
+// Admin → Website Section → FAQ: the questions and their headings.
+export interface PublicFaq {
+  _id: string;
+  question: string;
+  answer: string;
+  image: string;
+  altText: string;
+  sortOrder: number;
+}
+
+export interface PublicFaqSection {
+  subheading: string;
+  heading: string;
+  highlightedWord: string;
+  description: string;
+}
+
+export async function fetchCityCallsFaqs(signal?: AbortSignal): Promise<{ section: PublicFaqSection; faqs: PublicFaq[] }> {
+  return fetchPublic('faq', signal);
+}
+
+// Admin → Website Section → Key Features: the "Why choose us" cards.
+export interface PublicKeyFeature {
+  _id: string;
+  title: string;
+  description: string;
+  // lucide-react icon name, e.g. "BadgeCheck".
+  icon: string;
+  sortOrder: number;
+}
+
+export interface PublicKeyFeaturesSection {
+  eyebrow: string;
+  heading: string;
+  highlight: string;
+  description: string;
+}
+
+export async function fetchCityCallsKeyFeatures(
+  signal?: AbortSignal
+): Promise<{ section: PublicKeyFeaturesSection; features: PublicKeyFeature[] }> {
+  return fetchPublic('key-features', signal);
+}

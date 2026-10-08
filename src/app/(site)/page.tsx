@@ -14,13 +14,15 @@ import { DownloadApp } from "@/components/home/DownloadApp/DownloadApp";
 import { BlogsPreview } from "@/components/home/BlogsPreview/BlogsPreview";
 import { SeoJsonLd } from "@/components/seo/SeoJsonLd";
 import { buildMetadata } from "@/lib/seo/seoMetadata";
+import { fetchBlogs } from "@/lib/api/blogs";
 
 // Falls back to the root layout's metadata when no SEO entry exists.
 export function generateMetadata() {
   return buildMetadata("/");
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const blogs = await fetchBlogs();
   return (
     <>
       <SeoJsonLd path="/" />
@@ -37,7 +39,7 @@ export default function HomePage() {
       <Testimonials />
       <FAQSection />
       <DownloadApp />
-      <BlogsPreview />
+      {blogs.length > 0 && <BlogsPreview blogs={blogs} />}
     </>
   );
 }

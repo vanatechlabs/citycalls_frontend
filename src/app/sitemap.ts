@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { blogs } from "@/data/blogs";
+import { fetchBlogs } from "@/lib/api/blogs";
 import { allServices } from "@/data/services";
 import { SITE_URL } from "@/lib/seo/seoMetadata";
 
@@ -51,9 +51,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: priorityFor(page.path),
   }));
 
-  // Blog posts live in the website's own data file, not the backend.
+  // Published blogs from Admin → Blog Section.
+  const blogs = await fetchBlogs();
   const blogEntries: MetadataRoute.Sitemap = blogs.map((blog) => {
-    const published = new Date(blog.date);
+    const published = new Date(blog.publishedAt ?? "");
     return {
       url: `${SITE_URL}/blogs/${blog.slug}`,
       ...(!Number.isNaN(published.getTime()) && { lastModified: published }),
