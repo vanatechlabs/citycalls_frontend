@@ -36,6 +36,7 @@ export default async function BlogsPage() {
         description={background?.description || HERO_FALLBACK.description}
         image={background?.image || HERO_FALLBACK.image}
         imageAlt={background?.imageAlt}
+        eyebrow={background?.subheading || "The CityCalls Journal"}
       />
       <BlogsList blogs={blogs} />
     </>

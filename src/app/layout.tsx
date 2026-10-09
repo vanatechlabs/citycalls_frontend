@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { AppProviders } from "@/components/providers/AppProviders";
 import SocialSidebar from "@/components/layout/SocialSidebar/SocialSidebar";
@@ -19,6 +20,11 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
+
+// Google Analytics 4. Only on production builds, so local development
+// visits don't show up in the reports.
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-V5033YQ6FX";
+const loadAnalytics = process.env.NODE_ENV === "production" && !!GA_MEASUREMENT_ID;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -76,6 +82,18 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           <FloatingActionButtons links={socialLinks} />
           <BookingDrawer />
         </AppProviders>
+
+        {loadAnalytics && (
+          <>
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive" />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_MEASUREMENT_ID}');`}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   );

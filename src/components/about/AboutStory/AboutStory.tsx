@@ -2,10 +2,7 @@
 
 import { Target, Users } from "lucide-react";
 import { motion, type Variants } from "framer-motion";
-const s1 = "/assets/Services/s1.png";
-const s2 = "/assets/Services/s2.png";
-const s3 = "/assets/Services/s3.png";
-const s4 = "/assets/Services/s4.png";
+import { aboutStoryDefaults, type AboutStoryData } from "@/lib/api/aboutPage";
 
 const wordVariants: Variants = {
   hidden: { y: "100%", opacity: 0 },
@@ -16,8 +13,12 @@ const wordVariants: Variants = {
   },
 };
 
-export function AboutStory() {
-  const headingWords = ["home", "services"];
+export function AboutStory({ content = aboutStoryDefaults }: { content?: AboutStoryData }) {
+  // Heading = lead text + highlighted words (green, underlined) + any tail.
+  const at = content.highlight ? content.heading.indexOf(content.highlight) : -1;
+  const lead = at < 0 ? content.heading : content.heading.slice(0, at);
+  const tail = at < 0 ? "" : content.heading.slice(at + content.highlight.length);
+  const headingWords = at < 0 ? [] : content.highlight.split(/\s+/).filter(Boolean);
 
   return (
     <section className="pt-8 pb-12 bg-gray-50 overflow-hidden">
@@ -26,7 +27,7 @@ export function AboutStory() {
           
           {/* Media Grid */}
           <div className="grid grid-cols-2 gap-4">
-            {[s1, s2, s3, s4].map((imgSrc, idx) => (
+            {content.images.map(({ image: imgSrc, imageAlt }, idx) => (
               <motion.div
                 key={idx}
                 initial={{ opacity: 0, scale: 0.5, rotate: idx % 2 === 0 ? -5 : 5 }}
@@ -37,7 +38,7 @@ export function AboutStory() {
               >
                 <img
                   src={imgSrc}
-                  alt={`About Story ${idx + 1}`}
+                  alt={imageAlt || `About Story ${idx + 1}`}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               </motion.div>
@@ -55,7 +56,7 @@ export function AboutStory() {
             }}
           >
             {/* Eyebrow */}
-            <motion.div 
+            {content.eyebrow && <motion.div 
               variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }} 
               className="flex items-center gap-3 mb-4"
             >
@@ -65,18 +66,18 @@ export function AboutStory() {
                 className="h-px w-8 bg-primary"
               />
               <span className="uppercase tracking-[0.2em] text-primary-dark font-bold text-xs">
-                Our Story
+                {content.eyebrow}
               </span>
-            </motion.div>
+            </motion.div>}
 
             {/* Heading — per-word reveal */}
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif leading-[1.15] mb-6">
               <span className="inline-block overflow-hidden pb-1 align-bottom">
                 <motion.span variants={wordVariants} className="inline-block will-change-transform">
-                  Rebuilding trust in&nbsp;
+                  {lead.trimEnd()}{headingWords.length > 0 && "\u00A0"}
                 </motion.span>
               </span>
-              <span className="relative inline-block text-primary whitespace-nowrap align-bottom">
+              {headingWords.length > 0 && <span className="relative inline-block text-primary whitespace-nowrap align-bottom">
                 <span className="inline-block overflow-hidden pb-1">
                   <motion.span
                     variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.15, delayChildren: 0.3 } } }}
@@ -111,19 +112,21 @@ export function AboutStory() {
                     strokeLinecap="round"
                   />
                 </motion.svg>
-              </span>
+              </span>}
+              {tail.trim() && (
+                <span className="inline-block overflow-hidden pb-1 align-bottom">
+                  <motion.span variants={wordVariants} className="inline-block will-change-transform">{tail.trim()}</motion.span>
+                </span>
+              )}
             </h2>
 
             <motion.div 
               variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }} 
               className="space-y-4 mb-10"
             >
-              <p className="text-muted-foreground leading-relaxed">
-                CityCalls was born in a 1BHK in Vaishali after our founder had a fridge go down for the third time in a month. The local repair guys kept making it worse. The big-brand app never showed up. Something had to change.
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                We believe home services can be world-class without the world-class price tag, if you focus obsessively on the basics: verified people, honest pricing, and showing up on time.
-              </p>
+              {[content.paragraphOne, content.paragraphTwo].filter(Boolean).map((text, i) => (
+                <p key={i} className="text-muted-foreground leading-relaxed">{text}</p>
+              ))}
             </motion.div>
 
             {/* Mission Box */}
@@ -137,11 +140,11 @@ export function AboutStory() {
                     <Target className="w-5 h-5" />
                   </div>
                   <h3 className="font-bold text-ink uppercase tracking-wide text-sm">
-                    Our Mission
+                    {content.missionTitle}
                   </h3>
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Make every service call feel like calling a friend who happens to be an expert.
+                  {content.missionText}
                 </p>
               </motion.div>
 
@@ -154,11 +157,11 @@ export function AboutStory() {
                     <Users className="w-5 h-5" />
                   </div>
                   <h3 className="font-bold text-ink uppercase tracking-wide text-sm">
-                    Our Team
+                    {content.teamTitle}
                   </h3>
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  We're a team of 40+ people in Ghaziabad — customer support, technicians, trainers, engineers.
+                  {content.teamText}
                 </p>
               </motion.div>
             </div>

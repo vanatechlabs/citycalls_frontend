@@ -1,17 +1,20 @@
 "use client";
 
-import { Award, Heart, ShieldCheck, Users } from "lucide-react";
+import {
+  Award, BadgeCheck, Clock, HandCoins, Heart, ShieldCheck, Sparkles, Star, Target, ThumbsUp, Users, Wrench, type LucideIcon,
+} from "lucide-react";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { aboutValuesDefaults, type AboutPageData } from "@/lib/api/aboutPage";
 
-const values = [
-  { icon: ShieldCheck, title: "Trust first", desc: "Every pro is verified before their first job — and re-verified every year." },
-  { icon: Heart, title: "Customer-obsessed", desc: "We track every rating, every complaint, every callback. And we act." },
-  { icon: Users, title: "Fair to our pros", desc: "We take a smaller cut than any competitor, so our pros earn more per job." },
-  { icon: Award, title: "Quality without compromise", desc: "We'd rather turn down a job than send an untrained person to your home." },
-];
+// Icon names chosen in Admin → About Page → Our Values.
+const ICONS: Record<string, LucideIcon> = {
+  ShieldCheck, Heart, Users, Award, Star, ThumbsUp, BadgeCheck, Sparkles, Clock, Wrench, HandCoins, Target,
+};
 
-export function AboutValues() {
+export function AboutValues({ content = aboutValuesDefaults }: { content?: AboutPageData["values"] }) {
+  const values = content.items.map((v) => ({ icon: ICONS[v.icon] ?? ShieldCheck, title: v.title, desc: v.description }));
+
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: false, amount: 0.2 });
 
@@ -19,14 +22,14 @@ export function AboutValues() {
     <section ref={sectionRef} className="bg-muted/40 py-12">
       <div className="container-x">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="flex items-center justify-center gap-3 mb-4">
+          {content.section.eyebrow && <div className="flex items-center justify-center gap-3 mb-4">
             <div className="h-px w-8 bg-primary" />
             <span className="uppercase tracking-[0.2em] text-primary-dark font-bold text-xs">
-              What we stand for
+              {content.section.eyebrow}
             </span>
             <div className="h-px w-8 bg-primary" />
-          </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif leading-[1.15]">Four values, non-negotiable.</h2>
+          </div>}
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif leading-[1.15]">{content.section.heading}</h2>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -40,7 +43,7 @@ export function AboutValues() {
               className="group relative bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:shadow-2xl hover:border-[#4D4D4D] transition-all duration-300"
             >
               <div className="absolute top-2 right-3 text-[56px] font-black text-[#94d052]/15 group-hover:text-[#94d052]/30 leading-none select-none transition-colors duration-300 pointer-events-none">
-                0{idx + 1}
+                {String(idx + 1).padStart(2, "0")}
               </div>
 
               <div className="relative z-10 p-5 flex flex-col items-start text-left h-full">
@@ -58,7 +61,7 @@ export function AboutValues() {
                 </motion.div>
 
                 <span className="text-[10px] font-bold tracking-[0.2em] text-primary uppercase mb-1">
-                  Value 0{idx + 1}
+                  Value {String(idx + 1).padStart(2, "0")}
                 </span>
 
                 <h3 className="text-lg font-bold text-[#4D4D4D] group-hover:text-primary mb-2 uppercase tracking-wider transition-colors duration-300">

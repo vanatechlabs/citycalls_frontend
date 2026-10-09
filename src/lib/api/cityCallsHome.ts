@@ -292,3 +292,28 @@ export async function fetchCityCallsKeyFeatures(
 ): Promise<{ section: PublicKeyFeaturesSection; features: PublicKeyFeature[] }> {
   return fetchPublic('key-features', signal);
 }
+
+// Admin → Website Section → How It Works: the home page's step cards.
+export interface PublicHowItWorksStep {
+  _id: string;
+  title: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+  // lucide-react icon name, e.g. "CalendarCheck".
+  icon: string;
+  sortOrder: number;
+}
+
+export interface PublicHowItWorksSection {
+  eyebrow: string;
+  heading: string;
+  highlight: string;
+  description: string;
+}
+
+export async function fetchCityCallsHowItWorks(
+  signal?: AbortSignal
+): Promise<{ section: PublicHowItWorksSection; steps: PublicHowItWorksStep[] }> {
+  return fetchPublic('how-it-works', signal);
+}

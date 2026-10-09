@@ -1,42 +1,41 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { motion, useMotionValueEvent, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
 import {
-  motion,
-  useMotionValueEvent,
-  useScroll,
-  useSpring,
-  useTransform,
-  type MotionValue,
-} from "framer-motion";
-import { ArrowRight, CalendarCheck, Check, ThumbsUp, UserCheck, Wrench, type LucideIcon } from "lucide-react";
+  BadgeCheck, CalendarCheck, ClipboardCheck, Clock, Home, PhoneCall, ShieldCheck, Sparkles, ThumbsUp, Truck, UserCheck, Wrench,
+  type LucideIcon,
+} from "lucide-react";
+
+// "How it works" as a horizontal scroll story: the section pins while you
+// scroll down, and the landscape step cards slide right-to-left one by one.
+// The card in the middle is in focus (full size, photo zooms out), a counter
+// and progress bar track the step, and a dotted timeline lights up step by
+// step. Scroll distance equals the slide distance, so the speed feels natural.
+// Used on the home page and the service pages.
 
 const stepIcons: LucideIcon[] = [CalendarCheck, UserCheck, Wrench, ThumbsUp];
-
-const defaultSteps = [
-  {
-    title: "Book a Service",
-    description: "Select your preferred date & time, and instantly book our service online.",
-    badge: "Step 01",
-  },
-  {
-    title: "Expert Assigned",
-    description: "A background-verified and highly trained technician is assigned to your booking.",
-    badge: "Step 02",
-  },
-  {
-    title: "Doorstep Repair",
-    description: "Our expert visits your home, diagnoses the issue, and fixes it using genuine parts.",
-    badge: "Step 03",
-  },
-  {
-    title: "Relax & Enjoy",
-    description: "Experience a hassle-free repair with our 30-day post-service warranty.",
-    badge: "Step 04",
-  },
+// Icon names chosen in Admin → Website Section → How It Works.
+const ICONS: Record<string, LucideIcon> = {
+  CalendarCheck, UserCheck, Wrench, ThumbsUp, PhoneCall, ClipboardCheck, Truck, ShieldCheck, BadgeCheck, Home, Clock, Sparkles,
+};
+// Photo per step (used when a page's steps don't bring their own photo).
+const stepImages = [
+  "/assets/how-it-works/step-1-book.webp",
+  "/assets/how-it-works/step-2-expert.webp",
+  "/assets/how-it-works/step-3-repair.webp",
+  "/assets/how-it-works/step-4-relax.webp",
 ];
 
-type Step = { badge: string; title: string; description: string };
+const defaultSteps = [
+  { title: "Book a Service", description: "Select your preferred date & time, and instantly book our service online.", badge: "Step 01" },
+  { title: "Expert Assigned", description: "A background-verified and highly trained technician is assigned to your booking.", badge: "Step 02" },
+  { title: "Doorstep Repair", description: "Our expert visits your home, diagnoses the issue, and fixes it using genuine parts.", badge: "Step 03" },
+  { title: "Relax & Enjoy", description: "Experience a hassle-free repair with our 30-day post-service warranty.", badge: "Step 04" },
+];
+
+export type HowItWorksStep = { badge: string; title: string; description: string; image?: string; imageAlt?: string; icon?: string };
+type Step = HowItWorksStep;
 
 interface HowItWorksProps {
   eyebrow?: string;
@@ -46,114 +45,68 @@ interface HowItWorksProps {
   steps?: Step[];
 }
 
-// Share of the scroll at which the last card has settled; the rest is a short
-// rest before the section scrolls away.
-const SETTLED_AT = 0.85;
-// Share of each step's scroll during which its card just stays in front
-// before the next one starts coming in.
-const HOLD = 0.4;
-
-// Where a card sits relative to the front card: 0 = front, 1 = one behind,
-// -1 = still waiting below the stage.
-function cardState(depth: number) {
-  if (depth <= -1) return { y: "115%", scale: 1, rotateX: 16, shade: 0 };
-  if (depth === 0) return { y: "0%", scale: 1, rotateX: 0, shade: 0 };
-  if (depth === 1) return { y: "-7%", scale: 0.94, rotateX: 0, shade: 0.18 };
-  if (depth === 2) return { y: "-13%", scale: 0.88, rotateX: 0, shade: 0.32 };
-  return { y: "-18%", scale: 0.82, rotateX: 0, shade: 0.45 };
-}
-
 const pad = (n: number) => String(n).padStart(2, "0");
+const CARD_SHADOW = "rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset";
 
-// One card of the deck. Its position is a pure function of scroll progress,
-// so the motion follows the scroll wheel exactly (no snapping between steps).
-function StackCard({
-  step,
-  index,
-  total,
-  progress,
-  marks,
-}: {
-  step: Step;
-  index: number;
-  total: number;
-  progress: MotionValue<number>;
-  marks: number[];
-}) {
-  const Icon = stepIcons[index] ?? CalendarCheck;
-  // Each step: its card arrives at marks[k] and holds until marks[k] + HOLD
-  // of a step, so the deck rests between moves instead of always sliding.
-  const segment = marks.length > 1 ? marks[1] - marks[0] : 1;
-  const keyframes = marks.flatMap((mark, k) => {
-    const state = cardState(k - index);
-    return k < marks.length - 1 ? [{ at: mark, state }, { at: mark + segment * HOLD, state }] : [{ at: mark, state }];
-  });
-  const input = keyframes.length > 1 ? keyframes.map((f) => f.at) : [0, 1];
-  const values = <T,>(get: (s: ReturnType<typeof cardState>) => T) =>
-    keyframes.length > 1 ? keyframes.map((f) => get(f.state)) : [get(keyframes[0].state), get(keyframes[0].state)];
+// One landscape card. It is in focus when the scroll reaches its own point
+// (index / (total - 1)) and eases back as the next one arrives.
+function StepCard({ step, index, total, progress }: { step: Step; index: number; total: number; progress: MotionValue<number> }) {
+  const Icon = (step.icon && ICONS[step.icon]) || stepIcons[index % stepIcons.length] || CalendarCheck;
+  const center = total > 1 ? index / (total - 1) : 0;
+  const span = total > 1 ? 1 / (total - 1) : 1;
+  const range = [center - span, center, center + span];
 
-  const y = useTransform(progress, input, values((s) => s.y));
-  const scale = useTransform(progress, input, values((s) => s.scale));
-  const rotateX = useTransform(progress, input, values((s) => s.rotateX));
-  const shade = useTransform(progress, input, values((s) => s.shade));
-  const isLast = index === total - 1;
+  const scale = useTransform(progress, range, [0.9, 1, 0.9]);
+  const opacity = useTransform(progress, range, [0.5, 1, 0.5]);
+  const zoom = useTransform(progress, range, [1.22, 1, 1.22]);
+  const imageX = useTransform(progress, range, ["6%", "0%", "-6%"]);
 
   return (
     <motion.article
-      style={{ y, scale, rotateX, zIndex: index, transformOrigin: "50% 0%" }}
-      className="absolute inset-x-0 top-0 h-full overflow-hidden rounded-3xl border border-black/[0.06] bg-white shadow-[0_30px_60px_-25px_rgba(15,23,42,0.35),0_10px_20px_-12px_rgba(15,23,42,0.15)] will-change-transform"
+      style={{ scale, opacity, boxShadow: CARD_SHADOW }}
+      className="relative w-[80vw] shrink-0 overflow-hidden rounded-[22px] bg-white p-2.5 sm:w-[62vw] lg:w-[min(52vw,740px)]"
     >
-      {/* decoration: corner glow, dot grid and a large faded icon */}
-      <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-primary/15 blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(62,137,20,0.09)_1px,transparent_1px)] bg-[size:18px_18px] [mask-image:linear-gradient(to_left,black,transparent_60%)]" />
-      <Icon aria-hidden className="pointer-events-none absolute -bottom-8 -right-6 h-48 w-48 -rotate-12 text-[#3e8914]/[0.06]" strokeWidth={1.25} />
-
-      <div className="relative flex h-full flex-col p-6 sm:p-8">
-        <div className="flex items-start justify-between gap-4">
-          <span className="relative grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-2xl bg-gradient-to-br from-[#4fa31d] to-[#2f6b0f] text-white shadow-[0_12px_24px_-10px_rgba(62,137,20,0.8)] sm:h-16 sm:w-16">
-            <span aria-hidden className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/25 to-transparent" />
-            <Icon className="relative h-7 w-7 sm:h-8 sm:w-8" strokeWidth={1.8} />
+      <div className="grid gap-2.5 md:grid-cols-[1.2fr_1fr]">
+        {/* Photo */}
+        <figure className="relative aspect-[16/10] overflow-hidden rounded-[16px] bg-slate-100 md:aspect-auto md:min-h-[290px]">
+          <motion.img
+            src={step.image || stepImages[index % stepImages.length]}
+            alt={step.imageAlt || step.title}
+            loading="lazy"
+            draggable={false}
+            style={{ scale: zoom, x: imageX }}
+            className="absolute inset-0 h-full w-full object-cover will-change-transform"
+          />
+          <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+          {/* Step number chip */}
+          <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[10.5px] font-black tracking-wider text-[#3e8914] shadow-sm backdrop-blur-md">
+            {pad(index + 1)}
           </span>
+        </figure>
+
+        {/* Text */}
+        <div className="relative flex flex-col justify-center px-4 pb-4 pt-2 md:px-5 md:py-6">
           <span
             aria-hidden
-            className="select-none text-[64px] font-black leading-none tracking-tighter text-transparent sm:text-[84px]"
-            style={{ WebkitTextStroke: "1.5px rgba(62,137,20,0.28)" }}
+            className="pointer-events-none absolute right-4 top-2 select-none text-[56px] font-black leading-none text-transparent md:text-[72px]"
+            style={{ WebkitTextStroke: "1.5px rgba(62,137,20,0.18)" }}
           >
             {pad(index + 1)}
           </span>
-        </div>
-
-        <div className="mt-auto">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#3e8914]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#3e8914]">
-            {step.badge}
-            <span className="text-[#3e8914]/50">/ {pad(total)}</span>
+          <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-[#5aa832] to-[#2f6b0f] text-white shadow-[0_10px_22px_-10px_rgba(62,137,20,0.8)]">
+            <Icon className="h-5 w-5" strokeWidth={2} />
           </span>
-          <h3 className="mt-3 text-[22px] font-extrabold leading-tight tracking-tight text-ink sm:text-[28px]">{step.title}</h3>
-          <p className="mt-2 max-w-md text-[13px] font-medium leading-relaxed text-ink/65 sm:text-[14.5px]">{step.description}</p>
-
-          <div className="mt-5 flex items-center justify-between gap-4 border-t border-black/[0.06] pt-4">
-            <div className="flex gap-1.5">
-              {Array.from({ length: total }, (_, i) => (
-                <span key={i} className={`h-1.5 rounded-full ${i <= index ? "w-6 bg-[#3e8914]" : "w-3 bg-black/10"}`} />
-              ))}
-            </div>
-            <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-ink/45">
-              {isLast ? (
-                <>
-                  <Check className="h-3.5 w-3.5 text-[#3e8914]" strokeWidth={3} /> All set
-                </>
-              ) : (
-                <>
-                  Keep scrolling <ArrowRight className="h-3.5 w-3.5 rotate-90 text-[#3e8914]" />
-                </>
-              )}
-            </span>
+          <span className="mt-4 text-[10.5px] font-bold uppercase tracking-[0.2em] text-[#3e8914]">
+            {step.badge} <span className="text-ink/30">/ {pad(total)}</span>
+          </span>
+          <h3 className="mt-1.5 text-[20px] font-extrabold leading-tight tracking-tight text-ink md:text-[22px]">{step.title}</h3>
+          <p className="mt-2 text-[13.5px] leading-relaxed text-ink/60">{step.description}</p>
+          <div className="mt-5 flex items-center gap-2">
+            <span className="h-[3px] w-10 rounded-full bg-gradient-to-r from-[#3e8914] to-primary" />
+            <span className="h-[3px] w-3 rounded-full bg-[#3e8914]/30" />
           </div>
         </div>
       </div>
-
-      {/* cards further back dim as the deck grows */}
-      <motion.div aria-hidden style={{ opacity: shade }} className="pointer-events-none absolute inset-0 bg-slate-900" />
     </motion.article>
   );
 }
@@ -165,139 +118,129 @@ export function HowItWorks({
   description = "Your appliance repair is just a few clicks away. We make it simple, transparent, and absolutely hassle-free.",
   steps = defaultSteps,
 }: HowItWorksProps = {}) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [activeStep, setActiveStep] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const total = steps.length;
-  // Scroll progress at which each card is fully in front.
-  const marks = steps.map((_, k) => (total > 1 ? (k / (total - 1)) * SETTLED_AT : 0));
+  // How far the track has to slide so the last card ends up centred.
+  const [distance, setDistance] = useState(0);
 
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
-  const progress = useSpring(scrollYProgress, { stiffness: 70, damping: 26, mass: 0.8, restDelta: 0.0005 });
-  const railFill = useTransform(progress, [0, SETTLED_AT], ["0%", "100%"]);
+  useEffect(() => {
+    const track = trackRef.current;
+    const viewport = viewportRef.current;
+    if (!track || !viewport) return;
+    const measure = () => {
+      const cards = track.children;
+      if (!cards.length) return;
+      const first = cards[0] as HTMLElement;
+      const last = cards[cards.length - 1] as HTMLElement;
+      // From "first card centred" to "last card centred".
+      setDistance(Math.max(0, last.offsetLeft + last.offsetWidth / 2 - (first.offsetLeft + first.offsetWidth / 2)));
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(track);
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, [total]);
 
-  useMotionValueEvent(progress, "change", (latest) => {
-    const position = total > 1 ? (Math.min(latest, SETTLED_AT) / SETTLED_AT) * (total - 1) : 0;
-    // Within a step, the hold comes first; the next card is "active" once it's mostly in.
-    const step = Math.min(total - 1, Math.floor(position) + (position % 1 > HOLD + (1 - HOLD) * 0.6 ? 1 : 0));
-    setActiveStep(step);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
+  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.4, restDelta: 0.0005 });
+  const x = useTransform(progress, [0, 1], [0, -distance]);
+  const bar = useTransform(progress, [0, 1], ["0%", "100%"]);
+
+  const [active, setActive] = useState(0);
+  useMotionValueEvent(progress, "change", (v) => {
+    const next = Math.min(total - 1, Math.max(0, Math.round(v * (total - 1))));
+    setActive((prev) => (prev === next ? prev : next));
   });
 
-  // Clicking a step scrolls the page to the point where that card is in front.
-  function goToStep(index: number) {
-    const el = containerRef.current;
-    if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY;
-    const scrollable = el.offsetHeight - window.innerHeight;
-    const segment = total > 1 ? SETTLED_AT / (total - 1) : 0;
-    const target = index < total - 1 ? marks[index] + segment * HOLD * 0.5 : marks[index];
-    window.scrollTo({ top: top + target * scrollable, behavior: "smooth" });
-  }
-
-  const [before, ...after] = title.split(highlight);
+  const at = highlight ? title.indexOf(highlight) : -1;
 
   return (
-    <div ref={containerRef} className="relative h-[480vh] w-full border-t border-black/5 bg-[#3e8914]/[0.02]">
-      {/* Sticky frame — sticks just below the (64px) scrolled navbar */}
-      <div className="sticky top-16 flex h-[calc(100vh-4rem)] w-full flex-col items-center justify-start overflow-hidden px-4 pb-6 pt-6 md:px-8 md:pt-8 lg:justify-center lg:pt-4">
+    // Tall enough to scroll exactly the slide distance while the frame is pinned.
+    <section ref={sectionRef} className="relative border-t border-black/5 bg-gradient-to-b from-white via-[#3e8914]/[0.03] to-white" style={{ height: `calc(100vh + ${distance}px)` }}>
+      <div className="sticky top-16 flex h-[calc(100vh-4rem)] flex-col justify-center overflow-hidden py-6">
         {/* ambience */}
-        <div aria-hidden className="pointer-events-none absolute left-1/4 top-1/3 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-primary/[0.07] blur-[110px]" />
-        <div aria-hidden className="pointer-events-none absolute bottom-0 right-0 h-[360px] w-[360px] rounded-full bg-emerald-200/20 blur-[110px]" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(62,137,20,0.07)_1px,transparent_1px)] bg-[size:22px_22px]" />
+        <div aria-hidden className="pointer-events-none absolute -left-24 top-1/4 h-72 w-72 rounded-full bg-primary/10 blur-[110px]" />
+        <div aria-hidden className="pointer-events-none absolute -right-24 bottom-10 h-72 w-72 rounded-full bg-emerald-200/30 blur-[110px]" />
 
-        <div className="container-x relative z-10 grid w-full max-w-7xl items-center gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          {/* Left — heading + step navigator */}
-          <div className="text-center lg:text-left">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#3e8914]/10 px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider text-[#3e8914]">
-              <span>{eyebrow}</span>
-              <span className="h-1.5 w-1.5 animate-ping rounded-full bg-[#3e8914]" />
-            </div>
-            <h2 className="font-display text-2xl font-black uppercase leading-tight tracking-tight text-ink md:text-4xl">
-              {before}
-              {after.length > 0 && (
-                <span className="relative inline-block text-[#3e8914]">
-                  {highlight}
-                  <svg aria-hidden className="absolute -bottom-1.5 left-0 h-3 w-full" viewBox="0 0 150 10" fill="none" preserveAspectRatio="none">
-                    <path d="M0 8 L 150 8" strokeWidth="3" strokeLinecap="round" className="stroke-[#3e8914]" />
-                  </svg>
-                </span>
+        {/* Heading + counter */}
+        <div className="container-x relative mx-auto flex w-full max-w-6xl flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            {eyebrow && (<span className="inline-flex items-center gap-2 rounded-full border border-[#3e8914]/20 bg-white px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#3e8914] shadow-sm">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#3e8914] opacity-50" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#3e8914]" />
+              </span>
+              {eyebrow}
+            </span>)}
+            <h2 className="mt-3 text-[26px] font-black uppercase leading-tight tracking-tight text-ink md:text-[34px]">
+              {at >= 0 ? (
+                <>
+                  {title.slice(0, at)}
+                  <span className="relative inline-block text-[#3e8914]">
+                    {highlight}
+                    <svg aria-hidden className="absolute -bottom-1.5 left-0 h-3 w-full" viewBox="0 0 150 10" fill="none" preserveAspectRatio="none">
+                      <path d="M2 7 C 40 2, 110 2, 148 7" strokeWidth="3.5" strokeLinecap="round" className="stroke-[#3e8914]" />
+                    </svg>
+                  </span>
+                  {title.slice(at + highlight.length)}
+                </>
+              ) : (
+                title
               )}
-              {after.join(highlight)}
             </h2>
-            <p className="mx-auto mt-3 max-w-md text-xs font-medium leading-relaxed text-ink/70 md:text-sm lg:mx-0">{description}</p>
-
-            {/* Step list with a rail that fills as you scroll (desktop) */}
-            <div className="relative mt-8 hidden lg:block">
-              <div className="absolute bottom-5 left-[19px] top-5 w-[3px] overflow-hidden rounded-full bg-black/[0.07]">
-                <motion.div style={{ height: railFill }} className="w-full rounded-full bg-gradient-to-b from-primary to-[#3e8914] shadow-[0_0_10px_rgba(62,137,20,0.6)]" />
-              </div>
-              <ol className="relative space-y-1.5">
-                {steps.map((step, idx) => {
-                  const Icon = stepIcons[idx] ?? CalendarCheck;
-                  const isActive = activeStep === idx;
-                  const isDone = activeStep > idx;
-                  return (
-                    <li key={idx}>
-                      <button
-                        type="button"
-                        onClick={() => goToStep(idx)}
-                        aria-current={isActive ? "step" : undefined}
-                        className={`group flex w-full items-center gap-4 rounded-2xl py-2 pl-0 pr-4 text-left transition-all duration-500 ${
-                          isActive ? "bg-white shadow-[0_12px_30px_-18px_rgba(15,23,42,0.45)] ring-1 ring-black/[0.05]" : "hover:bg-white/60"
-                        }`}
-                      >
-                        <span
-                          className={`relative grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 transition-all duration-500 ${
-                            isActive
-                              ? "scale-110 border-[#3e8914] bg-[#3e8914] text-white shadow-[0_0_0_5px_rgba(62,137,20,0.15)]"
-                              : isDone
-                                ? "border-[#3e8914] bg-white text-[#3e8914]"
-                                : "border-black/10 bg-white text-ink/35"
-                          }`}
-                        >
-                          {isDone ? <Check className="h-4 w-4" strokeWidth={3} /> : <Icon className="h-[18px] w-[18px]" />}
-                        </span>
-                        <span className="min-w-0">
-                          <span className={`block text-[10px] font-bold uppercase tracking-[0.16em] transition-colors ${isActive || isDone ? "text-[#3e8914]" : "text-ink/35"}`}>
-                            {step.badge}
-                          </span>
-                          <span className={`block truncate text-[15px] font-bold transition-colors ${isActive ? "text-ink" : "text-ink/55 group-hover:text-ink/80"}`}>
-                            {step.title}
-                          </span>
-                        </span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ol>
-            </div>
+            <p className="mt-2 max-w-xl text-[13.5px] font-medium leading-relaxed text-ink/65">{description}</p>
           </div>
-
-          {/* Right — the card deck */}
-          <div className="relative mx-auto w-full max-w-[560px]">
-            {/* Clips the cards waiting below; the top padding leaves room for
-                the cards stacked behind to peek out above the front one. */}
-            <div className="relative -mx-4 overflow-hidden px-4 pb-8 pt-[72px]">
-              <div className="relative h-[300px] sm:h-[330px] lg:h-[360px]" style={{ perspective: "1400px" }}>
-                {steps.map((step, idx) => (
-                  <StackCard key={idx} step={step} index={idx} total={total} progress={progress} marks={marks} />
-                ))}
-              </div>
-            </div>
-
-            {/* step dots (mobile / tablet) */}
-            <div className="mt-1 flex items-center justify-center gap-2 lg:hidden">
-              {steps.map((step, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => goToStep(idx)}
-                  aria-label={`Go to ${step.title}`}
-                  className={`h-2 rounded-full transition-all duration-500 ${activeStep === idx ? "w-8 bg-[#3e8914]" : activeStep > idx ? "w-2 bg-[#3e8914]/50" : "w-2 bg-black/15"}`}
-                />
-              ))}
+          <div className="flex shrink-0 items-center gap-3 md:flex-col md:items-end">
+            <p className="font-black tabular-nums text-ink">
+              <span className="text-[28px] text-[#3e8914] md:text-[34px]">{pad(active + 1)}</span>
+              <span className="text-[15px] text-ink/30"> / {pad(total)}</span>
+            </p>
+            <div className="h-1.5 w-32 overflow-hidden rounded-full bg-black/[0.07] md:w-40">
+              <motion.div style={{ width: bar }} className="h-full rounded-full bg-gradient-to-r from-[#3e8914] to-primary" />
             </div>
           </div>
         </div>
+
+        {/* Sliding cards */}
+        <div ref={viewportRef} className="relative mt-6 w-full md:mt-8">
+          <motion.div
+            ref={trackRef}
+            style={{ x }}
+            // Side padding centres the first and last card.
+            className="flex w-max items-center gap-5 px-[10vw] will-change-transform sm:px-[19vw] md:gap-8 lg:px-[max(24vw,calc(50vw-370px))]"
+          >
+            {steps.map((step, idx) => (
+              <StepCard key={idx} step={step} index={idx} total={total} progress={progress} />
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Timeline */}
+        <div className="container-x relative mx-auto mt-6 w-full max-w-3xl md:mt-8">
+          <div className="relative flex items-center justify-between">
+            <div aria-hidden className="absolute inset-x-4 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-[repeating-linear-gradient(90deg,rgba(15,23,42,0.12)_0_8px,transparent_8px_14px)]">
+              <motion.div style={{ width: bar }} className="h-full rounded-full bg-gradient-to-r from-[#3e8914] to-primary" />
+            </div>
+            {steps.map((step, idx) => (
+              <div key={idx} className="relative z-10 flex flex-col items-center gap-1.5">
+                <span
+                  className={`grid h-8 w-8 place-items-center rounded-full border-[3px] border-white text-[11px] font-black transition-all duration-500 ${
+                    idx <= active ? "bg-[#3e8914] text-white shadow-[0_0_0_4px_rgba(62,137,20,0.15)]" : "bg-slate-200 text-ink/40"
+                  } ${idx === active ? "scale-110" : ""}`}
+                >
+                  {pad(idx + 1)}
+                </span>
+                <span className={`hidden whitespace-nowrap text-[11px] font-bold transition-colors sm:block ${idx === active ? "text-ink" : "text-ink/40"}`}>
+                  {step.title}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

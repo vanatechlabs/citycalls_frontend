@@ -1,68 +1,19 @@
 "use client";
 
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { Flag, Users, Building2, Trophy, Rocket, Star, TrainFront, Sparkles } from "lucide-react";
+import {
+  Award, Building2, Flag, Heart, MapPin, Rocket, Sparkles, Star, Target, TrainFront, TrendingUp, Trophy, Users, type LucideIcon,
+} from "lucide-react";
 import { useRef } from "react";
+import { aboutJourneyDefaults, type AboutPageData } from "@/lib/api/aboutPage";
 
-const s1 = "/assets/Services/s1.png";
-const s2 = "/assets/Services/s2.png";
-const s3 = "/assets/Services/s3.png";
-const s4 = "/assets/Services/s4.png";
-const s5 = "/assets/Services/s5.png";
-const s6 = "/assets/Services/s6.png";
+// Icon names chosen in Admin → About Page → Our Journey.
+const ICONS: Record<string, LucideIcon> = {
+  Flag, Users, Building2, Trophy, Rocket, Star, MapPin, Award, Sparkles, Target, TrendingUp, Heart,
+};
 
-const milestones = [
-  {
-    year: "2022",
-    title: "The Beginning",
-    description: "Started CityCalls with a mission to simplify home services across all households.",
-    icon: Flag,
-    image: s1,
-    tag: "Milestone 01",
-  },
-  {
-    year: "2023",
-    title: "Growing Community",
-    description: "Reached 1,000+ happy customers and rapidly expanded our service categories.",
-    icon: Users,
-    image: s2,
-    tag: "Milestone 02",
-  },
-  {
-    year: "2024",
-    title: "Wider Reach",
-    description: "Onboarded top-rated verified professionals serving thousands of doorstep requests.",
-    icon: Building2,
-    image: s3,
-    tag: "Milestone 03",
-  },
-  {
-    year: "2025",
-    title: "Trusted by Many",
-    description: "Crossed 10,000+ completed orders with glowing 5-star customer reviews.",
-    icon: Trophy,
-    image: s4,
-    tag: "Milestone 04",
-  },
-  {
-    year: "2026",
-    title: "Scaling Nationwide",
-    description: "Expanding into major new cities with automated booking and instant dispatch.",
-    icon: Rocket,
-    image: s5,
-    tag: "Milestone 05",
-  },
-  {
-    year: "2027",
-    title: "The Road Ahead",
-    description: "Redefining home maintenance with AI scheduling and unmatched reliability.",
-    icon: Star,
-    image: s6,
-    tag: "Future Vision",
-  },
-];
-
-export function AboutJourney() {
+export function AboutJourney({ content = aboutJourneyDefaults }: { content?: AboutPageData["journey"] }) {
+  const milestones = content.items.map((m) => ({ ...m, icon: ICONS[m.icon] ?? Flag }));
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -86,22 +37,22 @@ export function AboutJourney() {
         
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
-          <motion.div
+          {content.section.eyebrow && <motion.div
             initial={{ opacity: 0, y: -10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#3e8914]/10 text-[#3e8914] text-[11px] font-bold uppercase tracking-widest mb-2"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            Our Story &amp; Growth
-          </motion.div>
+            {content.section.eyebrow}
+          </motion.div>}
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-3xl md:text-4xl font-black font-sans text-ink mb-3 tracking-tight"
           >
-            Our Journey
+            {content.section.heading}
           </motion.h2>
           <motion.div
             initial={{ scaleX: 0 }}
@@ -162,7 +113,7 @@ export function AboutJourney() {
               const isLeft = index % 2 === 0;
 
               return (
-                <div key={item.year} className="relative">
+                <div key={item._id} className="relative">
                   
                   {/* ===== Desktop 3-Column Layout ===== */}
                   <div className="hidden md:grid grid-cols-[1fr_auto_1fr] items-center gap-8 md:gap-12 w-full">
@@ -200,7 +151,7 @@ export function AboutJourney() {
                         >
                           <img
                             src={item.image}
-                            alt={item.title}
+                            alt={item.imageAlt || item.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-75 group-hover:opacity-50 transition-opacity duration-300" />
@@ -257,7 +208,7 @@ export function AboutJourney() {
                         >
                           <img
                             src={item.image}
-                            alt={item.title}
+                            alt={item.imageAlt || item.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-75 group-hover:opacity-50 transition-opacity duration-300" />
@@ -289,7 +240,7 @@ export function AboutJourney() {
                     </p>
 
                     <div className="relative h-44 w-full rounded-2xl overflow-hidden shadow-md border-2 border-white">
-                      <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                      <img src={item.image} alt={item.imageAlt || item.title} className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                       <span className="absolute bottom-2.5 left-3 text-[9px] font-bold text-white uppercase bg-black/50 backdrop-blur-md px-2 py-0.5 rounded">
                         {item.tag}

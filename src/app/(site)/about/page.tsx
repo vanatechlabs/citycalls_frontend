@@ -7,6 +7,7 @@ import { AboutParallax } from "@/components/about/AboutParallax/AboutParallax";
 import { AboutJourney } from "@/components/about/AboutJourney/AboutJourney";
 
 import { SeoJsonLd } from "@/components/seo/SeoJsonLd";
+import { fetchAboutPage } from "@/lib/api/aboutPage";
 import { buildMetadata } from "@/lib/seo/seoMetadata";
 
 const fallbackMetadata: Metadata = {
@@ -19,16 +20,17 @@ export function generateMetadata() {
   return buildMetadata("/about", fallbackMetadata);
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const about = await fetchAboutPage();
   return (
     <div className="overflow-hidden">
       <SeoJsonLd path="/about" />
-      <AboutHero />
-      <AboutStory />
+      <AboutHero content={about.hero} />
+      <AboutStory content={about.story} />
       <WhyChooseUs />
-      <AboutValues />
-      <AboutParallax />
-      <AboutJourney />
+      <AboutValues content={about.values} />
+      <AboutParallax content={about.parallax} />
+      {about.journey.items.length > 0 && <AboutJourney content={about.journey} />}
     </div>
   );
 }

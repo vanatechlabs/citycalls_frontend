@@ -95,6 +95,26 @@ const GLASS_STYLES = `
   }
   .footer-glass-icon:hover::after { transform: translateX(120%); }
 
+  /* Social icons: the green "hover" look is their normal look; hovering
+     brightens the glow a little more. */
+  .footer-glass-icon--social {
+    color: #fff;
+    border-color: rgba(110, 190, 38, 0.6);
+    background: linear-gradient(145deg, rgba(110, 190, 38, 0.45), rgba(110, 190, 38, 0.12));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      0 0 0 4px rgba(110, 190, 38, 0.12),
+      0 12px 26px -8px rgba(110, 190, 38, 0.65);
+  }
+  .footer-glass-icon--social:hover {
+    border-color: rgba(110, 190, 38, 0.85);
+    background: linear-gradient(145deg, rgba(110, 190, 38, 0.6), rgba(110, 190, 38, 0.2));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      0 0 0 5px rgba(110, 190, 38, 0.2),
+      0 14px 30px -8px rgba(110, 190, 38, 0.8);
+  }
+
   /* Column headings: frosted glass pill with a glowing brand dot. */
   .footer-glass-chip {
     position: relative;
@@ -240,7 +260,7 @@ export function Footer({ links = DEFAULT_SOCIAL_LINKS }: { links?: PublicSocialL
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="footer-glass-icon grid place-items-center h-10 w-10 rounded-full text-[#8fd14f]"
+                    className="footer-glass-icon footer-glass-icon--social grid place-items-center h-10 w-10 rounded-full"
                   >
                     <Icon size={18} className="relative" />
                   </motion.a>

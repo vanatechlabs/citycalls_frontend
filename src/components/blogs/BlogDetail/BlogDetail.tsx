@@ -15,7 +15,7 @@ export function BlogDetail({ blog, latest }: { blog: PublicBlog; latest: PublicB
   return (
     <>
       <ReadingProgress />
-      <BlogHero title={blog.h1Title || blog.title} image={blog.image} imageAlt={blog.imageAlt || blog.title} />
+      <BlogHero title={blog.h1Title || blog.title} image={blog.image} imageAlt={blog.imageAlt || blog.title} eyebrow={blog.category} />
 
       <section className="bg-white py-16">
         <div className="container-x max-w-7xl">
