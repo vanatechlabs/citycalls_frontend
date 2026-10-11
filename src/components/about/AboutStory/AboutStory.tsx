@@ -36,7 +36,7 @@ export function AboutStory({ content = aboutStoryDefaults }: { content?: AboutSt
                 transition={{ duration: 0.7, delay: idx * 0.15, type: "spring", bounce: 0.4 }}
                 className="relative overflow-hidden rounded-2xl aspect-square bg-muted flex items-center justify-center group shadow-md"
               >
-                <img
+                <img loading="lazy" decoding="async"
                   src={imgSrc}
                   alt={imageAlt || `About Story ${idx + 1}`}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"

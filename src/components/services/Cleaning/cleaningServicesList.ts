@@ -4,12 +4,12 @@ const unsplash = (id: string) => `https://images.unsplash.com/${id}?auto=format&
 
 // Hero and card images per cleaning service (same photos as data/services.ts).
 export const CLEANING_IMAGES = {
-  sofaShampooing: "/assets/Services/s10.png",
+  sofaShampooing: "/assets/Services/s10.webp",
   sofaDryCleaning: unsplash("photo-1493663284031-b7e3aefcae8e"),
   carpet: unsplash("photo-1524758631624-e2822e304c36"),
   mattress: unsplash("photo-1631049307264-da0ec9d70304"),
   home: unsplash("photo-1581578731548-c64695cc6952"),
-  kitchen: "/assets/Services/s11.png",
+  kitchen: "/assets/Services/s11.webp",
   bathroom: unsplash("photo-1552321554-5fefe8c9ef14"),
 };
 

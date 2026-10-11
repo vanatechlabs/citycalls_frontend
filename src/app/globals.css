@@ -48,7 +48,7 @@
   /* Brand green (approx #7CB342) */
   --primary: oklch(0.72 0.17 135);
   --primary-foreground: oklch(0.99 0 0);
-  --primary-dark: oklch(0.55 0.16 138);
+  --primary-dark: oklch(0.52 0.16 138);
   --secondary: oklch(0.97 0.005 260);
   --secondary-foreground: oklch(0.18 0.01 260);
   --muted: oklch(0.97 0.005 260);

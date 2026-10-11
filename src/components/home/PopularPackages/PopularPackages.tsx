@@ -28,8 +28,8 @@ const fallbackSection: PublicPackagesSection = {
 };
 
 const fallbackPackages: PublicPopularPackage[] = [
-  { name: "Split AC Servicing", duration: "1 hr", price: 499, image: "/assets/Images/ac1.png", imageAlt: "Technician servicing a split AC", featured: true },
-  { name: "Window AC Servicing", duration: "1 hr", price: 449, image: "/assets/Images/ac2.png", imageAlt: "Technician servicing a window AC", featured: true },
+  { name: "Split AC Servicing", duration: "1 hr", price: 499, image: "/assets/Images/ac1.webp", imageAlt: "Technician servicing a split AC", featured: true },
+  { name: "Window AC Servicing", duration: "1 hr", price: 449, image: "/assets/Images/ac2.webp", imageAlt: "Technician servicing a window AC", featured: true },
   { name: "Complete Pest Control", duration: "2-3 hrs", price: 1299, image: "/assets/Images/a1.webp", imageAlt: "Pest control treatment at home", featured: true },
   { name: "Geyser Service & Repair", duration: "45 mins", price: 299, image: "/assets/Images/a2.webp", imageAlt: "Geyser service and repair", featured: true },
   { name: "Chimney Deep Cleaning", duration: "1.5 hrs", price: 899, image: "/assets/Images/a3.webp", imageAlt: "Kitchen chimney deep cleaning", featured: false },
@@ -38,7 +38,8 @@ const fallbackPackages: PublicPopularPackage[] = [
   { name: "Full Home Deep Cleaning", duration: "5-6 hrs", price: 3499, image: "/assets/Images/a6.webp", imageAlt: "Full home deep cleaning service", featured: true },
 ].map((pkg, i) => ({ ...pkg, _id: `default-${i}`, sortOrder: i }));
 
-export const PopularPackages = () => {
+// `hideButton`: on /services itself the "Explore all" button would link to the same page.
+export const PopularPackages = ({ hideButton = false }: { hideButton?: boolean } = {}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [section, setSection] = useState<PublicPackagesSection>(fallbackSection);
   const [servicePackages, setServicePackages] = useState<PublicPopularPackage[]>(fallbackPackages);
@@ -99,7 +100,7 @@ export const PopularPackages = () => {
           <div className="max-w-2xl">
             <div className="flex items-center gap-3 mb-3">
               <div className="h-px w-8 bg-primary" />
-              <span className="uppercase tracking-[0.2em] text-primary font-bold text-[11px]">
+              <span className="uppercase tracking-[0.2em] text-primary-dark font-bold text-[11px]">
                 {section.eyebrow}
               </span>
             </div>
@@ -107,7 +108,7 @@ export const PopularPackages = () => {
               {highlightAt < 0 ? section.heading : (
                 <>
                   {section.heading.slice(0, highlightAt)}
-                  <span className="text-primary">{section.highlight}</span>
+                  <span className="text-primary-dark">{section.highlight}</span>
                   {section.heading.slice(highlightAt + section.highlight.length)}
                 </>
               )}
@@ -117,10 +118,10 @@ export const PopularPackages = () => {
             </p>
           </div>
           
-          {section.buttonText && (
+          {!hideButton && section.buttonText && (
           <Link
             href={section.buttonLink || "/services"}
-            className="group flex items-center gap-1.5 px-5 py-2.5 border-2 border-primary rounded-full text-primary text-[12px] font-bold uppercase tracking-wide hover:bg-primary hover:text-white transition-all w-fit shrink-0 shadow-sm"
+            className="group flex items-center gap-1.5 px-5 py-2.5 border-2 border-primary-dark rounded-full text-primary-dark text-[12px] font-bold uppercase tracking-wide hover:bg-primary-dark hover:text-white transition-all w-fit shrink-0 shadow-sm"
           >
             {section.buttonText}
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -135,6 +136,7 @@ export const PopularPackages = () => {
               {/* NAV BUTTONS */}
               <button
                 onClick={prevSlide}
+                aria-label="Previous packages"
                 className="absolute -left-5 top-1/2 -translate-y-1/2 z-20 bg-white shadow-xl rounded-full p-2.5 hover:scale-110 transition border border-gray-100 hidden md:block text-gray-700 hover:text-primary"
               >
                 <ChevronLeft className="w-5 h-5" />
@@ -142,6 +144,7 @@ export const PopularPackages = () => {
 
               <button
                 onClick={nextSlide}
+                aria-label="Next packages"
                 className="absolute -right-5 top-1/2 -translate-y-1/2 z-20 bg-white shadow-xl rounded-full p-2.5 hover:scale-110 transition border border-gray-100 hidden md:block text-gray-700 hover:text-primary"
               >
                 <ChevronRight className="w-5 h-5" />
@@ -173,7 +176,7 @@ export function PackageCard({ d, idx }: { d: PublicPopularPackage; idx: number }
   const { data, addToCart, openDrawer } = useBooking();
   const cart = data.cart || [];
   const itemId = String(d._id);
-  const imageSrc = d.image ? resolveWebsiteImageUrl(d.image) : undefined;
+  const imageSrc = d.image ? resolveWebsiteImageUrl(d.image, 640) : undefined;
   const isInCart = cart.some(item => item.id === itemId);
 
   const handleBook = (e: React.MouseEvent) => {
@@ -207,7 +210,7 @@ export function PackageCard({ d, idx }: { d: PublicPopularPackage; idx: number }
       >
         <div className="relative h-[150px] overflow-hidden shrink-0">
           {/* Image */}
-          <img
+          <img loading="lazy" decoding="async"
             src={imageSrc}
             alt={d.imageAlt || d.name}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -218,7 +221,7 @@ export function PackageCard({ d, idx }: { d: PublicPopularPackage; idx: number }
           {/* Tags */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
             {d.featured && (
-              <span className="bg-white/95 backdrop-blur-sm text-primary text-[10px] font-semibold uppercase tracking-widest px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
+              <span className="bg-white/95 backdrop-blur-sm text-primary-dark text-[10px] font-semibold uppercase tracking-widest px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
                 <Star className="w-2.5 h-2.5 fill-primary" /> Popular
               </span>
             )}
@@ -243,9 +246,9 @@ export function PackageCard({ d, idx }: { d: PublicPopularPackage; idx: number }
               <div className="text-[11px] text-gray-700 font-bold uppercase tracking-wider mb-0.5">
                 Starting from
               </div>
-              <div className="text-lg font-medium text-primary flex items-baseline gap-1">
+              <div className="text-lg font-medium text-primary-dark flex items-baseline gap-1">
                 ₹{d.price.toLocaleString("en-IN")}
-                <span className="text-[10px] text-gray-400 font-medium uppercase tracking-normal">/service</span>
+                <span className="text-[10px] text-gray-500 font-medium uppercase tracking-normal">/service</span>
               </div>
             </div>
             
@@ -259,7 +262,7 @@ export function PackageCard({ d, idx }: { d: PublicPopularPackage; idx: number }
             className={`w-full py-2 mt-auto text-center text-[12px] font-bold border-2 rounded-lg transition-colors duration-300 uppercase tracking-wide flex items-center justify-center gap-2 ${
               isInCart
                 ? "border-green-500 bg-green-500 text-white"
-                : "border-primary text-primary group-hover:bg-primary group-hover:text-white"
+                : "border-primary-dark text-primary-dark group-hover:bg-primary-dark group-hover:text-white"
             }`}
           >
             {isInCart ? <><Check size={14} strokeWidth={3} /> Added</> : "Book Package"}

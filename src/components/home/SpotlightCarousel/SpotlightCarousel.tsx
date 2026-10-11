@@ -220,7 +220,7 @@ export function SpotlightCarousel() {
 
           <h2 className="text-3xl md:text-4xl font-extrabold font-display">
             <span className="text-gray-900">Exclusive </span>
-            <span className="text-primary">Deals</span>
+            <span className="text-primary-dark">Deals</span>
           </h2>
         </div>
 
@@ -231,6 +231,7 @@ export function SpotlightCarousel() {
               {/* NAV BUTTONS */}
               <button
                 onClick={prevSlide}
+                aria-label="Previous slide"
                 className="absolute -left-2 md:-left-6 top-1/2 -translate-y-1/2 z-20 bg-white shadow-xl rounded-full p-3 hover:scale-110 transition border border-gray-100"
               >
                 <ChevronLeft className="text-gray-600 hover:text-primary" />
@@ -238,6 +239,7 @@ export function SpotlightCarousel() {
 
               <button
                 onClick={nextSlide}
+                aria-label="Next slide"
                 className="absolute -right-2 md:-right-6 top-1/2 -translate-y-1/2 z-20 bg-white shadow-xl rounded-full p-3 hover:scale-110 transition border border-gray-100"
               >
                 <ChevronRight className="text-gray-600 hover:text-primary" />

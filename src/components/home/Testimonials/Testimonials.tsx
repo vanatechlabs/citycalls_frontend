@@ -175,7 +175,7 @@ const TestimonialCard = ({ item, expandedCardId, setExpandedCardId }: { item: Pu
                   e.stopPropagation();
                   setIsExpanded(true);
                 }}
-                className="flex items-center gap-0.5 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full transition-all duration-200 hover:gap-1 border border-primary/20 text-primary bg-primary/5 hover:bg-primary/10"
+                className="flex items-center gap-0.5 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full transition-all duration-200 hover:gap-1 border border-primary/30 text-primary-dark bg-primary/5 hover:bg-primary/10"
               >
                 Read more
                 <span style={{ fontSize: '8px' }}>→</span>

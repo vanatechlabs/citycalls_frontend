@@ -1,4 +1,4 @@
-import { resolveWebsiteImageUrl } from "@/lib/api/cityCallsHome";
+import { resolveShareImageUrl, resolveWebsiteImageUrl } from "@/lib/api/cityCallsHome";
 import { blogs as localBlogs } from "@/data/blogs";
 import { parseContent, readingTime } from "@/components/blogs/blogUtils";
 
@@ -47,7 +47,7 @@ export function formatBlogDate(iso?: string) {
 const withImages = <T extends PublicBlogSummary>(blog: T): T => ({
   ...blog,
   image: blog.image ? resolveWebsiteImageUrl(blog.image) : "",
-  ...("ogImage" in blog && typeof blog.ogImage === "string" && blog.ogImage ? { ogImage: resolveWebsiteImageUrl(blog.ogImage) } : {}),
+  ...("ogImage" in blog && typeof blog.ogImage === "string" && blog.ogImage ? { ogImage: resolveShareImageUrl(blog.ogImage) } : {}),
 });
 
 // ── Fallback: the site's bundled articles, used only if the API is down ──
@@ -86,6 +86,13 @@ const fallbackBlogs: PublicBlog[] = localBlogs.map((b) => ({
   schemaMarkup: "",
 }));
 
+// List view of the fallback — summaries only, so a page that lists blogs
+// doesn't ship every article's full text.
+const fallbackSummaries: PublicBlogSummary[] = fallbackBlogs.map((b) => ({
+  _id: b._id, title: b.title, slug: b.slug, excerpt: b.excerpt, author: b.author, category: b.category,
+  image: b.image, imageAlt: b.imageAlt, featured: b.featured, publishedAt: b.publishedAt, readingMinutes: b.readingMinutes,
+}));
+
 // Newest first. Never throws.
 export async function fetchBlogs(): Promise<PublicBlogSummary[]> {
   try {
@@ -97,7 +104,7 @@ export async function fetchBlogs(): Promise<PublicBlogSummary[]> {
     const payload = (await response.json()) as { data: PublicBlogSummary[] };
     return (payload.data ?? []).map(withImages);
   } catch {
-    return fallbackBlogs;
+    return fallbackSummaries;
   }
 }
 

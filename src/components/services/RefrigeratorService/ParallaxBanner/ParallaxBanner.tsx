@@ -49,7 +49,7 @@ export function ParallaxBanner({
         }}
         className="absolute inset-0 w-full h-[150%] -top-[25%] z-0"
       >
-        <motion.img
+        <motion.img loading="lazy" decoding="async"
           src={image}
           alt="Appliance Repair"
           className="w-full h-full object-cover object-center brightness-105 contrast-110"

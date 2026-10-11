@@ -14,7 +14,7 @@ export default function ContactHero() {
           {/* Logo / Brand Name */}
           <div className="flex items-center justify-center mb-4">
             <div className="bg-black p-2 px-4 rounded-xl inline-block shadow-sm">
-              <img src="/logo.png" alt="CityCalls Logo" className="h-10 md:h-12 object-contain" />
+              <img src="/logo.webp" alt="CityCalls Logo" className="h-10 md:h-12 object-contain" />
             </div>
           </div>
           <h1 className="text-2xl md:text-4xl font-serif mt-6 uppercase tracking-tight">We're here for you</h1>

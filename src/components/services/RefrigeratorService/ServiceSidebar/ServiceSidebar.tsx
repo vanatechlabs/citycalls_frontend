@@ -3,7 +3,7 @@
 import { Phone, CheckCircle2, MessageCircle, IndianRupee, Mail, Clock4, Headset, MapPin, Building, Building2, ChevronDown, HelpCircle } from "lucide-react";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useState } from "react";
-const z2Icon = "/assets/icons/z2.png";
+const z2Icon = "/assets/icons/z2.webp";
 
 export interface ServiceSidebarContent {
   whyChooseTitle: string;
@@ -29,7 +29,7 @@ export const defaultServiceSidebarContent: ServiceSidebarContent = {
   contactTitle: "Contact Us",
   phone: "+91 74288 08884",
   whatsapp: "+91 74288 08884",
-  email: "hello@citycalls.in",
+  email: "support@citycalls.in",
   hours: "Mon-Sat: 9:00 AM – 8:00 PM",
   coverageTitle: "Our Service Coverage",
   coverageLines: ["All major areas in Ghaziabad", "and nearby locations."],
@@ -148,7 +148,7 @@ export function ServiceSidebar({ currentStep = 1, content = defaultServiceSideba
               </p>
             </div>
           </div>
-          <img src={z2Icon} alt="Service Coverage" className="h-12 object-contain ml-4 self-end -mb-2 scale-[1.5] origin-bottom-right" />
+          <img loading="lazy" decoding="async" src={z2Icon} alt="Service Coverage" className="h-12 object-contain ml-4 self-end -mb-2 scale-[1.5] origin-bottom-right" />
         </div>
       </div>
 

@@ -20,14 +20,14 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useMotionValue, useReducedMotion, useSpring, type Variants } from "framer-motion";
 import gsap from "gsap";
 import { useBooking } from "@/context/BookingContext";
-import { fetchCityCallsHeroSlides, resolveWebsiteImageUrl } from "@/lib/api/cityCallsHome";
+import { fetchCityCallsHeroSlides, resolveWebsiteImageUrl, type PublicHeroSlide } from "@/lib/api/cityCallsHome";
 
-const cara1 = "/assets/Banner/cara4.png";
-const cara2 = "/assets/Banner/cara5.png";
-const cara3 = "/assets/Banner/cara6.png";
-const cara4 = "/assets/Banner/cara7.png";
-const cara5 = "/assets/Banner/cara8.png";
-const h11 = "/assets/Banner/h11.png";
+const cara1 = "/assets/Banner/cara4.webp";
+const cara2 = "/assets/Banner/cara5.webp";
+const cara3 = "/assets/Banner/cara6.webp";
+const cara4 = "/assets/Banner/cara7.webp";
+const cara5 = "/assets/Banner/cara8.webp";
+const h11 = "/assets/Banner/h11.webp";
 
 import { LaunchSpotlight } from "./LaunchSpotlight";
 
@@ -167,7 +167,23 @@ const wordVariants: Variants = {
   },
 };
 
-export function HeroCarousel() {
+// CMS slides → carousel slides.
+function toSlides(heroSlides: PublicHeroSlide[]): Slide[] {
+  return heroSlides.map((item) => ({
+    id: item._id,
+    image: resolveWebsiteImageUrl(item.image, 1920),
+    altText: item.altText,
+    hasText: true,
+    subtitle: item.subtitle,
+    titleParts: [item.titleLine1, item.titleLine2],
+    description: item.description,
+    overlayOpacity: item.overlayOpacity,
+  }));
+}
+
+// `initialSlides` come from the server (home page); without them the
+// carousel loads the CMS slides itself.
+export function HeroCarousel({ initialSlides }: { initialSlides?: PublicHeroSlide[] } = {}) {
   const { openDrawer } = useBooking();
   const reduceMotion = useReducedMotion();
   // Mouse parallax — the background drifts slightly against the cursor.
@@ -187,26 +203,19 @@ export function HeroCarousel() {
     pointerX.set(0);
     pointerY.set(0);
   }
-  const [slides, setSlides] = useState<Slide[]>(fallbackSlides);
+  const hasServerSlides = !!initialSlides?.length;
+  const [slides, setSlides] = useState<Slide[]>(() => (hasServerSlides ? toSlides(initialSlides!) : fallbackSlides));
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
+    if (hasServerSlides) return;
     const controller = new AbortController();
 
     fetchCityCallsHeroSlides(controller.signal)
       .then((heroSlides) => {
         if (heroSlides.length === 0) return;
 
-        setSlides(heroSlides.map((item) => ({
-          id: item._id,
-          image: resolveWebsiteImageUrl(item.image),
-          altText: item.altText,
-          hasText: true,
-          subtitle: item.subtitle,
-          titleParts: [item.titleLine1, item.titleLine2],
-          description: item.description,
-          overlayOpacity: item.overlayOpacity,
-        })));
+        setSlides(toSlides(heroSlides));
         setCurrent(0);
       })
       .catch((error: unknown) => {
@@ -217,7 +226,7 @@ export function HeroCarousel() {
       });
 
     return () => controller.abort();
-  }, []);
+  }, [hasServerSlides]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -333,7 +342,8 @@ export function HeroCarousel() {
             key={s.id}
             onClick={() => setCurrent(i)}
             className="group flex items-center gap-2"
-            aria-label={`Show slide ${i + 1}`}
+            aria-label={`0${i + 1} — show slide ${i + 1}`}
+            aria-current={i === current ? "true" : undefined}
           >
             <span className={`text-[9px] font-mono tracking-widest transition-colors duration-300 ${i === current ? "text-primary" : "text-white/40"}`}>
               0{i + 1}
@@ -529,7 +539,7 @@ export function HeroCarousel() {
                       </>
                     ) : (
                       <>
-                        <button onClick={() => openDrawer()} className="group relative overflow-hidden rounded-none px-5 py-2.5 bg-primary text-primary-foreground transition-all duration-500 uppercase tracking-[0.15em] text-[11px] font-bold border-2 border-primary hover:bg-white hover:text-primary">
+                        <button onClick={() => openDrawer()} className="group relative overflow-hidden rounded-none px-5 py-2.5 bg-primary-dark text-primary-foreground transition-all duration-500 uppercase tracking-[0.15em] text-[11px] font-bold border-2 border-primary-dark hover:bg-white hover:text-primary-dark">
                           <span className="relative z-10 flex items-center gap-1.5">
                             Explore Services
                             <ChevronRight size={13} className="group-hover:translate-x-1 transition-transform duration-300" />

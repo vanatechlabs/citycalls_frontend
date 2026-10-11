@@ -15,12 +15,12 @@ const fallbackSection: PublicFaqSection = {
 };
 
 const fallbackFaqs: PublicFaq[] = [
-  { _id: "f1", sortOrder: 1, question: "How quickly can I get a technician?", answer: "For most services in Ghaziabad, we dispatch a pro within 60–90 minutes of booking. You can also schedule a specific slot up to 7 days out.", image: "/assets/Services/s1.png", altText: "CityCalls technician arriving for a home service visit" },
-  { _id: "f2", sortOrder: 2, question: "Do I pay before or after the service?", answer: "Always after. You inspect the work, then pay by UPI, card, wallet or cash.", image: "/assets/Banner/cara1.png", altText: "Customer paying after a completed CityCalls service" },
-  { _id: "f3", sortOrder: 3, question: "Is there a service warranty?", answer: "Yes. All repairs come with a 30-day service warranty on labour. Spare parts carry the manufacturer's warranty.", image: "/assets/Services/s2.png", altText: "Appliance repaired with a 30-day service warranty" },
-  { _id: "f4", sortOrder: 4, question: "Are the technicians background-verified?", answer: "Every professional is police-verified, trained by CityCalls, and continuously rated by customers. Low-rated pros are removed from the platform.", image: "/assets/Services/s3.png", altText: "Verified CityCalls professional at work" },
-  { _id: "f5", sortOrder: 5, question: "What if I'm not happy with the service?", answer: "Raise a complaint from your booking page. We'll send another pro at no cost or refund the visit charge — your call.", image: "/assets/Banner/cara2.png", altText: "CityCalls support resolving a customer complaint" },
-  { _id: "f6", sortOrder: 6, question: "Do you serve areas outside Ghaziabad?", answer: "Right now we're focused on Ghaziabad. Noida, Delhi and Meerut are on our roadmap for 2026.", image: "/assets/Services/s4.png", altText: "CityCalls service area across Ghaziabad" },
+  { _id: "f1", sortOrder: 1, question: "How quickly can I get a technician?", answer: "For most services in Ghaziabad, we dispatch a pro within 60–90 minutes of booking. You can also schedule a specific slot up to 7 days out.", image: "/assets/Services/s1.webp", altText: "CityCalls technician arriving for a home service visit" },
+  { _id: "f2", sortOrder: 2, question: "Do I pay before or after the service?", answer: "Always after. You inspect the work, then pay by UPI, card, wallet or cash.", image: "/assets/Banner/cara1.webp", altText: "Customer paying after a completed CityCalls service" },
+  { _id: "f3", sortOrder: 3, question: "Is there a service warranty?", answer: "Yes. All repairs come with a 30-day service warranty on labour. Spare parts carry the manufacturer's warranty.", image: "/assets/Services/s2.webp", altText: "Appliance repaired with a 30-day service warranty" },
+  { _id: "f4", sortOrder: 4, question: "Are the technicians background-verified?", answer: "Every professional is police-verified, trained by CityCalls, and continuously rated by customers. Low-rated pros are removed from the platform.", image: "/assets/Services/s3.webp", altText: "Verified CityCalls professional at work" },
+  { _id: "f5", sortOrder: 5, question: "What if I'm not happy with the service?", answer: "Raise a complaint from your booking page. We'll send another pro at no cost or refund the visit charge — your call.", image: "/assets/Banner/cara2.webp", altText: "CityCalls support resolving a customer complaint" },
+  { _id: "f6", sortOrder: 6, question: "Do you serve areas outside Ghaziabad?", answer: "Right now we're focused on Ghaziabad. Noida, Delhi and Meerut are on our roadmap for 2026.", image: "/assets/Services/s4.webp", altText: "CityCalls service area across Ghaziabad" },
 ];
 
 // Splits the heading so the admin-chosen word shows in green.
@@ -30,7 +30,7 @@ function HighlightedHeading({ heading, word }: { heading: string; word: string }
   return (
     <>
       {heading.slice(0, index)}
-      <span className="text-primary">{word}</span>
+      <span className="text-primary-dark">{word}</span>
       {heading.slice(index + word.length)}
     </>
   );
@@ -113,11 +113,11 @@ export function FAQSection() {
                   >
                     <div className="flex items-center gap-4">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 ${
-                        isActive ? "bg-primary text-primary-foreground" : "bg-gray-50 text-gray-400"
+                        isActive ? "bg-primary-dark text-primary-foreground" : "bg-gray-50 text-gray-500"
                       }`}>
                         <HelpCircle className="w-4 h-4" />
                       </div>
-                      <span className={`font-bold text-[15px] transition-colors duration-300 ${isActive ? "text-primary" : "text-ink"}`}>
+                      <span className={`font-bold text-[15px] transition-colors duration-300 ${isActive ? "text-primary-dark" : "text-ink"}`}>
                         {item.question}
                       </span>
                     </div>
@@ -166,7 +166,7 @@ export function FAQSection() {
                     className="absolute inset-0 bg-gray-50"
                   >
                     {shown?.image && (
-                      <img src={resolveWebsiteImageUrl(shown.image)} alt={shown.altText || shown.question} className="w-full h-full object-cover" />
+                      <img loading="lazy" decoding="async" src={resolveWebsiteImageUrl(shown.image, 900)} alt={shown.altText || shown.question} className="w-full h-full object-cover" />
                     )}
                   </motion.div>
                 </AnimatePresence>
@@ -185,7 +185,7 @@ export function FAQSection() {
               </p>
               <Link
                 href="/contact"
-                className="inline-block bg-primary text-primary-foreground px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-primary-dark transition-all shadow-md rounded-lg relative z-10"
+                className="inline-block bg-primary-dark text-primary-foreground px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-ink transition-all shadow-md rounded-lg relative z-10"
               >
                 Contact Support
               </Link>

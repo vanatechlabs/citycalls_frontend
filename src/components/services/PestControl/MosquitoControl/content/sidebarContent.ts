@@ -11,7 +11,7 @@ export const mosquitoControlSidebarContent: ServiceSidebarContent = {
   contactTitle: "Mosquito Control Support",
   phone: "+91 74288 08884",
   whatsapp: "+91 74288 08884",
-  email: "hello@citycalls.in",
+  email: "support@citycalls.in",
   hours: "Mon-Sat: 9:00 AM – 8:00 PM",
   coverageTitle: "Mosquito Control Coverage",
   coverageLines: ["All major areas in Ghaziabad", "and nearby locations."],

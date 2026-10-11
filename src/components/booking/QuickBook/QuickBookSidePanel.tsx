@@ -56,7 +56,7 @@ export function QuickBookSidePanel() {
       {/* Illustration: calendar, bell and "We'll call you soon!" phone */}
       <div className="relative -mx-3 mt-auto shrink-0 pb-4 pt-4">
         <Image
-          src="/assets/icons/quick.png"
+          src="/assets/icons/quick.webp"
           alt="Calendar with a tick and a phone saying we'll call you soon"
           width={1460}
           height={880}

@@ -9,7 +9,7 @@ export function NotFound() {
         <div className="w-full max-w-5xl" aria-hidden="true">
           {/* The supplied SVG contains its own scoped animation styles. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <img loading="lazy" decoding="async"
             src="/assets/404-animated.svg"
             alt=""
             className="mx-auto h-auto w-full max-h-[58vh] object-contain"

@@ -27,9 +27,9 @@ const fallbackAbout: PublicHomeAbout = {
   buttonText: "Discover More",
   buttonLink: "/about",
   images: [
-    { image: "/assets/Images/about1.png", alt: "CityCalls Professional Cleaning" },
-    { image: "/assets/Images/about2.png", alt: "CityCalls Technician with Happy Family" },
-    { image: "/assets/Images/about3.png", alt: "CityCalls Team Collaboration" },
+    { image: "/assets/Images/about1.webp", alt: "CityCalls Professional Cleaning" },
+    { image: "/assets/Images/about2.webp", alt: "CityCalls Technician with Happy Family" },
+    { image: "/assets/Images/about3.webp", alt: "CityCalls Team Collaboration" },
   ],
   status: "ACTIVE",
 };
@@ -107,7 +107,7 @@ export function AboutSection() {
 
   const { before, words, after } = splitHeading(content.heading, content.highlight);
   const images = [0, 1, 2].map((i) => content.images?.[i] ?? fallbackAbout.images[i]);
-  const imageSrc = (i: number) => (images[i]?.image ? resolveWebsiteImageUrl(images[i].image) : undefined);
+  const imageSrc = (i: number) => (images[i]?.image ? resolveWebsiteImageUrl(images[i].image, 900) : undefined);
   const points = content.points.filter(Boolean);
   const pillars = [
     { title: content.missionTitle, text: content.missionText },
@@ -303,7 +303,7 @@ export function AboutSection() {
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                 className="col-span-1 row-span-2 rounded-2xl overflow-hidden shadow-md"
               >
-                <motion.img
+                <motion.img loading="lazy" decoding="async"
                   initial={{ scale: 1.15 }}
                   animate={isInView ? { scale: 1 } : {}}
                   transition={{ duration: 0.9, ease: "easeOut" }}
@@ -319,7 +319,7 @@ export function AboutSection() {
                 transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
                 className="col-span-1 row-span-1 rounded-2xl overflow-hidden shadow-md"
               >
-                <motion.img
+                <motion.img loading="lazy" decoding="async"
                   initial={{ scale: 1.15 }}
                   animate={isInView ? { scale: 1 } : {}}
                   transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
@@ -335,7 +335,7 @@ export function AboutSection() {
                 transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
                 className="col-span-1 row-span-1 rounded-2xl overflow-hidden shadow-md"
               >
-                <motion.img
+                <motion.img loading="lazy" decoding="async"
                   initial={{ scale: 1.15 }}
                   animate={isInView ? { scale: 1 } : {}}
                   transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}

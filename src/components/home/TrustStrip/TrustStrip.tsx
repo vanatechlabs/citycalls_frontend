@@ -28,10 +28,10 @@ const COUNTER_ICONS: Record<PublicCounterIcon, LucideIcon> = {
 // Shown until (or if) Admin → Website Section → Counters can't be loaded.
 const fallbackCounters: PublicHomeCounters = {
   items: [
-    { value: 10000, suffix: "+", label: "Happy Customers", icon: "users", image: "/assets/Services/s1.png", imageAlt: "CityCalls technician repairing a refrigerator" },
-    { value: 100, suffix: "%", label: "Verified Professionals", icon: "shield-check", image: "/assets/Services/s2.png", imageAlt: "Verified CityCalls technician servicing an AC" },
-    { value: 60, suffix: " min", label: "Average Response Time", icon: "timer", image: "/assets/Services/s3.png", imageAlt: "CityCalls technician repairing a washing machine" },
-    { value: 4.8, suffix: "★", label: "Average Rating", icon: "star", image: "/assets/Services/s4.png", imageAlt: "CityCalls technician repairing a television" },
+    { value: 10000, suffix: "+", label: "Happy Customers", icon: "users", image: "/assets/Services/s1.webp", imageAlt: "CityCalls technician repairing a refrigerator" },
+    { value: 100, suffix: "%", label: "Verified Professionals", icon: "shield-check", image: "/assets/Services/s2.webp", imageAlt: "Verified CityCalls technician servicing an AC" },
+    { value: 60, suffix: " min", label: "Average Response Time", icon: "timer", image: "/assets/Services/s3.webp", imageAlt: "CityCalls technician repairing a washing machine" },
+    { value: 4.8, suffix: "★", label: "Average Rating", icon: "star", image: "/assets/Services/s4.webp", imageAlt: "CityCalls technician repairing a television" },
   ],
   status: "ACTIVE",
 };
@@ -111,8 +111,8 @@ export function TrustStrip() {
                 className="group relative h-40 overflow-hidden rounded-2xl shadow-[0_16px_36px_-18px_rgba(15,23,42,0.6)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_48px_-18px_rgba(15,23,42,0.75)] sm:h-44"
               >
                 {/* Photo — seen through the glass */}
-                <img
-                  src={c.image ? resolveWebsiteImageUrl(c.image) : undefined}
+                <img loading="lazy" decoding="async"
+                  src={c.image ? resolveWebsiteImageUrl(c.image, 600) : undefined}
                   alt={c.imageAlt || c.label}
                   className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
                 />

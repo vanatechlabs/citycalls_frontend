@@ -15,6 +15,11 @@ import { BlogsPreview } from "@/components/home/BlogsPreview/BlogsPreview";
 import { SeoJsonLd } from "@/components/seo/SeoJsonLd";
 import { buildMetadata } from "@/lib/seo/seoMetadata";
 import { fetchBlogs } from "@/lib/api/blogs";
+import { fetchHeroSlidesForPage, resolveWebsiteImageUrl } from "@/lib/api/cityCallsHome";
+import { preload } from "react-dom";
+
+// Shown when the CMS has no hero slides (same as the carousel's first bundled slide).
+const FALLBACK_HERO_IMAGE = "/assets/Banner/h11.webp";
 
 // Falls back to the root layout's metadata when no SEO entry exists.
 export function generateMetadata() {
@@ -22,11 +27,16 @@ export function generateMetadata() {
 }
 
 export default async function HomePage() {
-  const blogs = await fetchBlogs();
+  const [blogs, heroSlides] = await Promise.all([fetchBlogs(), fetchHeroSlidesForPage()]);
+  // The banner image is the biggest thing on first paint — start it right away.
+  preload(heroSlides.length ? resolveWebsiteImageUrl(heroSlides[0].image, 1920) : FALLBACK_HERO_IMAGE, {
+    as: "image",
+    fetchPriority: "high",
+  });
   return (
     <>
       <SeoJsonLd path="/" />
-      <HeroCarousel />
+      <HeroCarousel initialSlides={heroSlides} />
       <OfferStrip />
       <SpotlightCarousel />
       <PremiumServices />

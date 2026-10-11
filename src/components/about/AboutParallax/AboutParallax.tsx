@@ -27,7 +27,7 @@ export function AboutParallax({ content = aboutParallaxDefaults }: { content?: A
         style={{ y: y1, scale }}
         className="absolute inset-0 w-full h-[140%] -top-[20%]"
       >
-        <img
+        <img loading="lazy" decoding="async"
           src={content.image}
           alt={content.imageAlt || "Professional Services"}
           className="w-full h-full object-cover object-center brightness-[0.85] contrast-[1.05]"

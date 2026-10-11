@@ -161,7 +161,7 @@ const sections: LegalSection[] = [
     body: (
       <p>
         These terms are governed by the laws of India. We will first try to resolve any complaint amicably — please contact
-        us at hello@citycalls.in or +91 74288 08884. Any dispute that cannot be resolved will be subject to the jurisdiction
+        us at support@citycalls.in or +91 74288 08884. Any dispute that cannot be resolved will be subject to the jurisdiction
         of the courts at Ghaziabad, Uttar Pradesh.
       </p>
     ),

@@ -25,7 +25,7 @@ export function HowItWorks() {
               badge: `Step ${pad(i + 1)}`,
               title: s.title,
               description: s.description,
-              image: s.image ? resolveWebsiteImageUrl(s.image) : undefined,
+              image: s.image ? resolveWebsiteImageUrl(s.image, 1100) : undefined,
               imageAlt: s.imageAlt || undefined,
               icon: s.icon,
             }))

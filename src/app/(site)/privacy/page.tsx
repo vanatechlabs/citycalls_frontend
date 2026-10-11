@@ -124,7 +124,7 @@ const sections: LegalSection[] = [
           <li>Nominate another person to exercise these rights on your behalf.</li>
           <li>Raise a grievance with us, and if unresolved, with the Data Protection Board of India.</li>
         </ul>
-        <p>Write to <strong>hello@citycalls.in</strong> to use any of these rights. We will respond within 30 days.</p>
+        <p>Write to <strong>support@citycalls.in</strong> to use any of these rights. We will respond within 30 days.</p>
       </>
     ),
   },
@@ -143,7 +143,7 @@ const sections: LegalSection[] = [
     title: "Grievance officer",
     body: (
       <p>
-        For any privacy concern or complaint, contact our Grievance Officer at <strong>hello@citycalls.in</strong> or
+        For any privacy concern or complaint, contact our Grievance Officer at <strong>support@citycalls.in</strong> or
         <strong> +91 74288 08884</strong> (Mon–Sun, 8:00 AM – 8:00 PM), or write to Citytimes India Co., Raj Nagar, Ghaziabad,
         Uttar Pradesh 201002. We acknowledge complaints within 48 hours and aim to resolve them within 30 days.
       </p>

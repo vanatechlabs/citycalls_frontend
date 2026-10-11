@@ -4,7 +4,7 @@ const unsplash = (id: string) => `https://images.unsplash.com/${id}?auto=format&
 
 // Hero and card images per pest service (same photos as data/services.ts).
 export const PEST_IMAGES = {
-  general: "/assets/Services/s8.png",
+  general: "/assets/Services/s8.webp",
   termite: unsplash("photo-1526397751294-331021109fbd"),
   cockroach: unsplash("photo-1560393464-5c69a73c5770"),
   mosquito: unsplash("photo-1595853035070-59a39fe84de3"),

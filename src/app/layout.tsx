@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { preconnect } from "react-dom";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { AppProviders } from "@/components/providers/AppProviders";
 import SocialSidebar from "@/components/layout/SocialSidebar/SocialSidebar";
@@ -25,6 +26,9 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 // visits don't show up in the reports.
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-V5033YQ6FX";
 const loadAnalytics = process.env.NODE_ENV === "production" && !!GA_MEASUREMENT_ID;
+
+// Origins the page loads from right away (CMS data, Cloudinary images).
+const API_ORIGIN = new URL(process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000/api/v1").origin;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -70,6 +74,9 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   // Admin → Social Media: sidebar links and the call / WhatsApp buttons.
   const socialLinks = await fetchSocialLinks();
+  // Open these connections early so the first API call / image doesn't wait on DNS + TLS.
+  preconnect(API_ORIGIN, { crossOrigin: "anonymous" });
+  preconnect("https://res.cloudinary.com");
 
   return (
     <html lang="en" className={`${inter.variable} ${plusJakartaSans.variable}`}>
@@ -85,8 +92,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
         {loadAnalytics && (
           <>
-            <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive" />
-            <Script id="ga4-init" strategy="afterInteractive">
+            {/* Loads once the page is idle, so it never slows down the first paint. */}
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="lazyOnload" />
+            <Script id="ga4-init" strategy="lazyOnload">
               {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());

@@ -67,7 +67,7 @@ export function cleaningSidebarContent(serviceName: string, whyChooseItems: stri
     contactTitle: `${serviceName} Support`,
     phone: "+91 74288 08884",
     whatsapp: "+91 74288 08884",
-    email: "hello@citycalls.in",
+    email: "support@citycalls.in",
     hours: CLEANING_HOURS,
     coverageTitle: `${serviceName} Coverage`,
     coverageLines: ["All major areas in Ghaziabad", "and nearby locations."],

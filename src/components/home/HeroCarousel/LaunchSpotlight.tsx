@@ -5,8 +5,8 @@ import { AnimatePresence, motion, useReducedMotion, type Variants } from "framer
 import { ChevronDown, ChevronUp, Sparkles, X } from "lucide-react";
 import { fetchCityCallsLaunchSpotlight, resolveWebsiteImageUrl } from "@/lib/api/cityCallsHome";
 
-const cara5 = "/assets/Banner/cara8.png";
-const h2 = "/assets/Banner/h2.png";
+const cara5 = "/assets/Banner/cara8.webp";
+const h2 = "/assets/Banner/h2.webp";
 
 /* ============================================================================
    LAUNCH SPOTLIGHT — floating bottom-left card (mirrors the Call & WhatsApp
@@ -125,7 +125,7 @@ export function LaunchSpotlight() {
       .then((slides) => {
         setSpotlightItems(slides.map((slide) => ({
           id: slide.id,
-          image: resolveWebsiteImageUrl(slide.image),
+          image: resolveWebsiteImageUrl(slide.image, 1200),
           altText: slide.altText,
           badgeText: slide.badgeText,
           serviceName: slide.heading,

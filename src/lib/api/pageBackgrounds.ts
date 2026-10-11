@@ -33,7 +33,7 @@ export async function fetchPageBackground(path: string): Promise<PublicPageBackg
     const payload = (await response.json()) as ApiEnvelope<PublicPageBackground | null>;
     const background = payload.data;
     if (!background) return null;
-    return { ...background, image: background.image ? resolveWebsiteImageUrl(background.image) : undefined };
+    return { ...background, image: background.image ? resolveWebsiteImageUrl(background.image, 1920) : undefined };
   } catch {
     return null;
   }

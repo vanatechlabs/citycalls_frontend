@@ -104,8 +104,8 @@ export function LegalPage({ eyebrow, title, highlight, intro, lastUpdated, secti
               <p className="text-base font-bold text-slate-900">Questions? We&apos;re here to help.</p>
               <p className="mt-1 text-sm text-slate-600">{COMPANY} (operating the CityCalls brand)</p>
               <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
-                <a href="mailto:hello@citycalls.in" className="flex items-center gap-2 font-medium text-slate-700 hover:text-primary">
-                  <Mail className="h-4 w-4 text-primary" /> hello@citycalls.in
+                <a href="mailto:support@citycalls.in" className="flex items-center gap-2 font-medium text-slate-700 hover:text-primary">
+                  <Mail className="h-4 w-4 text-primary" /> support@citycalls.in
                 </a>
                 <a href="tel:+917428808884" className="flex items-center gap-2 font-medium text-slate-700 hover:text-primary">
                   <Phone className="h-4 w-4 text-primary" /> +91 74288 08884

@@ -1,15 +1,15 @@
 import type { ServiceCategory, SubService } from "@/types";
-const s1 = "/assets/Services/s1.png";
-const s2 = "/assets/Services/s2.png";
-const s3 = "/assets/Services/s3.png";
-const s4 = "/assets/Services/s4.png";
-const s5 = "/assets/Services/s5.png";
-const s6 = "/assets/Services/s6.png";
-const s7 = "/assets/Services/s7.png";
-const s8 = "/assets/Services/s8.png";
-const s10 = "/assets/Services/s10.png";
-const s11 = "/assets/Services/s11.png";
-const s12 = "/assets/Services/s12.png";
+const s1 = "/assets/Services/s1.webp";
+const s2 = "/assets/Services/s2.webp";
+const s3 = "/assets/Services/s3.webp";
+const s4 = "/assets/Services/s4.webp";
+const s5 = "/assets/Services/s5.webp";
+const s6 = "/assets/Services/s6.webp";
+const s7 = "/assets/Services/s7.webp";
+const s8 = "/assets/Services/s8.webp";
+const s10 = "/assets/Services/s10.webp";
+const s11 = "/assets/Services/s11.webp";
+const s12 = "/assets/Services/s12.webp";
 
 const img = (id: string) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1200&q=70`;

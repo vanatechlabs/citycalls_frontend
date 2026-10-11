@@ -203,6 +203,8 @@ export function PremiumServices() {
               initial={{ opacity: 0, scale: 0.6 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.5, delay: 0.5, ease: "backOut" }}
+              type="button"
+              aria-label="Show service photo"
               className="relative z-10 flex-shrink-0 w-11 h-11 rounded-full border border-gray-300 flex items-center justify-center text-gray-400 transition-all duration-300"
               style={
                 isImageVisible
@@ -230,8 +232,8 @@ export function PremiumServices() {
               transition={{ type: "spring", stiffness: 260, damping: 22 }}
               className="absolute top-full right-8 mt-1 w-52 h-36 rounded-2xl overflow-hidden z-50 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.4)] pointer-events-none origin-top-right"
             >
-              <motion.img
-                src={content.image ? resolveWebsiteImageUrl(content.image) : undefined}
+              <motion.img loading="lazy" decoding="async"
+                src={content.image ? resolveWebsiteImageUrl(content.image, 1200) : undefined}
                 alt={content.imageAlt || "CityCalls Premium Service"}
                 animate={isImageVisible ? { scale: 1 } : { scale: 1.25 }}
                 transition={{ duration: 0.7, ease: "easeOut" }}

@@ -75,10 +75,10 @@ export const AppDownloadStatsBanner = ({ title = "TRUSTED BY THOUSANDS", highlig
             <div className="flex flex-wrap items-center gap-4">
               <div className="flex gap-3">
                 <a href="#" className="inline-block hover:opacity-90 transition-opacity">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" className="h-10" />
+                  <img loading="lazy" decoding="async" src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" className="h-10" />
                 </a>
                 <a href="#" className="inline-block hover:opacity-90 transition-opacity">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Download on the App Store" className="h-10" />
+                  <img loading="lazy" decoding="async" src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Download on the App Store" className="h-10" />
                 </a>
               </div>
             </div>

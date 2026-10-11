@@ -184,7 +184,8 @@ const CARD_HOVER_STYLES = `
   }
 `;
 
-export function ServicesGrid() {
+// `hideButton`: on /services itself the "Explore all" button would link to the same page.
+export function ServicesGrid({ hideButton = false }: { hideButton?: boolean } = {}) {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.15 });
   const [modalOpen, setModalOpen] = useState(false);
@@ -353,7 +354,7 @@ export function ServicesGrid() {
               const service = {
                 slug,
                 name: card.name,
-                image: card.image ? resolveWebsiteImageUrl(card.image) : undefined,
+                image: card.image ? resolveWebsiteImageUrl(card.image, 640) : undefined,
                 imageAlt: card.imageAlt || card.name,
                 price: card.priceText,
                 short: card.shortDescription,
@@ -386,7 +387,7 @@ export function ServicesGrid() {
                       white text area) and reveals the Book Service button. */}
                   <div className="svc-media absolute inset-x-0 top-0 z-20 overflow-hidden">
                     <Link href={service.href} className="block h-full w-full" tabIndex={-1}>
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={service.image}
                         alt={service.imageAlt}
                         className="svc-img w-full h-full object-cover"
@@ -481,7 +482,7 @@ export function ServicesGrid() {
           transition={{ duration: 0.5, delay: 1.1 }}
           className="mt-6 text-center"
         >
-          {section.buttonText && (
+          {!hideButton && section.buttonText && (
           <Link
             href={section.buttonLink || "/services"}
             className="inline-flex items-center justify-center gap-2.5 bg-primary-dark hover:bg-primary text-primary-foreground px-8 py-3 font-bold uppercase tracking-widest text-[11px] shadow-lg transition-all duration-300 group rounded-md"

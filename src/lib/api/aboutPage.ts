@@ -87,7 +87,7 @@ export const aboutHeroDefaults: AboutHeroData = {
   primaryButtonLink: "/",
   secondaryButtonText: "Contact Us",
   secondaryButtonLink: "/contact",
-  image: "/assets/Banner/about.png",
+  image: "/assets/Banner/about.webp",
   imageAlt: "Smiling CityCalls technician in a green uniform — trusted by 10,000+ happy customers",
 };
 
@@ -104,15 +104,15 @@ export const aboutStoryDefaults: AboutStoryData = {
   teamTitle: "Our Team",
   teamText: "We're a team of 40+ people in Ghaziabad — customer support, technicians, trainers, engineers.",
   images: [
-    { image: "/assets/Services/s1.png", imageAlt: "CityCalls technician repairing a refrigerator at a customer's home" },
-    { image: "/assets/Services/s2.png", imageAlt: "CityCalls technician servicing a wall-mounted split AC" },
-    { image: "/assets/Services/s3.png", imageAlt: "CityCalls technician repairing a front-load washing machine" },
-    { image: "/assets/Services/s4.png", imageAlt: "CityCalls technician fixing the circuit board of an LED TV" },
+    { image: "/assets/Services/s1.webp", imageAlt: "CityCalls technician repairing a refrigerator at a customer's home" },
+    { image: "/assets/Services/s2.webp", imageAlt: "CityCalls technician servicing a wall-mounted split AC" },
+    { image: "/assets/Services/s3.webp", imageAlt: "CityCalls technician repairing a front-load washing machine" },
+    { image: "/assets/Services/s4.webp", imageAlt: "CityCalls technician fixing the circuit board of an LED TV" },
   ],
 };
 
 export const aboutParallaxDefaults: AboutParallaxData = {
-  image: "/assets/Banner/cara2.png",
+  image: "/assets/Banner/cara2.webp",
   imageAlt: "CityCalls pest control expert spraying treatment along a living room wall",
   status: "ACTIVE",
 };
@@ -133,32 +133,32 @@ export const aboutJourneyDefaults: AboutPageData["journey"] = {
     {
       _id: "m1", year: "2022", title: "The Beginning", tag: "Milestone 01", icon: "Flag",
       description: "Started CityCalls with a mission to simplify home services across all households.",
-      image: "/assets/Services/s1.png", imageAlt: "CityCalls technician repairing a refrigerator — where our journey began",
+      image: "/assets/Services/s1.webp", imageAlt: "CityCalls technician repairing a refrigerator — where our journey began",
     },
     {
       _id: "m2", year: "2023", title: "Growing Community", tag: "Milestone 02", icon: "Users",
       description: "Reached 1,000+ happy customers and rapidly expanded our service categories.",
-      image: "/assets/Services/s2.png", imageAlt: "CityCalls technician servicing a split AC for a growing customer base",
+      image: "/assets/Services/s2.webp", imageAlt: "CityCalls technician servicing a split AC for a growing customer base",
     },
     {
       _id: "m3", year: "2024", title: "Wider Reach", tag: "Milestone 03", icon: "Building2",
       description: "Onboarded top-rated verified professionals serving thousands of doorstep requests.",
-      image: "/assets/Services/s3.png", imageAlt: "Verified CityCalls professional repairing a washing machine at the doorstep",
+      image: "/assets/Services/s3.webp", imageAlt: "Verified CityCalls professional repairing a washing machine at the doorstep",
     },
     {
       _id: "m4", year: "2025", title: "Trusted by Many", tag: "Milestone 04", icon: "Trophy",
       description: "Crossed 10,000+ completed orders with glowing 5-star customer reviews.",
-      image: "/assets/Services/s4.png", imageAlt: "CityCalls technician repairing an LED TV for a 5-star rated service",
+      image: "/assets/Services/s4.webp", imageAlt: "CityCalls technician repairing an LED TV for a 5-star rated service",
     },
     {
       _id: "m5", year: "2026", title: "Scaling Nationwide", tag: "Milestone 05", icon: "Rocket",
       description: "Expanding into major new cities with automated booking and instant dispatch.",
-      image: "/assets/Services/s5.png", imageAlt: "CityCalls technician repairing a built-in microwave oven",
+      image: "/assets/Services/s5.webp", imageAlt: "CityCalls technician repairing a built-in microwave oven",
     },
     {
       _id: "m6", year: "2027", title: "The Road Ahead", tag: "Future Vision", icon: "Star",
       description: "Redefining home maintenance with AI scheduling and unmatched reliability.",
-      image: "/assets/Services/s6.png", imageAlt: "CityCalls technician servicing a bathroom geyser",
+      image: "/assets/Services/s6.webp", imageAlt: "CityCalls technician servicing a bathroom geyser",
     },
   ],
 };

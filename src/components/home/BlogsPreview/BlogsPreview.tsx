@@ -118,7 +118,7 @@ export function BlogsPreview({ blogs }: { blogs: PublicBlogSummary[] }) {
                 
                 {/* Image Container */}
                 <div className="relative overflow-hidden aspect-[16/10]">
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={blog.image}
                     alt={blog.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"

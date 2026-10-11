@@ -6,7 +6,7 @@ import { useRef } from "react";
 import type { PublicPageBackground } from "@/lib/api/pageBackgrounds";
 import type { PublicServicePage } from "@/lib/api/servicePages";
 
-const refBg = "/assets/Banner/refbg.png";
+const refBg = "/assets/Banner/refbg.webp";
 
 // Same text treatment as the home page hero carousel.
 const HERO_FONT = "var(--font-plus-jakarta-sans), sans-serif";

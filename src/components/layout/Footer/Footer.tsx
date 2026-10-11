@@ -17,10 +17,10 @@ import {
 import { Logo } from "@/components/layout/Logo/Logo";
 import { allServices } from "@/data/services";
 import { DEFAULT_SOCIAL_LINKS, type PublicSocialLinks } from "@/lib/api/socialLinks";
-const callIcon = "/assets/icons/call.png";
-const mapIcon = "/assets/icons/maps.png";
-const playIcon = "/assets/icons/play.png";
-const appleIcon = "/assets/icons/apple.png";
+const callIcon = "/assets/icons/call.webp";
+const mapIcon = "/assets/icons/maps.webp";
+const playIcon = "/assets/icons/play.webp";
+const appleIcon = "/assets/icons/apple.webp";
 
 // Reusable animation variants
 const fadeUp: Variants = {
@@ -274,7 +274,7 @@ export function Footer({ links = DEFAULT_SOCIAL_LINKS }: { links?: PublicSocialL
               whileHover={{ y: -4 }}
               className="mt-8 rounded-xl border border-white/10 bg-white/[0.02] p-4 flex items-center gap-4 w-max pr-8 transition-transform"
             >
-              <motion.img
+              <motion.img loading="lazy" decoding="async"
                 initial={{ rotate: -15, scale: 0.6, opacity: 0 }}
                 whileInView={{ rotate: 0, scale: 1, opacity: 1 }}
                 viewport={{ once: false }}
@@ -354,7 +354,7 @@ export function Footer({ links = DEFAULT_SOCIAL_LINKS }: { links?: PublicSocialL
                 <span className="footer-glass-icon grid h-9 w-9 shrink-0 place-items-center rounded-full text-[#8fd14f]">
                   <Mail size={16} className="relative" />
                 </span>
-                <span className="text-white/90">hello@citycalls.in</span>
+                <a href="mailto:support@citycalls.in" className="text-white/90 transition-colors hover:text-[#8fd14f]">support@citycalls.in</a>
               </motion.li>
               <motion.li variants={staggerItem} className="group flex gap-3 items-center">
                 <span className="footer-glass-icon grid h-9 w-9 shrink-0 place-items-center rounded-full text-[#8fd14f]">
@@ -376,7 +376,7 @@ export function Footer({ links = DEFAULT_SOCIAL_LINKS }: { links?: PublicSocialL
                   href="#"
                   className="block"
                 >
-                  <img src={playIcon} alt="Get it on Google Play" className="h-10 w-auto object-contain" />
+                  <img loading="lazy" decoding="async" src={playIcon} alt="Get it on Google Play" className="h-10 w-auto object-contain" />
                 </motion.a>
                 <motion.a
                   variants={staggerItem}
@@ -385,11 +385,11 @@ export function Footer({ links = DEFAULT_SOCIAL_LINKS }: { links?: PublicSocialL
                   href="#"
                   className="block"
                 >
-                  <img src={appleIcon} alt="Download on the App Store" className="h-10 w-auto object-contain" />
+                  <img loading="lazy" decoding="async" src={appleIcon} alt="Download on the App Store" className="h-10 w-auto object-contain" />
                 </motion.a>
               </motion.div>
             </motion.div>
-            <motion.img
+            <motion.img loading="lazy" decoding="async"
               initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 0.4, x: 0 }}
               viewport={{ once: false }}

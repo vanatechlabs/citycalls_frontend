@@ -11,13 +11,13 @@ import {
 import { motion, type Variants } from "framer-motion";
 import { isCurrentPath } from "./Navbar";
 
-const a1 = "/assets/icons/a1.png";
-const a2 = "/assets/icons/a2.png";
-const a3 = "/assets/icons/a3.png";
-const a4 = "/assets/icons/a4.png";
-const a5 = "/assets/icons/a5.png";
-const a6 = "/assets/icons/a6.png";
-const a7 = "/assets/icons/a7.png";
+const a1 = "/assets/icons/a1.webp";
+const a2 = "/assets/icons/a2.webp";
+const a3 = "/assets/icons/a3.webp";
+const a4 = "/assets/icons/a4.webp";
+const a5 = "/assets/icons/a5.webp";
+const a6 = "/assets/icons/a6.webp";
+const a7 = "/assets/icons/a7.webp";
 
 interface ServiceItem {
   slug: string;
@@ -150,7 +150,7 @@ export function MegaMenu({ category, onNavigate }: MegaMenuProps) {
                     isCurrent ? "bg-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]" : ""
                   }`}
                 >
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={iconSrc}
                     alt={s.name}
                     className={`h-9 w-9 shrink-0 object-contain transition-transform duration-200 ${

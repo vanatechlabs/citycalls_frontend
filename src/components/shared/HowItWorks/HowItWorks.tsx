@@ -79,7 +79,7 @@ function StepCard({ step, index, total, progress }: { step: Step; index: number;
           />
           <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
           {/* Step number chip */}
-          <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[10.5px] font-black tracking-wider text-[#3e8914] shadow-sm backdrop-blur-md">
+          <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[10.5px] font-black tracking-wider text-[#2f6b0f] shadow-sm backdrop-blur-md">
             {pad(index + 1)}
           </span>
         </figure>
@@ -96,8 +96,8 @@ function StepCard({ step, index, total, progress }: { step: Step; index: number;
           <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-[#5aa832] to-[#2f6b0f] text-white shadow-[0_10px_22px_-10px_rgba(62,137,20,0.8)]">
             <Icon className="h-5 w-5" strokeWidth={2} />
           </span>
-          <span className="mt-4 text-[10.5px] font-bold uppercase tracking-[0.2em] text-[#3e8914]">
-            {step.badge} <span className="text-ink/30">/ {pad(total)}</span>
+          <span className="mt-4 text-[10.5px] font-bold uppercase tracking-[0.2em] text-[#2f6b0f]">
+            {step.badge} <span className="text-ink/60">/ {pad(total)}</span>
           </span>
           <h3 className="mt-1.5 text-[20px] font-extrabold leading-tight tracking-tight text-ink md:text-[22px]">{step.title}</h3>
           <p className="mt-2 text-[13.5px] leading-relaxed text-ink/60">{step.description}</p>
@@ -168,7 +168,7 @@ export function HowItWorks({
         {/* Heading + counter */}
         <div className="container-x relative mx-auto flex w-full max-w-6xl flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            {eyebrow && (<span className="inline-flex items-center gap-2 rounded-full border border-[#3e8914]/20 bg-white px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#3e8914] shadow-sm">
+            {eyebrow && (<span className="inline-flex items-center gap-2 rounded-full border border-[#3e8914]/20 bg-white px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#2f6b0f] shadow-sm">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#3e8914] opacity-50" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-[#3e8914]" />
@@ -179,7 +179,7 @@ export function HowItWorks({
               {at >= 0 ? (
                 <>
                   {title.slice(0, at)}
-                  <span className="relative inline-block text-[#3e8914]">
+                  <span className="relative inline-block text-[#2f6b0f]">
                     {highlight}
                     <svg aria-hidden className="absolute -bottom-1.5 left-0 h-3 w-full" viewBox="0 0 150 10" fill="none" preserveAspectRatio="none">
                       <path d="M2 7 C 40 2, 110 2, 148 7" strokeWidth="3.5" strokeLinecap="round" className="stroke-[#3e8914]" />
@@ -195,8 +195,8 @@ export function HowItWorks({
           </div>
           <div className="flex shrink-0 items-center gap-3 md:flex-col md:items-end">
             <p className="font-black tabular-nums text-ink">
-              <span className="text-[28px] text-[#3e8914] md:text-[34px]">{pad(active + 1)}</span>
-              <span className="text-[15px] text-ink/30"> / {pad(total)}</span>
+              <span className="text-[28px] text-[#2f6b0f] md:text-[34px]">{pad(active + 1)}</span>
+              <span className="text-[15px] text-ink/60"> / {pad(total)}</span>
             </p>
             <div className="h-1.5 w-32 overflow-hidden rounded-full bg-black/[0.07] md:w-40">
               <motion.div style={{ width: bar }} className="h-full rounded-full bg-gradient-to-r from-[#3e8914] to-primary" />
@@ -228,12 +228,12 @@ export function HowItWorks({
               <div key={idx} className="relative z-10 flex flex-col items-center gap-1.5">
                 <span
                   className={`grid h-8 w-8 place-items-center rounded-full border-[3px] border-white text-[11px] font-black transition-all duration-500 ${
-                    idx <= active ? "bg-[#3e8914] text-white shadow-[0_0_0_4px_rgba(62,137,20,0.15)]" : "bg-slate-200 text-ink/40"
+                    idx <= active ? "bg-[#2f6b0f] text-white shadow-[0_0_0_4px_rgba(62,137,20,0.15)]" : "bg-slate-200 text-ink/70"
                   } ${idx === active ? "scale-110" : ""}`}
                 >
                   {pad(idx + 1)}
                 </span>
-                <span className={`hidden whitespace-nowrap text-[11px] font-bold transition-colors sm:block ${idx === active ? "text-ink" : "text-ink/40"}`}>
+                <span className={`hidden whitespace-nowrap text-[11px] font-bold transition-colors sm:block ${idx === active ? "text-ink" : "text-ink/60"}`}>
                   {step.title}
                 </span>
               </div>

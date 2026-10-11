@@ -149,7 +149,7 @@ export function AboutJourney({ content = aboutJourneyDefaults }: { content?: Abo
                           whileHover={{ scale: 1.03, y: -4 }}
                           className="relative h-52 w-full max-w-md rounded-2xl overflow-hidden shadow-[0_15px_35px_rgba(0,0,0,0.12)] border-2 border-white ring-1 ring-black/10 group cursor-pointer"
                         >
-                          <img
+                          <img loading="lazy" decoding="async"
                             src={item.image}
                             alt={item.imageAlt || item.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
@@ -206,7 +206,7 @@ export function AboutJourney({ content = aboutJourneyDefaults }: { content?: Abo
                           whileHover={{ scale: 1.03, y: -4 }}
                           className="relative h-52 w-full max-w-md rounded-2xl overflow-hidden shadow-[0_15px_35px_rgba(0,0,0,0.12)] border-2 border-white ring-1 ring-black/10 group cursor-pointer"
                         >
-                          <img
+                          <img loading="lazy" decoding="async"
                             src={item.image}
                             alt={item.imageAlt || item.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
@@ -240,7 +240,7 @@ export function AboutJourney({ content = aboutJourneyDefaults }: { content?: Abo
                     </p>
 
                     <div className="relative h-44 w-full rounded-2xl overflow-hidden shadow-md border-2 border-white">
-                      <img src={item.image} alt={item.imageAlt || item.title} className="w-full h-full object-cover" />
+                      <img loading="lazy" decoding="async" src={item.image} alt={item.imageAlt || item.title} className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                       <span className="absolute bottom-2.5 left-3 text-[9px] font-bold text-white uppercase bg-black/50 backdrop-blur-md px-2 py-0.5 rounded">
                         {item.tag}

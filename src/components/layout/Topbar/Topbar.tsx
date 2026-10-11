@@ -34,9 +34,9 @@ export function Topbar() {
               <Phone size={13} className="text-primary" />
               <span>+91 74288 08884</span>
             </a>
-            <a href="mailto:hello@citycalls.in" className="hidden sm:flex items-center gap-1.5 text-slate-800 dark:text-slate-100 hover:text-primary transition-colors font-bold whitespace-nowrap">
+            <a href="mailto:support@citycalls.in" className="hidden sm:flex items-center gap-1.5 text-slate-800 dark:text-slate-100 hover:text-primary transition-colors font-bold whitespace-nowrap">
               <Mail size={13} className="text-primary" />
-              <span>hello@citycalls.in</span>
+              <span>support@citycalls.in</span>
             </a>
           </div>
 

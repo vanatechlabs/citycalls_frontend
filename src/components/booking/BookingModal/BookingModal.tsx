@@ -69,6 +69,7 @@ export function BookingModal({ isOpen, onClose, serviceSlug }: BookingModalProps
           >
             <button
               onClick={onClose}
+              aria-label="Close booking form"
               className="absolute top-4 right-4 p-1 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors z-10 shadow-sm"
             >
               <X className="w-5 h-5" strokeWidth={1.5} />

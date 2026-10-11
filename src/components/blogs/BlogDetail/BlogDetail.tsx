@@ -103,7 +103,7 @@ export function BlogDetail({ blog, latest }: { blog: PublicBlog; latest: PublicB
                       className="group flex items-center gap-4 rounded-xl border border-gray-100 bg-white p-3 shadow-sm transition-all duration-300 hover:border-primary-dark/20 hover:shadow-md"
                     >
                       <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg">
-                        <img src={b.image} alt={b.imageAlt || b.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                        <img loading="lazy" decoding="async" src={b.image} alt={b.imageAlt || b.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
                       </div>
                       <div className="flex flex-col gap-1 pr-2">
                         <span className="text-[10px] font-extrabold uppercase tracking-widest text-primary">{b.category}</span>

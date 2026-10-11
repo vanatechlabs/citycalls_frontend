@@ -7,7 +7,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { findService } from "@/data/services";
 import { BookingForm } from "@/components/booking/BookingForm/BookingForm";
 import type { PublicPageBackground } from "@/lib/api/pageBackgrounds";
-const refBg = "/assets/Banner/refbg.png";
+const refBg = "/assets/Banner/refbg.webp";
 
 const DEFAULT_FEATURES = [
   { title: "Expert", subtitle: "Technicians" },
@@ -135,7 +135,7 @@ export function ServiceDetail({ slug, background }: { slug: string; background?:
               {/* Avatars */}
               <div className="flex justify-center -space-x-3">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <img 
+                  <img loading="lazy" decoding="async" 
                     key={i} 
                     src={`https://i.pravatar.cc/100?img=${i + 10}`} 
                     alt="Customer" 

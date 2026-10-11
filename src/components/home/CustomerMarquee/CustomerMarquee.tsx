@@ -15,7 +15,7 @@ export function CustomerMarquee() {
       </div>
       <div className="marquee-track-slow gap-4 pb-8 whitespace-nowrap">
         {row.map((src, i) => (
-          <img
+          <img loading="lazy" decoding="async"
             key={i}
             src={src}
             alt=""

@@ -63,7 +63,7 @@ export default function ContactForm() {
              <Mail className="w-4 h-4 mt-1 opacity-70"/>
              <div>
                <div className="font-bold text-xs tracking-widest uppercase mb-1.5 opacity-80">Email</div>
-               <a href="mailto:hello@citycalls.in" className="text-blue-600 underline font-medium hover:text-blue-700">hello@citycalls.in</a>
+               <a href="mailto:support@citycalls.in" className="text-blue-600 underline font-medium hover:text-blue-700">support@citycalls.in</a>
              </div>
            </div>
            <div className="flex items-start gap-4 mt-8">

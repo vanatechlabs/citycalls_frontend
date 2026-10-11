@@ -57,7 +57,7 @@ export function BlogsList({ blogs }: { blogs: PublicBlogSummary[] }) {
                 >
                   <Link href={`/blogs/${blog.slug}`} className="block">
                     <div className="relative aspect-[16/9] overflow-hidden">
-                      <img src={blog.image} alt={blog.imageAlt || blog.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                      <img loading="lazy" decoding="async" src={blog.image} alt={blog.imageAlt || blog.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
                       <div className="absolute left-4 top-4 flex gap-2">
                         <span className="inline-block bg-white/95 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-dark shadow-md backdrop-blur-sm">
                           {blog.category}

@@ -4,16 +4,16 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { PlusIcon } from 'lucide-react';
 
-const logo1 = "/assets/logo/logo1.png";
-const logo2 = "/assets/logo/logo2.png";
-const logo3 = "/assets/logo/logo3.png";
-const logo4 = "/assets/logo/logo4.png";
-const logo5 = "/assets/logo/logo5.png";
-const logo6 = "/assets/logo/logo6.png";
-const logo7 = "/assets/logo/logo7.png";
-const logo8 = "/assets/logo/logo8.png";
-const logo9 = "/assets/logo/logo9.png";
-const logo10 = "/assets/logo/logo10.png";
+const logo1 = "/assets/logo/logo1.webp";
+const logo2 = "/assets/logo/logo2.webp";
+const logo3 = "/assets/logo/logo3.webp";
+const logo4 = "/assets/logo/logo4.webp";
+const logo5 = "/assets/logo/logo5.webp";
+const logo6 = "/assets/logo/logo6.webp";
+const logo7 = "/assets/logo/logo7.webp";
+const logo8 = "/assets/logo/logo8.webp";
+const logo9 = "/assets/logo/logo9.webp";
+const logo10 = "/assets/logo/logo10.webp";
 
 const brands = [
   { name: "Whirlpool", image: logo1, id: 1 },
@@ -94,7 +94,7 @@ export function BrandsWeService() {
                   isDesktopRightEdge ? 'md:border-r-0' : 'md:border-r md:border-black/10'
                 } ${mobileBg} ${desktopBg}`}
               >
-                <motion.img 
+                <motion.img loading="lazy" decoding="async" 
                   initial={{ opacity: 0, scale: 0.5 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: false }}

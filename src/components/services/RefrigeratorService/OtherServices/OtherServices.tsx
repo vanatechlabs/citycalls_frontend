@@ -7,12 +7,12 @@ import Link from "next/link";
 
 // We import a few placeholder service images from the assets folder.
 // (You can swap these with the exact correct images if they don't match)
-const s1 = "/assets/Services/s1.png";
-const s2 = "/assets/Services/s2.png";
-const s3 = "/assets/Services/s3.png";
-const s4 = "/assets/Services/s4.png";
-const s5 = "/assets/Services/s5.png";
-const s6 = "/assets/Services/s6.png";
+const s1 = "/assets/Services/s1.webp";
+const s2 = "/assets/Services/s2.webp";
+const s3 = "/assets/Services/s3.webp";
+const s4 = "/assets/Services/s4.webp";
+const s5 = "/assets/Services/s5.webp";
+const s6 = "/assets/Services/s6.webp";
 
 const services = [
   { title: "Refrigerator", image: s1, slug: "refrigerator-service" },
@@ -47,7 +47,7 @@ export function OtherServices() {
             >
               {/* Image Container */}
               <div className="w-full h-[100px] md:h-[120px] flex items-center justify-center mb-4">
-                <img 
+                <img loading="lazy" decoding="async" 
                   src={service.image} 
                   alt={service.title} 
                   className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"

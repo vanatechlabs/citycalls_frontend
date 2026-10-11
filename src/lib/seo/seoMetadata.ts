@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { resolveWebsiteImageUrl } from "@/lib/api/cityCallsHome";
+import { resolveShareImageUrl } from "@/lib/api/cityCallsHome";
 
 // SEO entries managed in Admin → SEO Manager, one per page path.
 const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000/api/v1").replace(/\/$/, "");
@@ -7,14 +7,15 @@ const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:
 // without making every request hit the API.
 const SEO_REVALIDATE_SECONDS = 60;
 
-// Site-wide share preview (public/og-image.webp, 1599×835) — used whenever the
+// Site-wide share preview (public/og-image.jpg, 1600×836 — JPG because WhatsApp
+// doesn't show WebP previews) — used whenever the
 // admin hasn't set an OG image for a page, so WhatsApp/Facebook links always
 // show a picture. Relative URL resolves against metadataBase in the root layout.
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://citycalls.in").replace(/\/$/, "");
 export const DEFAULT_OG_IMAGE = {
-  url: "/og-image.webp",
-  width: 1599,
-  height: 835,
+  url: "/og-image.jpg",
+  width: 1600,
+  height: 836,
   alt: "CityCalls — Home Appliance Repair & Home Services in Delhi NCR",
 };
 
@@ -69,7 +70,7 @@ export async function buildMetadata(path: string, fallback: Metadata = {}): Prom
   const tags = parseMetaTags(seo.openGraphTags);
   const title = seo.metaTitle || (typeof fallback.title === "string" ? fallback.title : undefined);
   const description = seo.metaDescription || fallback.description || undefined;
-  const image = seo.ogImage ? resolveWebsiteImageUrl(seo.ogImage) : tags["og:image"];
+  const image = seo.ogImage ? resolveShareImageUrl(seo.ogImage) : tags["og:image"];
   const keywords = seo.metaKeywords?.split(",").map((k) => k.trim()).filter(Boolean);
 
   return {

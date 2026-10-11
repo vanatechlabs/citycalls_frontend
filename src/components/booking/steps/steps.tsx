@@ -84,7 +84,7 @@ export function StepCart() {
             {/* Left Image */}
             <div className="w-[60px] h-[64px] bg-black/5 rounded-lg shrink-0 overflow-hidden">
               {cartItem.image ? (
-                <img
+                <img loading="lazy" decoding="async"
                   src={cartItem.image}
                   alt={cartItem.name}
                   className="w-full h-full object-cover"
@@ -155,7 +155,7 @@ export function StepCart() {
               {/* Thumbnail */}
               <div className="w-10 h-10 rounded-lg bg-[#faf9f8] shrink-0 overflow-hidden grid place-items-center">
                 {(pkg as any).image ? (
-                  <img src={(pkg as any).image} alt={pkg.name} className="w-full h-full object-cover" />
+                  <img loading="lazy" decoding="async" src={(pkg as any).image} alt={pkg.name} className="w-full h-full object-cover" />
                 ) : (
                   <span className="text-[8px] font-bold text-ink/30 uppercase tracking-wide text-center leading-tight px-1">
                     {pkg.duration}
