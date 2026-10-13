@@ -123,7 +123,7 @@ const CARDS_PER_ROW = 4;
 // Card hover: the image slowly grows over the card while the white text area
 // dissolves, then the name, line and Book Service button rise in one by one.
 // Leaving reverses it quickly, without the entrance delays.
-const CARD_HOVER_STYLES = `
+export const CARD_HOVER_STYLES = `
   .svc-media {
     height: 10rem;
     transition: height 0.8s cubic-bezier(0.65, 0, 0.35, 1);

@@ -68,7 +68,8 @@ export function BlogHero({
   return (
     <section
       ref={ref}
-      className="relative flex min-h-[400px] items-center overflow-hidden bg-ink text-white md:min-h-[50vh]"
+      data-nav-overlay
+      className="relative flex min-h-[calc(400px+var(--nav-h))] items-center overflow-hidden bg-ink pt-[var(--nav-h)] text-white md:min-h-[calc(50vh+var(--nav-h))]"
       style={{ perspective: "1000px", fontFamily: HERO_FONT }}
     >
       <motion.div

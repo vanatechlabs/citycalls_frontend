@@ -408,16 +408,15 @@ export function Footer({ links = DEFAULT_SOCIAL_LINKS }: { links?: PublicSocialL
           className="w-full overflow-hidden flex justify-center select-none pointer-events-none mt-10 leading-[0.75] relative"
           style={{ paddingBottom: "clamp(22px, 4.8vw, 72px)" }}
         >
+          {/* Phones show a single word: it stays centred (no sideways drift, which
+              pushed it off the right edge) and is sized to the screen width. */}
           <motion.div
             style={{ x: smoothX }}
-            className="flex items-center gap-10 whitespace-nowrap will-change-transform"
+            className="flex items-center gap-10 whitespace-nowrap will-change-transform max-md:!transform-none"
           >
             <span
-              className="footer-glass-text font-black text-center whitespace-nowrap lowercase tracking-tighter select-none"
-              style={{
-                fontSize: "clamp(90px, 20vw, 300px)",
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-              }}
+              className="footer-glass-text font-black text-center whitespace-nowrap lowercase tracking-tighter select-none text-[length:21vw] md:text-[length:clamp(90px,20vw,300px)]"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
               citycalls
             </span>

@@ -88,7 +88,9 @@ export function BookingForm({ serviceSlug, serviceName = "Refrigerator Service",
         </div>
       )}
 
-      <div className={`flex-1 p-6 md:p-8 pt-0 -mt-2 ${step === 5 ? 'p-0 md:p-0' : ''}`}>
+      {/* Same top padding on phones as on desktop: the stepper above pulls this
+          block up (-mb-12), so without it the step card slid under the stepper. */}
+      <div className={step === 5 ? "flex-1" : "flex-1 -mt-2 p-6 pt-12 md:p-8"}>
         <AnimatePresence mode="wait">
           <motion.div
             key={step}

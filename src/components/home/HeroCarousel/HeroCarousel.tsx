@@ -244,7 +244,8 @@ export function HeroCarousel({ initialSlides }: { initialSlides?: PublicHeroSlid
     <section
       onMouseMove={handlePointerMove}
       onMouseLeave={handlePointerLeave}
-      className="relative h-[520px] lg:h-[560px] bg-ink text-white overflow-hidden"
+      data-nav-overlay
+      className="relative h-[calc(520px+var(--nav-h))] lg:h-[calc(560px+var(--nav-h))] bg-ink text-white overflow-hidden"
       style={{ fontFamily: "var(--font-plus-jakarta-sans), sans-serif" }}
     >
       {/* Background — cinematic cross-dissolve: the new image comes into focus
@@ -336,7 +337,7 @@ export function HeroCarousel({ initialSlides }: { initialSlides?: PublicHeroSlid
 
       {/* Vertical slide rail with fill progress */}
       {/* right-20 keeps it clear of the fixed social sidebar on the right edge */}
-      <div className="hidden lg:flex flex-col items-end gap-3 absolute right-20 top-8 z-20">
+      <div className="hidden lg:flex flex-col items-end gap-3 absolute right-20 top-[calc(2rem+var(--nav-h))] z-20">
         {slides.map((s, i) => (
           <button
             key={s.id}
@@ -366,12 +367,12 @@ export function HeroCarousel({ initialSlides }: { initialSlides?: PublicHeroSlid
       {/* Floating "New Launched" mini spotlight widget (Fixed bottom-left) */}
       <LaunchSpotlight />
 
-      <div className="relative z-20 mx-auto flex h-full w-full max-w-7xl items-center px-4 py-8 lg:px-8 2xl:px-4">
+      <div className="relative z-20 mx-auto flex h-full w-full max-w-7xl items-center px-4 pb-8 pt-[calc(2rem+var(--nav-h))] lg:px-8 2xl:px-4">
         <div className="flex w-full flex-col lg:flex-row lg:items-center gap-8 md:gap-10">
           {/* Left: headline & copy */}
           {/* Pulled left only on wide screens — on small laptops the container has
               no side margin, so the shift pushed the headline off-screen. */}
-          <div className="flex-1 min-h-[260px] lg:-mt-6 2xl:-translate-x-12">
+          <div className="min-w-0 flex-1 min-h-[260px] lg:-mt-6 2xl:-translate-x-12">
             <AnimatePresence mode="wait">
             {slide.hasText && slide.titleParts ? (
               <motion.div
@@ -388,7 +389,7 @@ export function HeroCarousel({ initialSlides }: { initialSlides?: PublicHeroSlid
                     // wrapper would stop the glass chip's backdrop blur.
                     animate={{ clipPath: "inset(0 0% 0 0)", transitionEnd: { clipPath: "none" } }}
                     transition={{ duration: 0.6, delay: 0.1, ease: [0.65, 0, 0.35, 1] }}
-                    className="inline-block mb-6 lg:mb-[clamp(14px,3vh,24px)]"
+                    className="inline-block max-w-full mb-5 sm:mb-6 lg:mb-[clamp(14px,3vh,24px)]"
                   >
                     {slide.id === 1 ? (
                       <div style={{ fontFamily: "var(--font-plus-jakarta-sans), sans-serif", display: "flex", alignItems: "center", gap: "10px" }}>
@@ -401,7 +402,7 @@ export function HeroCarousel({ initialSlides }: { initialSlides?: PublicHeroSlid
                     ) : (
                       <div
                         // Frosted glass chip with a lit top edge and a sheen
-                        className="relative inline-flex items-center gap-2 overflow-hidden whitespace-nowrap rounded-full border border-white/40 bg-gradient-to-br from-white/25 via-white/10 to-white/[0.06] px-4 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.55),inset_0_-1px_0_rgba(255,255,255,0.1),0_8px_24px_-8px_rgba(0,0,0,0.45)] backdrop-blur-xl backdrop-saturate-150"
+                        className="relative flex max-w-full items-center gap-1.5 overflow-hidden whitespace-nowrap rounded-full border border-white/40 bg-gradient-to-br from-white/25 via-white/10 to-white/[0.06] px-3 py-1 sm:gap-2 sm:px-4 sm:py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.55),inset_0_-1px_0_rgba(255,255,255,0.1),0_8px_24px_-8px_rgba(0,0,0,0.45)] backdrop-blur-xl backdrop-saturate-150"
                         style={{ fontFamily: "var(--font-plus-jakarta-sans), sans-serif" }}
                       >
                         <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent" />
@@ -411,7 +412,7 @@ export function HeroCarousel({ initialSlides }: { initialSlides?: PublicHeroSlid
                           <span className="relative inline-flex h-2 w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(124,179,66,0.9)]" />
                         </span>
                         <span
-                          className="text-[11px] font-bold text-white uppercase tracking-[0.2em]"
+                          className="truncate text-[9px] font-bold uppercase tracking-[0.14em] text-white sm:text-[11px] sm:tracking-[0.2em]"
                           style={{ textShadow: HERO_TEXT_SHADOW }}
                         >
                           {slide.subtitle}
@@ -482,7 +483,7 @@ export function HeroCarousel({ initialSlides }: { initialSlides?: PublicHeroSlid
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.8, ease: CINEMATIC_EASE }}
-                    className="flex flex-col sm:flex-row gap-3 mt-2"
+                    className="flex flex-row flex-wrap items-center gap-2.5 sm:gap-3 mt-2"
                   >
                     {slide.id === 1 ? (
                       <>
@@ -539,14 +540,14 @@ export function HeroCarousel({ initialSlides }: { initialSlides?: PublicHeroSlid
                       </>
                     ) : (
                       <>
-                        <button onClick={() => openDrawer()} className="group relative overflow-hidden rounded-none px-5 py-2.5 bg-primary-dark text-primary-foreground transition-all duration-500 uppercase tracking-[0.15em] text-[11px] font-bold border-2 border-primary-dark hover:bg-white hover:text-primary-dark">
+                        <button onClick={() => openDrawer()} className="group relative overflow-hidden rounded-none px-4 py-2 sm:px-5 sm:py-2.5 bg-primary-dark text-primary-foreground transition-all duration-500 uppercase tracking-[0.12em] sm:tracking-[0.15em] text-[10px] sm:text-[11px] font-bold border-2 border-primary-dark hover:bg-white hover:text-primary-dark">
                           <span className="relative z-10 flex items-center gap-1.5">
                             Explore Services
                             <ChevronRight size={13} className="group-hover:translate-x-1 transition-transform duration-300" />
                           </span>
                         </button>
 
-                        <a href="#services" className="group relative overflow-hidden rounded-none px-5 py-2.5 border-2 border-white/40 text-white hover:border-white transition-all duration-500 uppercase tracking-[0.15em] text-[11px] font-bold bg-white/5 backdrop-blur-sm hover:bg-white hover:text-primary text-center">
+                        <a href="#services" className="group relative overflow-hidden rounded-none px-4 py-2 sm:px-5 sm:py-2.5 border-2 border-white/40 text-white hover:border-white transition-all duration-500 uppercase tracking-[0.12em] sm:tracking-[0.15em] text-[10px] sm:text-[11px] font-bold bg-white/5 backdrop-blur-sm hover:bg-white hover:text-primary text-center">
                           <span className="relative z-10 flex items-center justify-center gap-1.5">
                             View All
                           </span>

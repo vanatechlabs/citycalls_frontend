@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { fetchPageParallax, type PublicPageParallax } from '@/lib/api/pageParallax';
 
 interface ParallaxBannerProps {
   eyebrow?: string;
@@ -11,13 +13,46 @@ interface ParallaxBannerProps {
   image?: string;
 }
 
-export function ParallaxBanner({
+// The props are the page's own banner. Admin → Background Section → Add
+// Parallax Image can set a different image and text for this page — when it
+// has, that replaces them.
+export function ParallaxBanner(props: ParallaxBannerProps = {}) {
+  const pathname = usePathname() ?? '';
+  const [managed, setManaged] = useState<{ path: string; data: PublicPageParallax } | null>(null);
+
+  useEffect(() => {
+    if (!pathname) return;
+    const controller = new AbortController();
+    void fetchPageParallax(pathname, controller.signal).then((data) => {
+      if (data) setManaged({ path: pathname, data });
+    });
+    return () => controller.abort();
+  }, [pathname]);
+
+  const entry = managed?.path === pathname ? managed.data : null;
+  if (!entry) return <ParallaxBannerView {...props} />;
+  return (
+    <ParallaxBannerView
+      eyebrow={entry.subheading ?? ''}
+      title={entry.heading}
+      highlight={entry.highlight ?? ''}
+      description={entry.description ?? ''}
+      image={entry.image || props.image}
+      imageAlt={entry.imageAlt}
+    />
+  );
+}
+
+function ParallaxBannerView({
   eyebrow = "Appliance Repair",
   title = "Expert Repair at Your Doorstep",
   highlight = "Your Doorstep",
   description = "Experience world-class appliance service. We bring your appliances back to life with 100% genuine parts, verified professionals, and guaranteed satisfaction.",
   image = "https://images.unsplash.com/photo-1556911220-bff31c812dba?q=80&w=2000&auto=format&fit=crop",
-}: ParallaxBannerProps = {}) {
+  imageAlt,
+}: ParallaxBannerProps & { imageAlt?: string }) {
+  // Heading with the highlighted part in green (whole heading when there's no highlight).
+  const at = highlight ? title.indexOf(highlight) : -1;
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -51,7 +86,7 @@ export function ParallaxBanner({
       >
         <motion.img loading="lazy" decoding="async"
           src={image}
-          alt="Appliance Repair"
+          alt={imageAlt || eyebrow || title}
           className="w-full h-full object-cover object-center brightness-105 contrast-110"
           style={{
             x: useTransform(scrollYProgress, [0, 1], ["-3%", "3%"])
@@ -93,13 +128,15 @@ export function ParallaxBanner({
       {/* Parallax Content */}
       <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
         <div className="text-center px-4 max-w-[1000px] mx-auto pointer-events-auto">
-          <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#88be1e]">{eyebrow}</div>
+          {eyebrow && <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#88be1e]">{eyebrow}</div>}
           <h2 className="text-2xl md:text-4xl font-sans font-black text-white uppercase tracking-tight leading-tight mb-3 drop-shadow-md md:whitespace-nowrap">
-            {title.split(highlight)[0]}<span className="text-[#3e8914]">{highlight}</span>{title.split(highlight).slice(1).join(highlight)}
+            {at < 0 ? title : <>{title.slice(0, at)}<span className="text-[#3e8914]">{highlight}</span>{title.slice(at + highlight.length)}</>}
           </h2>
-          <p className="text-white/90 text-[14px] md:text-[18px] font-medium leading-relaxed drop-shadow-sm">
-            {description}
-          </p>
+          {description && (
+            <p className="text-white/90 text-[14px] md:text-[18px] font-medium leading-relaxed drop-shadow-sm">
+              {description}
+            </p>
+          )}
         </div>
       </div>
     </section>

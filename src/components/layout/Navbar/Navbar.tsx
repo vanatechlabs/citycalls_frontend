@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import {
-  ArrowRight, ArrowUpRight, Bug, ChevronDown, ChevronRight, Info, LayoutGrid, Newspaper, Phone, Refrigerator, Scissors,
-  Sofa, SprayCan, X,
+  ArrowRight, ArrowUpRight, ChevronDown, ChevronRight, FileText, House, Info, LayoutGrid, Mail, Newspaper, Phone, Scissors,
+  ShieldCheck, Sofa, SprayCan, WashingMachine, X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -14,7 +14,9 @@ import { fetchCityCallsNavbarMenus } from "@/lib/api/navbar";
 import { Logo } from "@/components/layout/Logo/Logo";
 import { MegaMenu } from "./MegaMenu";
 
-const NAV_ORDER = ["home-appliance", "home-cleaning", "sofa-cleaning", "pest-control"];
+const NAV_ORDER = ["home-appliance", "home-cleaning", "pest-control"];
+// Not a menu of its own — its services are listed under Home Cleaning.
+const MERGED_INTO: Record<string, string> = { "sofa-cleaning": "home-cleaning" };
 
 // Looser than the catalog's own ServiceCategory/SubService types (which key
 // `id` to a closed ServiceCategoryId union) — the admin-managed menus can
@@ -36,15 +38,32 @@ interface NavCategory {
 // hardcoded catalog data (which also powers the /services/:slug detail
 // pages — those keep working unchanged regardless of where the navbar link
 // itself came from).
-// Menu items inside the glass pill: open item gets a raised glass chip.
-const NAV_ITEM_IDLE = "text-white/75 hover:bg-white/[0.08] hover:text-white";
+// Menu items inside the glass pill (roomier from 1760px wide).
+const NAV_ITEM =
+  "relative flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-2 text-[13px] font-semibold tracking-wide transition-all duration-200 2xl:px-2.5 min-[1760px]:gap-2 min-[1760px]:px-3.5 min-[1760px]:text-[14.5px]";
+const NAV_ITEM_IDLE = "text-white/90 hover:bg-white/[0.08] hover:text-white";
+// Its dropdown is open.
+const NAV_ITEM_OPEN = "bg-white/[0.10] text-white";
+// The page being viewed: olive-green pill, with a thin green line and a
+// glowing dot on the pill's bottom edge right under it.
 const NAV_ITEM_ACTIVE =
-  "bg-white/[0.14] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_4px_14px_-4px_rgba(0,0,0,0.5)] ring-1 ring-white/15";
+  "bg-[#4c8a1a]/45 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.10)] before:absolute before:-bottom-[7px] before:left-1 before:right-1 before:h-px before:bg-gradient-to-r before:from-transparent before:via-[#7ed321] before:to-transparent after:absolute after:-bottom-[10px] after:left-1/2 after:h-1.5 after:w-1.5 after:-translate-x-1/2 after:rounded-full after:bg-[#7ed321] after:shadow-[0_0_8px_2px_rgba(126,211,33,0.7)]";
+const NAV_ICON = "h-[15px] w-[15px] shrink-0 min-[1760px]:h-[17px] min-[1760px]:w-[17px]";
+const navIconTone = (active: boolean) => (active ? "text-[#7ed321]" : "text-white/90");
 
-// Icon for a navbar menu in the mobile drawer, by its slug.
+// Solid house (with a door) for the active Home item.
+function HouseFilled({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden className={className}>
+      <path d="M11.3 2.6a1.1 1.1 0 0 1 1.4 0l8.4 7.1c.25.21.4.52.4.85V20a1.5 1.5 0 0 1-1.5 1.5H15v-6.2a.8.8 0 0 0-.8-.8H9.8a.8.8 0 0 0-.8.8v6.2H4A1.5 1.5 0 0 1 2.5 20v-9.45c0-.33.15-.64.4-.85l8.4-7.1z" />
+    </svg>
+  );
+}
+
+// Icon for a navbar menu (desktop pill and mobile drawer), by its slug.
 function categoryIcon(id: string) {
-  if (/appliance/.test(id)) return Refrigerator;
-  if (/pest/.test(id)) return Bug;
+  if (/appliance/.test(id)) return WashingMachine;
+  if (/pest/.test(id)) return ShieldCheck;
   if (/sofa/.test(id)) return Sofa;
   if (/clean/.test(id)) return SprayCan;
   return LayoutGrid;
@@ -85,9 +104,15 @@ const drawerItemVariants: Variants = {
 
 const fallbackNavCategories: NavCategory[] = serviceCategories
   .filter((cat) => NAV_ORDER.includes(cat.id))
-  .sort((a, b) => NAV_ORDER.indexOf(a.id) - NAV_ORDER.indexOf(b.id));
+  .sort((a, b) => NAV_ORDER.indexOf(a.id) - NAV_ORDER.indexOf(b.id))
+  .map((cat) => ({
+    id: cat.id,
+    label: cat.label,
+    services: [...cat.services, ...serviceCategories.filter((other) => MERGED_INTO[other.id] === cat.id).flatMap((other) => other.services)],
+  }));
 
-export function Navbar() {
+// `solid` (Admin → Settings → Website Navbar): the black navbar on every page.
+export function Navbar({ solid = false }: { solid?: boolean } = {}) {
   const pathname = usePathname() ?? "/";
   const [openCat, setOpenCat] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -107,6 +132,18 @@ export function Navbar() {
     setMobileOpen(false);
   }
   const [scrolled, setScrolled] = useState(false);
+  // Pages that open with a dark photo hero (it carries data-nav-overlay): the
+  // navbar floats over it, see-through, until the page is scrolled. The route
+  // check decides the first paint; the hero's marker confirms it afterwards
+  // (e.g. a 404 under /services has no hero, so the navbar goes solid).
+  const overlayRoute = pathname === "/" || pathname === "/blogs" || pathname === "/services" || pathname.startsWith("/services/");
+  const [heroPresent, setHeroPresent] = useState(true);
+  const overlay = !solid && overlayRoute && heroPresent;
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setHeroPresent(!!document.querySelector("[data-nav-overlay]")));
+    return () => cancelAnimationFrame(frame);
+  }, [pathname]);
   // Managed from Admin → Website Section → Navbar List. Starts as the
   // hardcoded fallback (so there's no flash of an empty navbar) and is
   // replaced once the admin-configured menus load successfully.
@@ -165,39 +202,48 @@ export function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-[100] text-white transition-[background-color,box-shadow] duration-500 ${
+      className={`${overlay ? "fixed inset-x-0" : "sticky"} top-0 z-[100] text-white transition-[background-color,box-shadow] duration-500 ${
         // Scrolled: real frosted glass over the page content behind it.
         scrolled
           ? "bg-ink/55 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_14px_40px_-16px_rgba(0,0,0,0.75)]"
-          : "bg-ink"
+          : overlay
+            ? "bg-transparent"
+            : "bg-ink"
       }`}
     >
       {/* Soft gold light behind the buttons + a glass top edge */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-20 right-[6%] h-40 w-80 rounded-full bg-[#d4af37]/20 blur-3xl" />
+        {/* Over a hero: only a faint shade at the very top so the menu stays readable on bright photos */}
+        {overlay && !scrolled && <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/15 to-transparent" />}
+        <div className={`absolute -top-20 right-[6%] h-40 w-80 rounded-full bg-[#d4af37]/20 blur-3xl ${overlay && !scrolled ? "opacity-0" : ""}`} />
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
       </div>
 
       <div
-        className={`relative mx-auto flex w-full max-w-[1600px] items-center justify-between gap-4 px-4 transition-[height] duration-300 lg:px-6 2xl:px-10 ${
+        className={`relative mx-auto flex w-full max-w-[1760px] items-center justify-between gap-3 px-4 transition-[height] duration-300 lg:px-6 2xl:px-10 ${
           scrolled ? "h-16" : "h-16 md:h-[76px]"
         }`}
       >
-        <Logo />
+        {/* Nudged right to line up with the content below (see .nav-logo-* in globals.css) */}
+        <Logo className={`shrink-0 ${pathname === "/" ? "nav-logo-home" : "nav-logo-page"}`} />
 
         {/* Glass menu pill — dropdowns open below each item (MegaMenu). No
             backdrop-filter here: it would stop the dropdown's own blur from
             seeing the page behind it. */}
         {/* Full menu from xl (1280px) up — below that it doesn't fit beside the
             buttons, so the hamburger menu takes over. */}
-        <nav className="relative hidden xl:flex items-center gap-0.5 rounded-full border border-white/15 bg-white/[0.07] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-1px_0_rgba(255,255,255,0.04),0_10px_30px_-10px_rgba(0,0,0,0.6)]">
+        <nav className="relative hidden xl:flex items-center gap-0.5 rounded-full border border-white/15 bg-white/[0.07] p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),inset_0_-1px_0_rgba(255,255,255,0.04),0_10px_30px_-10px_rgba(0,0,0,0.6)]">
           {/* top sheen */}
           <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/[0.10] via-transparent to-transparent" />
+          <Link href="/" aria-current={pathname === "/" ? "page" : undefined} className={`${NAV_ITEM} ${pathname === "/" ? NAV_ITEM_ACTIVE : NAV_ITEM_IDLE}`}>
+            {pathname === "/" ? <HouseFilled className={`${NAV_ICON} ${navIconTone(true)}`} /> : <House className={`${NAV_ICON} ${navIconTone(false)}`} />}
+            Home
+          </Link>
           {navCategories.map((cat) => {
             const isOpen = openCat === cat.id;
-            // The page being viewed belongs to this menu — keep it highlighted
-            // the same way as on hover.
+            // The page being viewed belongs to this menu — it stays highlighted.
             const isCurrent = currentCat === cat.id;
+            const Icon = categoryIcon(cat.id);
             return (
               <div
                 key={cat.id}
@@ -207,14 +253,13 @@ export function Navbar() {
               >
                 <button
                   aria-current={isCurrent ? "page" : undefined}
-                  className={`relative flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-semibold tracking-wide transition-all duration-200 2xl:px-4 ${
-                    isOpen || isCurrent ? NAV_ITEM_ACTIVE : NAV_ITEM_IDLE
-                  }`}
+                  className={`${NAV_ITEM} ${isCurrent ? NAV_ITEM_ACTIVE : isOpen ? NAV_ITEM_OPEN : NAV_ITEM_IDLE}`}
                 >
+                  <Icon className={`${NAV_ICON} ${navIconTone(isCurrent)}`} />
                   {cat.label}
                   <ChevronDown
                     size={14}
-                    className={`transition-transform duration-300 ${isOpen ? "rotate-180 text-primary" : isCurrent ? "text-primary" : "opacity-50"}`}
+                    className={`transition-transform duration-300 ${isOpen ? "rotate-180 text-[#7ed321]" : isCurrent ? "text-[#7ed321]" : "opacity-80"}`}
                   />
                 </button>
                 {isOpen && <MegaMenu category={cat} onNavigate={() => setOpenCat(null)} />}
@@ -224,19 +269,17 @@ export function Navbar() {
           <Link
             href="/blogs"
             aria-current={isCurrentPath(pathname, "/blogs") ? "page" : undefined}
-            className={`relative whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-semibold tracking-wide transition-all duration-200 2xl:px-4 ${
-              isCurrentPath(pathname, "/blogs") ? NAV_ITEM_ACTIVE : NAV_ITEM_IDLE
-            }`}
+            className={`${NAV_ITEM} ${isCurrentPath(pathname, "/blogs") ? NAV_ITEM_ACTIVE : NAV_ITEM_IDLE}`}
           >
+            <FileText className={`${NAV_ICON} ${navIconTone(isCurrentPath(pathname, "/blogs"))}`} />
             Blogs
           </Link>
           <Link
             href="/contact"
             aria-current={isCurrentPath(pathname, "/contact") ? "page" : undefined}
-            className={`relative whitespace-nowrap rounded-full px-3 py-2 text-[13px] font-semibold tracking-wide transition-all duration-200 2xl:px-4 ${
-              isCurrentPath(pathname, "/contact") ? NAV_ITEM_ACTIVE : NAV_ITEM_IDLE
-            }`}
+            className={`${NAV_ITEM} ${isCurrentPath(pathname, "/contact") ? NAV_ITEM_ACTIVE : NAV_ITEM_IDLE}`}
           >
+            <Mail className={`${NAV_ICON} ${navIconTone(isCurrentPath(pathname, "/contact"))}`} />
             Contact
           </Link>
         </nav>
@@ -244,14 +287,14 @@ export function Navbar() {
         <div className="flex items-center gap-2.5">
           <div className="hidden md:flex items-center gap-2.5">
             {/* Beauty Saloon — gold glass pill (styles: .beauty-btn in globals.css) */}
-            <a href="https://salon.citycalls.in/" target="_blank" rel="noopener noreferrer" className="beauty-btn group">
+            <a href="https://salon.citycalls.in/" target="_blank" rel="noopener noreferrer" className="beauty-btn group shrink-0 whitespace-nowrap">
               <Scissors size={15} className="beauty-btn__icon" />
               <span className="beauty-btn__text">Beauty Saloon</span>
               <ArrowUpRight size={14} className="text-[#e9c96a] transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </a>
 
             {/* Help Now — New UI Button */}
-            <a href="https://helpnow.citycalls.in/" target="_blank" rel="noopener noreferrer" className="helpnow-btn flex items-center gap-1 bg-gradient-to-b from-[#FFCF24] to-[#FDBA00] hover:from-[#FFE066] hover:to-[#F5B50A] rounded-full pl-2 pr-1 py-1.5 shadow-[0_4px_14px_rgba(253,186,0,0.4)] border border-[#E5A800]">
+            <a href="https://helpnow.citycalls.in/" target="_blank" rel="noopener noreferrer" className="helpnow-btn flex shrink-0 items-center gap-1 whitespace-nowrap bg-gradient-to-b from-[#FFCF24] to-[#FDBA00] hover:from-[#FFE066] hover:to-[#F5B50A] rounded-full pl-2 pr-1 py-1.5 shadow-[0_4px_14px_rgba(253,186,0,0.4)] border border-[#E5A800]">
               {/* Left Icon (House + Sparkles) */}
               <div className="flex items-center gap-1">
                 <div className="relative flex items-center pr-1">
@@ -311,7 +354,7 @@ export function Navbar() {
       </div>
 
       {/* Thin brand-green accent line along the bottom edge */}
-      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+      <div className={`h-px w-full bg-gradient-to-r from-transparent via-primary/60 to-transparent transition-opacity duration-500 ${overlay && !scrolled ? "opacity-0" : ""}`} />
 
       {mobileMenuMounted && createPortal(
         <AnimatePresence>

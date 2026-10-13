@@ -18,6 +18,8 @@ interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   serviceSlug: string;
+  // Name to show when the service isn't in the bundled catalog (e.g. a new Navbar List link).
+  serviceName?: string;
 }
 
 const pathVariants = {
@@ -32,9 +34,10 @@ const pathVariants = {
   },
 } as any;
 
-export function BookingModal({ isOpen, onClose, serviceSlug }: BookingModalProps) {
+export function BookingModal({ isOpen, onClose, serviceSlug, serviceName }: BookingModalProps) {
   const [step, setStep] = useState(1);
   const service = findService(serviceSlug);
+  const displayName = service?.name ?? serviceName;
 
   useEffect(() => {
     if (isOpen) {
@@ -114,9 +117,9 @@ export function BookingModal({ isOpen, onClose, serviceSlug }: BookingModalProps
                           />
                         </motion.svg>
                       </span>
-                      {service && (
+                      {displayName && (
                         <span className="text-[16px] text-[#0D47A1] mt-0.5 whitespace-nowrap">
-                          - {service.name}
+                          - {displayName}
                         </span>
                       )}
                     </h2>
@@ -130,7 +133,7 @@ export function BookingModal({ isOpen, onClose, serviceSlug }: BookingModalProps
               )}
 
               <div className={step !== 5 ? "mt-6" : "mt-0"}>
-                <BookingDataProvider key={serviceSlug} serviceSlug={serviceSlug} serviceName={service?.name ?? "Home Service"}>
+                <BookingDataProvider key={serviceSlug} serviceSlug={serviceSlug} serviceName={displayName ?? "Home Service"}>
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={step}

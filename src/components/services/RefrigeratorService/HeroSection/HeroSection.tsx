@@ -83,7 +83,8 @@ export function HeroSection({ service, content, background }: HeroProps) {
   return (
     <section
       ref={containerRef}
-      className="relative overflow-hidden bg-ink text-white"
+      data-nav-overlay
+      className="relative overflow-hidden bg-ink pt-[var(--nav-h)] text-white"
       style={{ perspective: "1000px", fontFamily: HERO_FONT }}
     >
       <motion.div

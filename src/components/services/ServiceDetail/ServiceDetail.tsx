@@ -45,7 +45,7 @@ export function ServiceDetail({ slug, background }: { slug: string; background?:
   return (
     <div className="bg-[#f9fafb] min-h-screen overflow-x-hidden">
       {/* Hero banner */}
-      <section ref={containerRef} className="relative text-white overflow-hidden bg-ink" style={{ perspective: "1000px" }}>
+      <section ref={containerRef} data-nav-overlay className="relative text-white overflow-hidden bg-ink pt-[var(--nav-h)]" style={{ perspective: "1000px" }}>
         <motion.div 
           initial={{ scale: 1.1, opacity: 0 }}
           animate={{ scale: 1, opacity: 0.8 }}
