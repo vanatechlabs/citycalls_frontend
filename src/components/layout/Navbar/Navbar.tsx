@@ -17,6 +17,8 @@ import { MegaMenu } from "./MegaMenu";
 const NAV_ORDER = ["home-appliance", "home-cleaning", "pest-control"];
 // Not a menu of its own — its services are listed under Home Cleaning.
 const MERGED_INTO: Record<string, string> = { "sofa-cleaning": "home-cleaning" };
+// One-word pages that open on a light section (no photo hero).
+const SOLID_NAV_PAGES = ["/about", "/contact", "/privacy", "/terms"];
 
 // Looser than the catalog's own ServiceCategory/SubService types (which key
 // `id` to a closed ServiceCategoryId union) — the admin-managed menus can
@@ -136,7 +138,10 @@ export function Navbar({ solid = false }: { solid?: boolean } = {}) {
   // navbar floats over it, see-through, until the page is scrolled. The route
   // check decides the first paint; the hero's marker confirms it afterwards
   // (e.g. a 404 under /services has no hero, so the navbar goes solid).
-  const overlayRoute = pathname === "/" || pathname === "/blogs" || pathname === "/services" || pathname.startsWith("/services/");
+  // Any other one-word path is a city location page (/ac-service-in-noida).
+  const overlayRoute =
+    pathname === "/" || pathname === "/blogs" || pathname === "/services" || pathname.startsWith("/services/") ||
+    (/^\/[a-z0-9]+(?:-[a-z0-9]+)*$/.test(pathname) && !SOLID_NAV_PAGES.includes(pathname));
   const [heroPresent, setHeroPresent] = useState(true);
   const overlay = !solid && overlayRoute && heroPresent;
 

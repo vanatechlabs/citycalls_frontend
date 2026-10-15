@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import {
   ArrowRight,
   ChevronRight,
-  Home,
   LayoutGrid,
 } from "lucide-react";
 import { motion, type Variants } from "framer-motion";
@@ -76,8 +75,7 @@ const panelVariants: Variants = {
     opacity: 1,
     clipPath: "inset(0 0 0% 0)",
     transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
-    // A clip-path left on the wrapper would stop the glass panel's
-    // backdrop blur from seeing the page behind it.
+    // Drop the clip-path once open so the notch and shadow aren't cut off.
     transitionEnd: { clipPath: "none" },
   },
 };
@@ -113,28 +111,28 @@ export function MegaMenu({ category, onNavigate }: MegaMenuProps) {
       initial="hidden"
       animate="visible"
       exit={{ opacity: 0, y: 4, transition: { duration: 0.12 } }}
-      className="absolute left-0 top-full pt-2.5 z-50"
+      className="absolute left-0 top-full pt-3 z-50"
     >
-      {/* Frosted glass panel — dark tint stays readable even where the blur
-          can't reach (e.g. while the header itself is blurred on scroll). */}
-      <div className="relative w-[320px] overflow-hidden rounded-xl border border-white/15 bg-gradient-to-b from-[#141c2b]/80 to-[#0a0f19]/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_30px_60px_-15px_rgba(0,0,0,0.75)] backdrop-blur-2xl backdrop-saturate-150">
-        {/* glass sheen */}
-        <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/[0.08] to-transparent" />
-        {/* Header: Home Icon + CityCalls Logo + Divider + Category Name */}
-        <div className="relative px-4 py-3.5 flex items-center gap-2 border-b border-white/10 bg-white/[0.04]">
-          <Home className="w-4 h-4 text-primary shrink-0" strokeWidth={2.2} />
-          <span className="text-[13px] font-semibold tracking-tight flex items-center">
-            <span className="text-primary">City</span>
-            <span className="text-white">Calls</span>
-          </span>
-          <span className="text-white/20 text-xs mx-0.5">|</span>
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 truncate">
+      {/* Solid dark card (no see-through glass) under the nav item, with a small notch pointing up at it. */}
+      <span aria-hidden className="absolute left-7 top-[7px] h-3 w-3 rotate-45 rounded-[2px] border-l border-t border-white/10 bg-[#121a24]" />
+      <div className="relative w-[290px] overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-[#121a24] to-[#0c121a] shadow-[0_24px_50px_-12px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.06)]">
+        {/* Header: category + how many services */}
+        <div className="flex items-center justify-between gap-3 border-b border-white/[0.07] px-4 py-2.5">
+          <span className="truncate text-[10.5px] font-bold uppercase tracking-[0.14em] text-slate-400">
             {categoryHeaderTitle}
+          </span>
+          <span className="shrink-0 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary">
+            {category.services.length}
           </span>
         </div>
 
-        {/* Services List */}
-        <motion.div variants={listVariants} initial="hidden" animate="visible" className="relative space-y-0.5 p-1.5">
+        {/* Services */}
+        <motion.div
+          variants={listVariants}
+          initial="hidden"
+          animate="visible"
+          className="max-h-[min(60vh,380px)] overflow-y-auto overscroll-contain p-1.5"
+        >
           {category.services.map((s, index) => {
             const iconSrc = s.image || getServiceIconImage(s.slug, s.name, index);
             const href = s.path || `/services/${s.slug}`;
@@ -146,23 +144,30 @@ export function MegaMenu({ category, onNavigate }: MegaMenuProps) {
                   href={href}
                   onClick={onNavigate}
                   aria-current={isCurrent ? "page" : undefined}
-                  className={`group flex items-center gap-3 rounded-xl px-2.5 py-2 transition-all duration-200 hover:bg-white/[0.08] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] ${
-                    isCurrent ? "bg-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]" : ""
+                  className={`group relative flex items-center gap-3 rounded-xl px-2 py-1.5 transition-colors duration-200 hover:bg-white/[0.05] ${
+                    isCurrent ? "bg-primary/10" : ""
                   }`}
                 >
-                  <img loading="lazy" decoding="async"
-                    src={iconSrc}
-                    alt={s.name}
-                    className={`h-9 w-9 shrink-0 object-contain transition-transform duration-200 ${
-                      isHomeCleaning ? "scale-[1.25] group-hover:scale-[1.35]" : "group-hover:scale-110"
-                    }`}
+                  {/* green bar on the left for hover / current page */}
+                  <span
+                    aria-hidden
+                    className={`absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-primary transition-opacity duration-200 group-hover:opacity-100 ${isCurrent ? "opacity-100" : "opacity-0"}`}
                   />
-                  <span className={`text-[13px] font-semibold tracking-normal group-hover:text-primary transition-colors duration-150 truncate ${isCurrent ? "text-primary" : "text-white"}`}>
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/[0.06] ring-1 ring-white/10 transition-colors duration-200 group-hover:bg-white/[0.1] group-hover:ring-primary/50">
+                    <img loading="lazy" decoding="async"
+                      src={iconSrc}
+                      alt=""
+                      className={`h-7 w-7 object-contain transition-transform duration-200 ${
+                        isHomeCleaning ? "scale-[1.25] group-hover:scale-[1.35]" : "group-hover:scale-110"
+                      }`}
+                    />
+                  </span>
+                  <span className={`min-w-0 flex-1 truncate text-[13px] font-semibold transition-colors duration-150 group-hover:text-primary ${isCurrent ? "text-primary" : "text-white"}`}>
                     {s.name}
                   </span>
                   <ChevronRight
                     size={14}
-                    className={`ml-auto shrink-0 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200 ${isCurrent ? "text-primary" : "text-slate-500"}`}
+                    className={`shrink-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-primary ${isCurrent ? "text-primary" : "text-slate-600"}`}
                   />
                 </Link>
               </motion.div>
@@ -170,25 +175,22 @@ export function MegaMenu({ category, onNavigate }: MegaMenuProps) {
           })}
         </motion.div>
 
-        {/* Bottom Button: View All Services card */}
-        <div className="relative p-3 border-t border-white/10">
-          <Link
-            href="/services"
-            onClick={onNavigate}
-            className="flex items-center justify-between px-4 py-2.5 rounded-xl border border-white/12 bg-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] hover:border-primary/50 hover:bg-white/[0.1] transition-all duration-200 group/btn"
-          >
-            <div className="flex items-center gap-2.5">
-              <LayoutGrid className="w-4 h-4 text-primary shrink-0" />
-              <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white group-hover/btn:text-primary transition-colors">
-                VIEW ALL SERVICES
-              </span>
-            </div>
-            <ArrowRight
-              size={13}
-              className="text-slate-400 group-hover/btn:text-primary group-hover/btn:translate-x-0.5 transition-all duration-200"
-            />
-          </Link>
-        </div>
+        {/* Footer: View all services */}
+        <Link
+          href="/services"
+          onClick={onNavigate}
+          className="group/btn flex items-center justify-between gap-3 border-t border-white/[0.07] bg-white/[0.03] px-4 py-2.5 transition-colors duration-200 hover:bg-primary/10"
+        >
+          <span className="flex items-center gap-2">
+            <LayoutGrid className="h-3.5 w-3.5 shrink-0 text-primary" />
+            <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white transition-colors group-hover/btn:text-primary">
+              View all services
+            </span>
+          </span>
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white transition-transform duration-200 group-hover/btn:translate-x-0.5">
+            <ArrowRight size={12} />
+          </span>
+        </Link>
       </div>
     </motion.div>
   );
