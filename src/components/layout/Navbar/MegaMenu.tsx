@@ -131,7 +131,7 @@ export function MegaMenu({ category, onNavigate }: MegaMenuProps) {
           variants={listVariants}
           initial="hidden"
           animate="visible"
-          className="max-h-[min(60vh,380px)] overflow-y-auto overscroll-contain p-1.5"
+          className="p-1.5"
         >
           {category.services.map((s, index) => {
             const iconSrc = s.image || getServiceIconImage(s.slug, s.name, index);
