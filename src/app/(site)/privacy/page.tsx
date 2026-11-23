@@ -20,7 +20,7 @@ const sections: LegalSection[] = [
       <>
         <p>
           CityCalls is a home services brand operated by <strong>Citytimes India Co.</strong> (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;),
-          based in Raj Nagar, Ghaziabad, Uttar Pradesh. We connect customers with background-verified technicians for
+          based in Sector 10, Raj Nagar, Ghaziabad, Uttar Pradesh. We connect customers with background-verified technicians for
           appliance repair, cleaning, pest control, beauty and other home services.
         </p>
         <p>
@@ -144,7 +144,7 @@ const sections: LegalSection[] = [
     body: (
       <p>
         For any privacy concern or complaint, contact our Grievance Officer at <strong>support@citycalls.in</strong> or
-        <strong> +91 74288 08884</strong> (Mon–Sun, 8:00 AM – 8:00 PM), or write to Citytimes India Co., Raj Nagar, Ghaziabad,
+        <strong> +91 74288 08884</strong> (Mon–Sun, 8:00 AM – 8:00 PM), or write to Citytimes India Co., Sector 10, Raj Nagar, Ghaziabad,
         Uttar Pradesh 201002. We acknowledge complaints within 48 hours and aim to resolve them within 30 days.
       </p>
     ),

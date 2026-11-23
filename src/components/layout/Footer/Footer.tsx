@@ -360,8 +360,16 @@ export function Footer({ links = DEFAULT_SOCIAL_LINKS }: { links?: PublicSocialL
                 <span className="footer-glass-icon grid h-9 w-9 shrink-0 place-items-center rounded-full text-[#8fd14f]">
                   <MapPin size={16} className="relative" />
                 </span>
-                <span className="text-white/90 leading-relaxed max-w-[200px]">
-                  Raj Nagar, Ghaziabad, Uttar Pradesh 201002
+                <span className="text-white/90 leading-relaxed max-w-[220px]">
+                  First Floor, A 24, A Block, Sector 63, Noida, Uttar Pradesh 201301
+                </span>
+              </motion.li>
+              <motion.li variants={staggerItem} className="group flex gap-3 items-center">
+                <span className="footer-glass-icon grid h-9 w-9 shrink-0 place-items-center rounded-full text-[#8fd14f]">
+                  <MapPin size={16} className="relative" />
+                </span>
+                <span className="text-white/90 leading-relaxed max-w-[220px]">
+                  Sector 10, Raj Nagar, Ghaziabad, Uttar Pradesh 201002
                 </span>
               </motion.li>
             </motion.ul>

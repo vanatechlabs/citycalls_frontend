@@ -1,5 +1,8 @@
 "use client";
 
+import { Navigation } from "lucide-react";
+import { CITYCALLS_OFFICES } from "@/components/contact/offices";
+
 export default function ContactHero() {
   return (
     <div className="bg-[#f5f3ef] p-8 lg:p-16 flex flex-col justify-between relative overflow-hidden">
@@ -17,25 +20,41 @@ export default function ContactHero() {
               <img src="/logo.webp" alt="CityCalls Logo" className="h-10 md:h-12 object-contain" />
             </div>
           </div>
-          <h1 className="text-2xl md:text-4xl font-serif mt-6 uppercase tracking-tight">We're here for you</h1>
+          <h1 className="text-2xl md:text-4xl font-serif mt-6 uppercase tracking-tight">We&apos;re here for you</h1>
           <p className="mt-4 text-xs md:text-sm max-w-sm mx-auto text-ink/80 leading-relaxed font-medium">
-            Have a question, feedback or just want to say hello? We'd love to hear from you. Let's connect.
+            Have a question, feedback or just want to say hello? We&apos;d love to hear from you. Let&apos;s connect.
           </p>
         </div>
 
-        {/* Map Section */}
-        <div className="mt-auto pt-2 mx-auto w-full max-w-3xl h-[450px] lg:h-[550px]">
-          <div className="w-full h-full rounded-xl overflow-hidden shadow-sm border border-black/5">
-            <iframe
-              title="CityCalls office map"
-              className="w-full h-full"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d112024.79835134117!2d77.23935890804523!3d28.666456488559664!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cf1e7c6d74735%3A0xf40e0c1b03cc114f!2sCityCalls!5e0!3m2!1sen!2sin!4v1784698469970!5m2!1sen!2sin"
-              style={{ border: 0 }}
-              allowFullScreen={true}
-              loading="lazy"
-              referrerPolicy="strict-origin-when-cross-origin"
-            />
-          </div>
+        {/* Two maps, half each: one per office */}
+        <div className="mt-auto pt-2 mx-auto flex w-full max-w-3xl flex-col gap-3 h-[560px] lg:h-[600px]">
+          {CITYCALLS_OFFICES.map((office) => (
+            <div key={office.city} className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-black/5 bg-white shadow-sm">
+              <div className="flex items-center justify-between gap-3 border-b border-black/5 px-4 py-2">
+                <div className="min-w-0">
+                  <div className="text-[11px] font-bold uppercase tracking-widest text-primary">{office.city}</div>
+                  <div className="truncate text-xs font-medium text-ink/70">{office.lines.join(", ")}</div>
+                </div>
+                <a
+                  href={office.directions}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex shrink-0 items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-blue-600 hover:text-blue-700"
+                >
+                  <Navigation className="h-3.5 w-3.5" /> Directions
+                </a>
+              </div>
+              <iframe
+                title={`CityCalls ${office.city} on Google Maps — ${office.lines.join(", ")}`}
+                className="min-h-0 w-full flex-1"
+                src={office.mapEmbed}
+                style={{ border: 0 }}
+                allowFullScreen={true}
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+              />
+            </div>
+          ))}
         </div>
       </div>
     </div>

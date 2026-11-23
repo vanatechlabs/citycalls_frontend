@@ -4,6 +4,7 @@ import { CheckCircle, Instagram, Loader2, Mail, MapPin, Phone, Clock } from "luc
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { submitContactEnquiry } from "@/lib/api/bookings";
+import { CITYCALLS_OFFICES } from "@/components/contact/offices";
 
 export default function ContactForm() {
   const [sent, setSent] = useState(false);
@@ -85,8 +86,13 @@ export default function ContactForm() {
            <div className="flex items-start gap-4">
              <MapPin className="w-4 h-4 mt-1 opacity-70"/>
              <div>
-               <div className="font-bold text-xs tracking-widest uppercase mb-1.5 opacity-80">Address</div>
-               <div className="font-medium leading-relaxed">CITYCALLS<br/>3rd Floor, Raj Nagar<br/>Ghaziabad, UP 201002</div>
+               <div className="font-bold text-xs tracking-widest uppercase mb-1.5 opacity-80">Addresses</div>
+               {CITYCALLS_OFFICES.map((office, i) => (
+                 <div key={office.city} className={i > 0 ? "mt-4" : undefined}>
+                   <div className="text-[11px] font-bold uppercase tracking-wider text-primary">{office.city}</div>
+                   <div className="font-medium leading-relaxed">{office.lines.join(", ")}</div>
+                 </div>
+               ))}
              </div>
            </div>
            <div className="flex items-start gap-4 mt-8">

@@ -20,7 +20,7 @@ const sections: LegalSection[] = [
       <>
         <p>
           These Terms &amp; Conditions apply when you use citycalls.in or book a service through CityCalls, a brand operated
-          by <strong>Citytimes India Co.</strong>, Raj Nagar, Ghaziabad, Uttar Pradesh (&quot;CityCalls&quot;, &quot;we&quot;, &quot;us&quot;).
+          by <strong>Citytimes India Co.</strong>, Sector 10, Raj Nagar, Ghaziabad, Uttar Pradesh (&quot;CityCalls&quot;, &quot;we&quot;, &quot;us&quot;).
         </p>
         <p>By booking a service or using the website, you agree to these terms. If you do not agree, please do not use our services.</p>
       </>

@@ -111,7 +111,7 @@ export function LegalPage({ eyebrow, title, highlight, intro, lastUpdated, secti
                   <Phone className="h-4 w-4 text-primary" /> +91 74288 08884
                 </a>
                 <span className="flex items-center gap-2 font-medium text-slate-700">
-                  <MapPin className="h-4 w-4 shrink-0 text-primary" /> Raj Nagar, Ghaziabad, UP 201002
+                  <MapPin className="h-4 w-4 shrink-0 text-primary" /> Sector 10, Raj Nagar, Ghaziabad, UP 201002
                 </span>
               </div>
             </div>
