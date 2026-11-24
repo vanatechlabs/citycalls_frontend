@@ -18,6 +18,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import { useBooking } from "@/context/BookingContext";
+import { fetchCityCallsHeroSlides, resolveWebsiteImageUrl } from "@/lib/api/cityCallsHome";
 
 import cara1 from "@/assets/Banner/cara4.png";
 import cara2 from "@/assets/Banner/cara5.png";
@@ -29,8 +30,9 @@ import h11 from "@/assets/Banner/h11.png";
 import { LaunchSpotlight } from "./LaunchSpotlight";
 
 interface Slide {
-  id: number;
+  id: number | string;
   image: string;
+  altText?: string;
   hasText?: boolean;
   subtitle?: string;
   titleParts?: string[];
@@ -38,7 +40,7 @@ interface Slide {
   hideButtons?: boolean;
 }
 
-const slides: Slide[] = [
+const fallbackSlides: Slide[] = [
   {
     id: 1,
     image: h11,
@@ -130,14 +132,43 @@ const wordVariants = {
 
 export function HeroCarousel() {
   const { openDrawer } = useBooking();
+  const [slides, setSlides] = useState<Slide[]>(fallbackSlides);
   const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchCityCallsHeroSlides(controller.signal)
+      .then((heroSlides) => {
+        if (heroSlides.length === 0) return;
+
+        setSlides(heroSlides.map((item) => ({
+          id: item._id,
+          image: resolveWebsiteImageUrl(item.image),
+          altText: item.altText,
+          hasText: true,
+          subtitle: item.subtitle,
+          titleParts: [item.titleLine1, item.titleLine2],
+          description: item.description,
+        })));
+        setCurrent(0);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        // The bundled slides intentionally remain visible if the CMS API is
+        // unavailable, so a backend outage never leaves the hero blank.
+        console.warn('Using bundled hero slides because CMS slides could not be loaded.');
+      });
+
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
     }, SLIDE_INTERVAL);
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
 
   const slide = slides[current];
 
@@ -147,6 +178,8 @@ export function HeroCarousel() {
       <div className="absolute inset-0">
         <motion.div
           key={slide.id}
+          role="img"
+          aria-label={slide.altText || slide.subtitle || 'City Calls service'}
           initial={{ scale: 1.06 }}
           animate={{ scale: 1.16 }}
           transition={{ duration: SLIDE_INTERVAL / 1000 + 1.2, ease: "linear" }}
@@ -160,7 +193,7 @@ export function HeroCarousel() {
         />
       </div>
 
-      <div className={`absolute inset-0 z-10 transition-opacity duration-700 ${slide.hasText ? (slide.id === 1 ? "bg-transparent" : "bg-gradient-to-t from-black/45 via-black/25 to-black/10") : "bg-black/5"}`} />
+      <div className={`absolute inset-0 z-10 transition-opacity duration-700 ${slide.hasText ? (slide.id === 1 ? "bg-transparent" : "bg-gradient-to-t from-black/55 via-black/35 to-black/18") : "bg-black/5"}`} />
 
       {/* Shutter reveal — alternating blinds open on every slide change */}
       <div className="absolute inset-0 z-30 flex pointer-events-none">
@@ -229,8 +262,14 @@ export function HeroCarousel() {
                         </span>
                       </div>
                     ) : (
-                      <div className="bg-[#4D4D4D] text-white text-[12px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm border border-white/10 whitespace-nowrap">
-                        {slide.subtitle}
+                      <div
+                        className="inline-flex items-center gap-2.5 border border-white/25 bg-white/[0.07] backdrop-blur-sm px-4 py-1.5 rounded-full shadow-[0_4px_16px_rgba(0,0,0,0.18)] whitespace-nowrap"
+                        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                        <span className="text-[12px] font-bold text-white uppercase tracking-[0.2em]">
+                          {slide.subtitle}
+                        </span>
                       </div>
                     )}
                   </motion.div>
@@ -238,8 +277,12 @@ export function HeroCarousel() {
 
                 {/* Title — per-word slide-up reveal, masked per line */}
                 <h1
-                  className={`mb-4 leading-[1.12] tracking-tight ${slide.id === 1 ? "" : "text-4xl sm:text-[44px] md:text-[52px] lg:text-[62px] font-semibold text-white"}`}
-                  style={slide.id === 1 ? { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "clamp(36px, 5vw, 56px)", fontWeight: 800, lineHeight: 1.12, letterSpacing: "-0.02em" } : {}}
+                  className={`mb-4 leading-[1.12] tracking-tight ${slide.id === 1 ? "" : "text-4xl sm:text-[44px] md:text-[52px] lg:text-[62px] font-bold text-white"}`}
+                  style={
+                    slide.id === 1
+                      ? { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "clamp(36px, 5vw, 56px)", fontWeight: 800, lineHeight: 1.12, letterSpacing: "-0.02em" }
+                      : { fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: "-0.01em" }
+                  }
                 >
                   {slide.titleParts.map((line, li) => (
                     <motion.span
@@ -256,7 +299,9 @@ export function HeroCarousel() {
                           className={`inline-block mr-[0.28em] will-change-transform ${
                             slide.id === 1
                               ? li === 0 ? "text-[#0f172a]" : "text-[#d97706]"
-                              : li === 1 ? "text-primary" : "text-white"
+                              : li === 1
+                                ? "text-[#7BB50B] drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)]"
+                                : "text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)]"
                           }`}
                         >
                           {word}
@@ -271,8 +316,12 @@ export function HeroCarousel() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.85, ease: "easeOut" }}
-                    style={slide.id === 1 ? { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "clamp(15px, 1.6vw, 17px)", color: "#334155", lineHeight: 1.65, fontWeight: 600 } : {}}
-                    className={`mb-8 max-w-xl leading-relaxed ${slide.id === 1 ? "" : "text-[15px] md:text-base lg:text-[17px] font-normal text-white/85 tracking-wide"}`}
+                    style={
+                      slide.id === 1
+                        ? { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "clamp(15px, 1.6vw, 17px)", color: "#334155", lineHeight: 1.65, fontWeight: 600 }
+                        : { fontFamily: "'Plus Jakarta Sans', sans-serif", textShadow: "0 2px 10px rgba(0,0,0,0.4)" }
+                    }
+                    className={`mb-8 max-w-xl leading-relaxed ${slide.id === 1 ? "" : "text-[15px] md:text-base lg:text-[17px] font-medium text-white/90 tracking-wide"}`}
                   >
                     {slide.description}
                   </motion.p>

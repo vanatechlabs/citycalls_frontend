@@ -62,6 +62,13 @@ export function Navbar() {
             </div>
           ))}
           <Link
+            to="/blogs"
+            className="group relative flex items-center px-1.5 xl:px-2.5 py-2 text-[12px] font-sans font-semibold uppercase tracking-wider text-white/90 hover:text-white transition-colors duration-200 rounded-md whitespace-nowrap"
+          >
+            Blogs
+            <span className="absolute left-1.5 right-1.5 xl:left-2.5 xl:right-2.5 -bottom-[1px] h-[2px] bg-primary origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+          </Link>
+          <Link
             to="/contact"
             className="group relative flex items-center px-1.5 xl:px-2.5 py-2 text-[12px] font-sans font-semibold uppercase tracking-wider text-white/90 hover:text-white transition-colors duration-200 rounded-md whitespace-nowrap"
           >
@@ -105,11 +112,11 @@ export function Navbar() {
             </div>
 
             {/* Help Now — New UI Button */}
-            <a href="https://helpnow.citycalls.in/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-gradient-to-b from-[#FFCF24] to-[#FDBA00] hover:from-[#FFE066] hover:to-[#F5B50A] transition-all duration-300 rounded-full pl-2.5 pr-1 py-0.5 shadow-[0_4px_14px_rgba(253,186,0,0.4)] border border-[#E5A800]">
+            <a href="https://helpnow.citycalls.in/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 bg-gradient-to-b from-[#FFCF24] to-[#FDBA00] hover:from-[#FFE066] hover:to-[#F5B50A] transition-all duration-300 rounded-full pl-2 pr-1 py-1.5 shadow-[0_4px_14px_rgba(253,186,0,0.4)] border border-[#E5A800]">
               {/* Left Icon (House + Sparkles) */}
-              <div className="flex items-center gap-1.5">
-                <div className="relative flex items-center pr-1.5">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <div className="flex items-center gap-1">
+                <div className="relative flex items-center pr-1">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M3 10l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                     <rect x="9" y="12" width="2.5" height="2.5" fill="black"></rect>
                     <rect x="12.5" y="12" width="2.5" height="2.5" fill="black"></rect>
@@ -117,34 +124,34 @@ export function Navbar() {
                     <rect x="12.5" y="15.5" width="2.5" height="2.5" fill="black"></rect>
                   </svg>
                   <div className="absolute -top-0.5 right-0">
-                    <svg width="9" height="9" viewBox="0 0 24 24" fill="black">
+                    <svg width="8" height="8" viewBox="0 0 24 24" fill="black">
                       <path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2z"/>
                     </svg>
                   </div>
-                  <div className="absolute top-3 -right-1.5">
-                    <svg width="6" height="6" viewBox="0 0 24 24" fill="black">
+                  <div className="absolute top-3 -right-1">
+                    <svg width="5" height="5" viewBox="0 0 24 24" fill="black">
                       <path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2z"/>
                     </svg>
                   </div>
                 </div>
                 {/* Divider */}
-                <div className="w-[1.5px] h-6 bg-black/80 rounded-full" />
+                <div className="w-[1.5px] h-6.5 bg-black/80 rounded-full" />
               </div>
 
               {/* Middle Text */}
               <div className="flex flex-col items-start leading-none">
-                <div className="text-black text-[15px] tracking-tight flex items-baseline">
+                <div className="text-black text-[14px] tracking-tight flex items-baseline">
                   <span className="font-extrabold font-sans">Help</span>
                   <span className="font-serif italic font-bold ml-[1px]">Now</span>
                 </div>
-                <span className="text-black font-bold text-[8px] uppercase tracking-wider mt-0.5">
+                <span className="text-black font-bold text-[7.5px] uppercase tracking-tight mt-0.5">
                   House Help Services
                 </span>
               </div>
 
               {/* Right Arrow */}
-              <div className="w-7 h-7 bg-white/95 rounded-full flex items-center justify-center ml-1 shadow-sm">
-                <ArrowRight size={15} className="text-black" strokeWidth={2.5} />
+              <div className="w-6.5 h-6.5 bg-white/95 rounded-full flex items-center justify-center ml-0.5 shadow-sm">
+                <ArrowRight size={14} className="text-black" strokeWidth={2.5} />
               </div>
             </a>
           </div>

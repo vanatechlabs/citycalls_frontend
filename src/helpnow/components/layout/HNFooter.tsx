@@ -277,8 +277,8 @@ export function HNFooter() {
               </motion.li>
               <motion.li variants={staggerItem} className="flex gap-2.5 items-start">
                 <Mail size={17} className="text-[#f5a623] shrink-0 mt-0.5" />
-                <a href="mailto:hello@helpnow.in" className="text-white/90 hover:text-[#f5a623] transition-colors">
-                  hello@helpnow.in
+                <a href="mailto:hello@citycalls.in" className="text-white/90 hover:text-[#f5a623] transition-colors">
+                  hello@citycalls.in
                 </a>
               </motion.li>
               <motion.li variants={staggerItem} className="flex gap-2.5 items-start">
